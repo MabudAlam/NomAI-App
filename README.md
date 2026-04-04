@@ -20,9 +20,7 @@ Backend Repo: [https://github.com/Pavel401/NomAI](https://github.com/Pavel401/No
 
 > Note: This project is actively evolving. Contributions are welcome!
 
----
 
-If you want, I can also make this sound more “founder-y” or more casual depending on the vibe you’re going for.
 
 ## Features
 
