@@ -1,16 +1,28 @@
+
+
 <p align="center">
   <img src="assets/png/logo.png" alt="NomAI Logo" width="120" />
 </p>
 
 # NomAI – AI Nutrition & Meal Tracking
 
+> I originally built this project for personal use and never shared it anywhere outside of GitHub. Recently, I’ve noticed people showing interest and starring the repo and forking.
+>
+> I’m curious — how did you all discover this project?
+>
+> I’m planning to fix some existing issues, especially around the AI agent. If you’re using the app, feel free to share feedback or suggestions!
+
 NomAI is an open-source Flutter app that helps you track meals, analyze nutrition, and get AI-powered guidance tailored to your goals. It combines quick logging, powerful analytics, and a friendly chat interface to make healthy eating simple and sustainable.
 
-Built with Python , Fastapi , Gemini , PydanticAI ,Supabase , OpenAI , Flutter, Firebase, and a lightweight backend for AI chat, NomAI works on both iOS and Android.
+Built with Python, FastAPI, Gemini, PydanticAI, Supabase, OpenAI, Flutter, and Firebase, NomAI works on both iOS and Android.
 
-Backend Repo : https://github.com/Pavel401/NomAI
+Backend Repo: [https://github.com/Pavel401/NomAI](https://github.com/Pavel401/NomAI)
 
-Note: This project is actively evolving. Contributions are welcome!
+> Note: This project is actively evolving. Contributions are welcome!
+
+---
+
+If you want, I can also make this sound more “founder-y” or more casual depending on the vibe you’re going for.
 
 ## Features
 
