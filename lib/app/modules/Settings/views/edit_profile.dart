@@ -194,7 +194,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: DropdownButtonFormField<T>(
-        value: value,
+        initialValue: value,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: MealAIColors.blackText),
