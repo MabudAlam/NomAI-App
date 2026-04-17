@@ -55,7 +55,7 @@ class NutritionTrackerCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: MealAIColors.whiteText,
+                    color: NomAIColors.whiteText,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Padding(
@@ -215,7 +215,7 @@ class NutritionTrackerCard extends StatelessWidget {
                               animation: true,
                               animationDuration: 1000,
                               percent: caloriesPercent,
-                              backgroundColor: MealAIColors.gaugeColor,
+                              backgroundColor: NomAIColors.gaugeColor,
                               progressColor: _getProgressColor(
                                   caloriesPercent, exceededLimit),
                               circularStrokeCap: CircularStrokeCap.round,
@@ -260,21 +260,21 @@ class NutritionTrackerCard extends StatelessWidget {
                 "Proteins",
                 consumedProtein,
                 maximumProtein,
-                MealAIColors.proteinColor,
+                NomAIColors.proteinColor,
                 Icons.fitness_center,
               ),
               _buildNutrientBox(
                 "Carbs",
                 consumedCarb,
                 maximumCarb,
-                MealAIColors.carbsColor,
+                NomAIColors.carbsColor,
                 Icons.grain,
               ),
               _buildNutrientBox(
                 "Fats",
                 consumedFat,
                 maximumFat,
-                MealAIColors.fatColor,
+                NomAIColors.fatColor,
                 Icons.opacity,
               ),
             ],
@@ -329,7 +329,7 @@ class NutritionTrackerCard extends StatelessWidget {
     if (exceeded) return Colors.red;
     if (percent > 0.9) return Colors.orange;
     if (percent > 0.75) return Colors.amber;
-    return MealAIColors.black;
+    return NomAIColors.black;
   }
 
   Widget _buildNutrientBox(
@@ -349,7 +349,7 @@ class NutritionTrackerCard extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
-                color: MealAIColors.whiteText,
+                color: NomAIColors.whiteText,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Column(

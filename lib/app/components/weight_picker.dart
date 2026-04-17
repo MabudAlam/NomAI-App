@@ -72,9 +72,9 @@ class _WeightPickerState extends State<WeightPicker> {
                     )),
             SizedBox(width: 5.w),
             Switch(
-                activeTrackColor: MealAIColors.switchBlackColor,
-                inactiveTrackColor: MealAIColors.lightPrimary,
-                activeThumbColor: MealAIColors.switchWhiteColor,
+                activeTrackColor: NomAIColors.switchBlackColor,
+                inactiveTrackColor: NomAIColors.lightPrimary,
+                activeThumbColor: NomAIColors.switchWhiteColor,
                 value: _selectedUnit == WeightUnit.LB,
                 onChanged: (value) {
                   setState(() {

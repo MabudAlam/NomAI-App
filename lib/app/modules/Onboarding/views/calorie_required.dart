@@ -311,7 +311,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MealAIColors.switchWhiteColor,
+      backgroundColor: NomAIColors.switchWhiteColor,
       body: SafeArea(
         child: _isCalculating ? _buildCalculatingView() : _buildResultsView(),
       ),
@@ -328,7 +328,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: MealAIColors.blackText,
+              color: NomAIColors.blackText,
             ),
             textAlign: TextAlign.center,
           ),
@@ -339,9 +339,9 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
               children: [
                 LinearProgressIndicator(
                   value: _progress,
-                  backgroundColor: MealAIColors.greyLight,
+                  backgroundColor: NomAIColors.greyLight,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    MealAIColors.selectedTile,
+                    NomAIColors.selectedTile,
                   ),
                   minHeight: 4,
                   borderRadius: BorderRadius.circular(2),
@@ -352,7 +352,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -360,7 +360,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                   _getProgressMessage(),
                   style: TextStyle(
                     fontSize: 14,
-                    color: MealAIColors.blackText.withOpacity(0.6),
+                    color: NomAIColors.blackText.withOpacity(0.6),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -400,7 +400,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
               ),
             ),
             const SizedBox(height: 10),
@@ -408,7 +408,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
               _getHealthModeText(),
               style: TextStyle(
                 fontSize: 16,
-                color: MealAIColors.blackText.withOpacity(0.6),
+                color: NomAIColors.blackText.withOpacity(0.6),
               ),
             ),
             const SizedBox(height: 40),
@@ -423,7 +423,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
               ),
             ),
             const SizedBox(height: 20),
@@ -463,7 +463,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
               ),
             ),
             const SizedBox(height: 20),
@@ -511,7 +511,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: MealAIColors.selectedTile,
+                  backgroundColor: NomAIColors.selectedTile,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   shape: RoundedRectangleBorder(
@@ -524,7 +524,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: MealAIColors.whiteText,
+                    color: NomAIColors.whiteText,
                   ),
                 ),
               ),
@@ -561,7 +561,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: MealAIColors.selectedTile,
+        color: NomAIColors.selectedTile,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -569,7 +569,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
           Icon(
             Icons.local_fire_department,
             size: 40,
-            color: MealAIColors.whiteText,
+            color: NomAIColors.whiteText,
           ),
           const SizedBox(width: 20),
           Expanded(
@@ -581,7 +581,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: MealAIColors.whiteText,
+                    color: NomAIColors.whiteText,
                   ),
                 ),
                 Row(
@@ -593,7 +593,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: MealAIColors.whiteText,
+                        color: NomAIColors.whiteText,
                       ),
                     ),
                     const SizedBox(width: 5),
@@ -601,7 +601,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                       unit,
                       style: TextStyle(
                         fontSize: 16,
-                        color: MealAIColors.whiteText.withOpacity(0.7),
+                        color: NomAIColors.whiteText.withOpacity(0.7),
                       ),
                     ),
                   ],
@@ -623,7 +623,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: MealAIColors.lightGreyTile,
+        color: NomAIColors.lightGreyTile,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -636,7 +636,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
               ),
               Text(
@@ -644,7 +644,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
               ),
             ],
@@ -658,9 +658,9 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                 width: 70,
                 child: CircularProgressIndicator(
                   value: percentage,
-                  backgroundColor: MealAIColors.stepperColor,
+                  backgroundColor: NomAIColors.stepperColor,
                   valueColor:
-                      AlwaysStoppedAnimation<Color>(MealAIColors.selectedTile),
+                      AlwaysStoppedAnimation<Color>(NomAIColors.selectedTile),
                   strokeWidth: 8,
                 ),
               ),
@@ -671,14 +671,14 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: MealAIColors.blackText,
+                      color: NomAIColors.blackText,
                     ),
                   ),
                   Text(
                     unit,
                     style: TextStyle(
                       fontSize: 14,
-                      color: MealAIColors.blackText.withOpacity(0.7),
+                      color: NomAIColors.blackText.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -700,7 +700,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: MealAIColors.lightGreyTile,
+        color: NomAIColors.lightGreyTile,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -708,12 +708,12 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: MealAIColors.switchWhiteColor,
+              color: NomAIColors.switchWhiteColor,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
               icon,
-              color: MealAIColors.blackText,
+              color: NomAIColors.blackText,
               size: 24,
             ),
           ),
@@ -727,7 +727,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -738,7 +738,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: MealAIColors.blackText,
+                        color: NomAIColors.blackText,
                       ),
                     ),
                     const SizedBox(width: 3),
@@ -746,7 +746,7 @@ class _DailyCalorieRequiredState extends State<DailyCalorieRequired>
                       unit,
                       style: TextStyle(
                         fontSize: 14,
-                        color: MealAIColors.blackText.withOpacity(0.7),
+                        color: NomAIColors.blackText.withOpacity(0.7),
                       ),
                     ),
                   ],

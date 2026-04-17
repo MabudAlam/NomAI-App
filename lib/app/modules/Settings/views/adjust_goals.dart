@@ -84,7 +84,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: MealAIColors.lightGreyTile,
+        color: NomAIColors.lightGreyTile,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color.withOpacity(0.2), width: 1),
       ),
@@ -102,7 +102,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: MealAIColors.blackText,
+                      color: NomAIColors.blackText,
                     ),
                   ),
                   if (subtitle != null)
@@ -110,7 +110,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
                       subtitle,
                       style: TextStyle(
                         fontSize: 12,
-                        color: MealAIColors.blueGrey,
+                        color: NomAIColors.blueGrey,
                       ),
                     ),
                 ],
@@ -130,7 +130,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                   ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
@@ -139,7 +139,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
                       unit,
                       style: TextStyle(
                         fontSize: 12,
-                        color: MealAIColors.blueGrey,
+                        color: NomAIColors.blueGrey,
                       ),
                     ),
                   ),
@@ -181,14 +181,14 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
                 '${min.toInt()}$unit',
                 style: TextStyle(
                   fontSize: 12,
-                  color: MealAIColors.blueGrey,
+                  color: NomAIColors.blueGrey,
                 ),
               ),
               Text(
                 '${max.toInt()}$unit',
                 style: TextStyle(
                   fontSize: 12,
-                  color: MealAIColors.blueGrey,
+                  color: NomAIColors.blueGrey,
                 ),
               ),
             ],
@@ -202,7 +202,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: MealAIColors.selectedTile,
+        color: NomAIColors.selectedTile,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -212,7 +212,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: MealAIColors.whiteText,
+              color: NomAIColors.whiteText,
             ),
           ),
           const SizedBox(height: 16),
@@ -220,13 +220,13 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildSummaryItem('Calories', _calories.toInt().toString(),
-                  'kcal', MealAIColors.whiteText),
+                  'kcal', NomAIColors.whiteText),
               _buildSummaryItem('Protein', _protein.toInt().toString(), 'g',
-                  MealAIColors.proteinColor),
+                  NomAIColors.proteinColor),
               _buildSummaryItem('Carbs', _carbs.toInt().toString(), 'g',
-                  MealAIColors.carbsColor),
+                  NomAIColors.carbsColor),
               _buildSummaryItem(
-                  'Fat', _fat.toInt().toString(), 'g', MealAIColors.fatColor),
+                  'Fat', _fat.toInt().toString(), 'g', NomAIColors.fatColor),
             ],
           ),
         ],
@@ -252,21 +252,21 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: MealAIColors.whiteText,
+            color: NomAIColors.whiteText,
           ),
         ),
         Text(
           unit,
           style: TextStyle(
             fontSize: 12,
-            color: MealAIColors.whiteText.withOpacity(0.7),
+            color: NomAIColors.whiteText.withOpacity(0.7),
           ),
         ),
         Text(
           label,
           style: TextStyle(
             fontSize: 12,
-            color: MealAIColors.whiteText.withOpacity(0.7),
+            color: NomAIColors.whiteText.withOpacity(0.7),
           ),
         ),
       ],
@@ -328,7 +328,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
                 ),
               ],
             ),
-            backgroundColor: MealAIColors.black,
+            backgroundColor: NomAIColors.black,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -356,7 +356,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
                 ),
               ],
             ),
-            backgroundColor: MealAIColors.red,
+            backgroundColor: NomAIColors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -381,7 +381,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: MealAIColors.blackText),
+          icon: Icon(Icons.arrow_back_ios, color: NomAIColors.blackText),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -389,7 +389,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: MealAIColors.blackText,
+            color: NomAIColors.blackText,
             letterSpacing: -0.5,
           ),
         ),
@@ -407,7 +407,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
               value: _calories,
               min: 1000,
               max: 5000,
-              color: MealAIColors.waterColor,
+              color: NomAIColors.waterColor,
               controller: _caloriesController,
               subtitle: 'Daily energy intake',
               onChanged: (val) => setState(() => _calories = val),
@@ -418,7 +418,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
               value: _protein,
               min: 50,
               max: 300,
-              color: MealAIColors.proteinColor,
+              color: NomAIColors.proteinColor,
               controller: _proteinController,
               subtitle: 'Muscle building & repair',
               onChanged: (val) => setState(() => _protein = val),
@@ -429,7 +429,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
               value: _carbs,
               min: 50,
               max: 500,
-              color: MealAIColors.carbsColor,
+              color: NomAIColors.carbsColor,
               controller: _carbsController,
               subtitle: 'Primary energy source',
               onChanged: (val) => setState(() => _carbs = val),
@@ -440,7 +440,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
               value: _fat,
               min: 20,
               max: 150,
-              color: MealAIColors.fatColor,
+              color: NomAIColors.fatColor,
               controller: _fatController,
               subtitle: 'Essential fatty acids',
               onChanged: (val) => setState(() => _fat = val),
@@ -451,7 +451,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
               value: _water,
               min: 4,
               max: 16,
-              color: MealAIColors.waterColor,
+              color: NomAIColors.waterColor,
               controller: _waterController,
               subtitle: 'Daily hydration',
               onChanged: (val) => setState(() => _water = val),
@@ -462,7 +462,7 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
               value: _fiber,
               min: 10,
               max: 60,
-              color: MealAIColors.carbsColor,
+              color: NomAIColors.carbsColor,
               controller: _fiberController,
               subtitle: 'Digestive health',
               onChanged: (val) => setState(() => _fiber = val),

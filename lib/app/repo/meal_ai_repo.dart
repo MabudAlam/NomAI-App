@@ -10,7 +10,7 @@ class AiRepository {
   Future<NutritionOutput> getNutritionData(
       NutritionInputQuery inputQuery) async {
     // String remoteConfigUrl = RemoteConfigService.getBaseUrl();
-    String remoteConfigUrl = "https://99f3-2a09-bac5-3e0c-11c3-00-1c5-137.ngrok-free.app";
+    String remoteConfigUrl = "https://46d0-2a09-bac5-3e0d-1a46-00-29e-85.ngrok-free.app";
 
     String baseUrl = remoteConfigUrl + ApiPath.getNutritionData;
 

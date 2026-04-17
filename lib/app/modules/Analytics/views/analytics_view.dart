@@ -80,7 +80,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                     monthLabel,
                     style: TextStyle(
                       fontSize: 14,
-                      color: MealAIColors.whiteText,
+                      color: NomAIColors.whiteText,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -107,10 +107,10 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             padding: EdgeInsets.all(4.w),
             width: double.infinity,
             decoration: BoxDecoration(
-              color: MealAIColors.lightSurface,
+              color: NomAIColors.lightSurface,
               borderRadius: BorderRadius.circular(3.w),
               border:
-                  Border.all(color: MealAIColors.blackText.withOpacity(0.08)),
+                  Border.all(color: NomAIColors.blackText.withOpacity(0.08)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -120,7 +120,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                   ),
                 ),
                 SizedBox(height: 1.5.h),
@@ -147,7 +147,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: MealAIColors.blackText,
+              color: NomAIColors.blackText,
             ),
           ),
         ),
@@ -187,9 +187,9 @@ class _AnalyticsViewState extends State<AnalyticsView> {
       height: 28.h,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: MealAIColors.lightSurface,
+          color: NomAIColors.lightSurface,
           borderRadius: BorderRadius.circular(3.w),
-          border: Border.all(color: MealAIColors.blackText.withOpacity(0.08)),
+          border: Border.all(color: NomAIColors.blackText.withOpacity(0.08)),
         ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(3.w, 1.5.h, 4.w, 1.5.h),
@@ -245,7 +245,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                       return Text(
                         value.toInt().toString(),
                         style: const TextStyle(
-                            fontSize: 10, color: MealAIColors.blackText),
+                            fontSize: 10, color: NomAIColors.blackText),
                       );
                     },
                   ),
@@ -261,7 +261,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                         child: Text(
                           v.toString(),
                           style: const TextStyle(
-                              fontSize: 10, color: MealAIColors.blackText),
+                              fontSize: 10, color: NomAIColors.blackText),
                         ),
                       );
                     },
@@ -283,20 +283,20 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                 LineChartBarData(
                   spots: spots,
                   isCurved: true,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                   barWidth: 2,
                   isStrokeCapRound: true,
                   dotData: FlDotData(
                     show: true,
                     getDotPainter: (spot, p, bar, i) => FlDotCirclePainter(
                       radius: 3,
-                      color: MealAIColors.blackText,
+                      color: NomAIColors.blackText,
                       strokeWidth: 0,
                     ),
                   ),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: MealAIColors.blackText.withOpacity(0.06),
+                    color: NomAIColors.blackText.withOpacity(0.06),
                   ),
                 ),
               ],
@@ -332,7 +332,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: MealAIColors.blackText,
+            color: NomAIColors.blackText,
           ),
         ),
         const SizedBox(height: 2),
@@ -340,7 +340,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: MealAIColors.grey,
+            color: NomAIColors.grey,
           ),
         ),
       ],
@@ -358,7 +358,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: MealAIColors.blackText,
+              color: NomAIColors.blackText,
             ),
           ),
           SizedBox(height: 0.3.h),
@@ -366,7 +366,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: MealAIColors.grey,
+              color: NomAIColors.grey,
             ),
           ),
         ],
@@ -388,9 +388,9 @@ class _AnalyticsViewState extends State<AnalyticsView> {
         margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 0.8.h),
         padding: EdgeInsets.symmetric(vertical: 1.2.h, horizontal: 3.w),
         decoration: BoxDecoration(
-          color: MealAIColors.lightSurface,
+          color: NomAIColors.lightSurface,
           borderRadius: BorderRadius.circular(3.w),
-          border: Border.all(color: MealAIColors.blackText.withOpacity(0.08)),
+          border: Border.all(color: NomAIColors.blackText.withOpacity(0.08)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -405,7 +405,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: MealAIColors.blackText,
+                      color: NomAIColors.blackText,
                     ),
                   ),
                 ),
@@ -425,7 +425,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                           alignment: Alignment.centerLeft,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: MealAIColors.blackText,
+                              color: NomAIColors.blackText,
                               borderRadius: BorderRadius.circular(1.w),
                             ),
                           ),
@@ -436,7 +436,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                         '${d.totalCalories} cal · ${d.mealCount} meals',
                         style: TextStyle(
                           fontSize: 11,
-                          color: MealAIColors.grey,
+                          color: NomAIColors.grey,
                         ),
                       ),
                     ],
@@ -445,7 +445,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                 SizedBox(width: 2.w),
                 Icon(
                   expanded ? Icons.expand_less : Icons.expand_more,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                   size: 4.w,
                 ),
               ],
@@ -459,7 +459,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                 SizedBox(height: 1.h),
                 Text(
                   d.overAllSummary!,
-                  style: TextStyle(fontSize: 12, color: MealAIColors.grey),
+                  style: TextStyle(fontSize: 12, color: NomAIColors.grey),
                 ),
               ],
             ],
@@ -498,13 +498,13 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: MealAIColors.blackText,
+              color: NomAIColors.blackText,
             ),
           ),
           SizedBox(height: 0.3.h),
           Text(
             k,
-            style: TextStyle(fontSize: 12, color: MealAIColors.grey),
+            style: TextStyle(fontSize: 12, color: NomAIColors.grey),
           ),
         ],
       ),
@@ -530,10 +530,10 @@ class _AnalyticsViewState extends State<AnalyticsView> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
             decoration: BoxDecoration(
-              color: selected ? MealAIColors.blackText : Colors.transparent,
+              color: selected ? NomAIColors.blackText : Colors.transparent,
               borderRadius: BorderRadius.circular(5.w),
               border: Border.all(
-                color: MealAIColors.blackText.withOpacity(0.25),
+                color: NomAIColors.blackText.withOpacity(0.25),
               ),
             ),
             child: Text(
@@ -541,7 +541,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : MealAIColors.blackText,
+                color: selected ? Colors.white : NomAIColors.blackText,
               ),
             ),
           ),
@@ -627,10 +627,10 @@ class _AnalyticsViewState extends State<AnalyticsView> {
         height: 8.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4.w),
-          border: Border.all(color: MealAIColors.blackText.withOpacity(0.2)),
-          color: MealAIColors.lightSurface,
+          border: Border.all(color: NomAIColors.blackText.withOpacity(0.2)),
+          color: NomAIColors.lightSurface,
         ),
-        child: Icon(icon, size: 4.w, color: MealAIColors.blackText),
+        child: Icon(icon, size: 4.w, color: NomAIColors.blackText),
       ),
     );
   }
@@ -638,20 +638,20 @@ class _AnalyticsViewState extends State<AnalyticsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MealAIColors.lightBackground,
+      backgroundColor: NomAIColors.lightBackground,
       appBar: AppBar(
-        backgroundColor: MealAIColors.blueGrey,
+        backgroundColor: NomAIColors.blueGrey,
         elevation: 0,
         title: const Text(
           'Analytics',
           style: TextStyle(
-            color: MealAIColors.whiteText,
+            color: NomAIColors.whiteText,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: MealAIColors.whiteText),
+        iconTheme: const IconThemeData(color: NomAIColors.whiteText),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -659,17 +659,17 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              MealAIColors.blueGrey,
-              MealAIColors.blueGrey.withOpacity(0.9),
-              MealAIColors.blueGrey.withOpacity(0.8),
-              MealAIColors.blueGrey.withOpacity(0.7),
-              MealAIColors.blueGrey.withOpacity(0.6),
-              MealAIColors.blueGrey.withOpacity(0.5),
-              MealAIColors.blueGrey.withOpacity(0.4),
-              MealAIColors.blueGrey.withOpacity(0.3),
-              MealAIColors.blueGrey.withOpacity(0.2),
-              MealAIColors.blueGrey.withOpacity(0.1),
-              MealAIColors.whiteText,
+              NomAIColors.blueGrey,
+              NomAIColors.blueGrey.withOpacity(0.9),
+              NomAIColors.blueGrey.withOpacity(0.8),
+              NomAIColors.blueGrey.withOpacity(0.7),
+              NomAIColors.blueGrey.withOpacity(0.6),
+              NomAIColors.blueGrey.withOpacity(0.5),
+              NomAIColors.blueGrey.withOpacity(0.4),
+              NomAIColors.blueGrey.withOpacity(0.3),
+              NomAIColors.blueGrey.withOpacity(0.2),
+              NomAIColors.blueGrey.withOpacity(0.1),
+              NomAIColors.whiteText,
             ],
             stops: const [
               0.0,
@@ -705,7 +705,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                     return Center(
                       child: Text(
                         'Failed to load analytics',
-                        style: TextStyle(color: MealAIColors.red),
+                        style: TextStyle(color: NomAIColors.red),
                       ),
                     );
                   }
@@ -721,7 +721,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
               return Center(
                 child: Text(
                   state.message,
-                  style: TextStyle(color: MealAIColors.red),
+                  style: TextStyle(color: NomAIColors.red),
                 ),
               );
             }
@@ -749,7 +749,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                       monthLabel,
                       style: TextStyle(
                         fontSize: 14,
-                        color: MealAIColors.grey,
+                        color: NomAIColors.grey,
                       ),
                     ),
                   ),

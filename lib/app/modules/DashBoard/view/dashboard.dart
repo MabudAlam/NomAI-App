@@ -8,6 +8,7 @@ import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/modules/Home/views/home_view.dart';
+import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:NomAi/app/modules/Scanner/views/scan_view.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    Get.put(ScannerController());
   }
 
   void _onItemTapped(int index) {
@@ -49,9 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
             Icon(
               isSelected ? selectedIcon : unselectedIcon,
               size: 26,
-              color: isSelected
-                  ? MealAIColors.blackText
-                  : MealAIColors.stepperColor,
+              color:
+                  isSelected ? NomAIColors.blackText : NomAIColors.stepperColor,
             ),
             const SizedBox(height: 2),
             Text(
@@ -59,8 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontSize: 11,
                 color: isSelected
-                    ? MealAIColors.blackText
-                    : MealAIColors.stepperColor,
+                    ? NomAIColors.blackText
+                    : NomAIColors.stepperColor,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -78,54 +79,62 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
 
     return Scaffold(
-      backgroundColor: MealAIColors.lightBackground,
+      backgroundColor: NomAIColors.lightBackground,
       extendBody: true,
       floatingActionButton: _selectedIndex == 0
-          ? Container(
-              height: 60,
-              width: 60,
-              decoration: BoxDecoration(
-                color: MealAIColors.blackText,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
+          ? GetBuilder<ScannerController>(
+              builder: (controller) {
+                final bool isProcessing = controller.isProcessing;
+                return Opacity(
+                  opacity: isProcessing ? 0.5 : 1.0,
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      color: NomAIColors.blackText,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.25),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: FloatingActionButton(
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      shape: const CircleBorder(),
+                      onPressed: isProcessing
+                          ? null
+                          : () {
+                              try {
+                                final userBloc = context.read<UserBloc>();
+                                Get.to(() => BlocProvider.value(
+                                      value: userBloc,
+                                      child: NomAICamera(),
+                                    ));
+                              } catch (_) {
+                                Get.to(() => NomAICamera());
+                              }
+                            },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Lottie.asset(
+                          'assets/lottie/scan.json',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              child: FloatingActionButton(
-                backgroundColor: MealAIColors.blackText,
-                elevation: 0,
-                shape: const CircleBorder(),
-                onPressed: () {
-                  // Preserve existing UserBloc when navigating via GetX
-                  try {
-                    final userBloc = context.read<UserBloc>();
-                    Get.to(() => BlocProvider.value(
-                          value: userBloc,
-                          child: MealAiCamera(),
-                        ));
-                  } catch (_) {
-                    // Fallback if bloc not found; navigate as-is
-                    Get.to(() => MealAiCamera());
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Lottie.asset(
-                    'assets/lottie/scan.json',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
+                );
+              },
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomAppBar(
         height: 65,
-        color: MealAIColors.switchWhiteColor,
+        color: NomAIColors.switchWhiteColor,
         elevation: 20,
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,

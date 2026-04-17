@@ -70,18 +70,18 @@ class _ImageDownscaleDemoState extends State<ImageDownscaleDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: MealAIColors.blueGrey,
+        backgroundColor: NomAIColors.blueGrey,
         elevation: 0,
         title: const Text(
           'Image Downscale Demo',
           style: TextStyle(
-            color: MealAIColors.whiteText,
+            color: NomAIColors.whiteText,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: MealAIColors.whiteText),
+        iconTheme: const IconThemeData(color: NomAIColors.whiteText),
       ),
       body: SingleChildScrollView(
         child: Column(

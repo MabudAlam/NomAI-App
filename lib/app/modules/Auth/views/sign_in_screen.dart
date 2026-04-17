@@ -48,7 +48,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(_errorMsg ?? 'Sign in failed'),
-              backgroundColor: MealAIColors.grey,
+              backgroundColor: NomAIColors.grey,
               behavior: SnackBarBehavior.floating,
               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               shape: RoundedRectangleBorder(
@@ -71,13 +71,13 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 120,
                   width: 120,
                   decoration: BoxDecoration(
-                    color: MealAIColors.blackText.withOpacity(0.1),
+                    color: NomAIColors.blackText.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.local_dining,
                     size: 70,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                   ),
                 ),
                 SizedBox(height: 40),
@@ -86,7 +86,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                   ),
                 ),
                 SizedBox(height: 16),
@@ -110,7 +110,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: MealAIColors.blackText,
+                            foregroundColor: NomAIColors.blackText,
                             padding: EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -127,7 +127,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               Text(
                                 "Continue with Google",
                                 style: TextStyle(
-                                  color: MealAIColors.blackText,
+                                  color: NomAIColors.blackText,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -138,7 +138,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       )
                     : Center(
                         child: CircularProgressIndicator(
-                          color: MealAIColors.blackText,
+                          color: NomAIColors.blackText,
                         ),
                       ),
                 SizedBox(height: 20),

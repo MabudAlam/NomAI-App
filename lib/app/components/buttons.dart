@@ -14,8 +14,8 @@ class PrimaryButton extends StatelessWidget {
         onPressed();
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: MealAIColors.darkPrimary,
-        foregroundColor: MealAIColors.lightPrimary,
+        backgroundColor: NomAIColors.darkPrimary,
+        foregroundColor: NomAIColors.lightPrimary,
         minimumSize: const Size(double.infinity, 50),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -78,9 +78,9 @@ class SecondaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? MealAIColors.black,
+          backgroundColor: backgroundColor ?? NomAIColors.black,
           foregroundColor: foregroundColor ?? Colors.white,
-          disabledBackgroundColor: disabledBackgroundColor ?? MealAIColors.grey,
+          disabledBackgroundColor: disabledBackgroundColor ?? NomAIColors.grey,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),

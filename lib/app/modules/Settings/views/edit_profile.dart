@@ -113,7 +113,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: MealAIColors.grey.withOpacity(0.3)),
+        border: Border.all(color: NomAIColors.grey.withOpacity(0.3)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -130,7 +130,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: MealAIColors.blackText,
+              color: NomAIColors.blackText,
               letterSpacing: -0.5,
             ),
           ),
@@ -154,27 +154,27 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
         controller: controller,
         keyboardType: keyboardType,
         validator: validator,
-        style: TextStyle(color: MealAIColors.blackText),
+        style: TextStyle(color: NomAIColors.blackText),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: MealAIColors.blackText),
+          labelStyle: TextStyle(color: NomAIColors.blackText),
           suffixText: suffix,
-          suffixStyle: TextStyle(color: MealAIColors.blackText),
+          suffixStyle: TextStyle(color: NomAIColors.blackText),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: MealAIColors.black),
+            borderSide: BorderSide(color: NomAIColors.black),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: MealAIColors.grey),
+            borderSide: BorderSide(color: NomAIColors.grey),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: MealAIColors.black, width: 2),
+            borderSide: BorderSide(color: NomAIColors.black, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: MealAIColors.red),
+            borderSide: BorderSide(color: NomAIColors.red),
           ),
           contentPadding: const EdgeInsets.all(16),
           filled: true,
@@ -197,36 +197,36 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
         initialValue: value,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: MealAIColors.blackText),
+          labelStyle: TextStyle(color: NomAIColors.blackText),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: MealAIColors.black),
+            borderSide: BorderSide(color: NomAIColors.black),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: MealAIColors.grey),
+            borderSide: BorderSide(color: NomAIColors.grey),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: MealAIColors.black, width: 2),
+            borderSide: BorderSide(color: NomAIColors.black, width: 2),
           ),
           contentPadding: const EdgeInsets.all(16),
           filled: true,
           fillColor: Colors.white,
         ),
         dropdownColor: Colors.white,
-        style: TextStyle(color: MealAIColors.blackText),
+        style: TextStyle(color: NomAIColors.blackText),
         items: items.map((T item) {
           return DropdownMenuItem<T>(
             value: item,
             child: Text(
               itemLabel(item),
-              style: TextStyle(color: MealAIColors.blackText),
+              style: TextStyle(color: NomAIColors.blackText),
             ),
           );
         }).toList(),
         onChanged: onChanged,
-        icon: Icon(Icons.keyboard_arrow_down, color: MealAIColors.blackText),
+        icon: Icon(Icons.keyboard_arrow_down, color: NomAIColors.blackText),
       ),
     );
   }
@@ -249,14 +249,14 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
               return Theme(
                 data: Theme.of(context).copyWith(
                   colorScheme: ColorScheme.light(
-                    primary: MealAIColors.black,
+                    primary: NomAIColors.black,
                     onPrimary: Colors.white,
-                    onSurface: MealAIColors.blackText,
+                    onSurface: NomAIColors.blackText,
                     surface: Colors.white,
                   ),
                   textButtonTheme: TextButtonThemeData(
                     style: TextButton.styleFrom(
-                      foregroundColor: MealAIColors.blackText,
+                      foregroundColor: NomAIColors.blackText,
                     ),
                   ),
                 ),
@@ -271,7 +271,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            border: Border.all(color: MealAIColors.grey),
+            border: Border.all(color: NomAIColors.grey),
             borderRadius: BorderRadius.circular(12),
             color: Colors.white,
           ),
@@ -282,7 +282,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
                 label,
                 style: TextStyle(
                   fontSize: 16,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
               ),
               Row(
@@ -291,14 +291,14 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
                     "${selectedDate.day.toString().padLeft(2, '0')}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year}",
                     style: TextStyle(
                       fontSize: 16,
-                      color: MealAIColors.blueGrey,
+                      color: NomAIColors.blueGrey,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Icon(
                     Icons.calendar_today,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                     size: 20,
                   ),
                 ],
@@ -326,14 +326,14 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
               return Theme(
                 data: Theme.of(context).copyWith(
                   colorScheme: ColorScheme.light(
-                    primary: MealAIColors.black,
+                    primary: NomAIColors.black,
                     onPrimary: Colors.white,
-                    onSurface: MealAIColors.blackText,
+                    onSurface: NomAIColors.blackText,
                     surface: Colors.white,
                   ),
                   textButtonTheme: TextButtonThemeData(
                     style: TextButton.styleFrom(
-                      foregroundColor: MealAIColors.blackText,
+                      foregroundColor: NomAIColors.blackText,
                     ),
                   ),
                 ),
@@ -346,7 +346,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            border: Border.all(color: MealAIColors.grey),
+            border: Border.all(color: NomAIColors.grey),
             borderRadius: BorderRadius.circular(12),
             color: Colors.white,
           ),
@@ -357,7 +357,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
                 label,
                 style: TextStyle(
                   fontSize: 16,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
               ),
               Row(
@@ -366,14 +366,14 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
                     selectedTime?.format(context) ?? "Not selected",
                     style: TextStyle(
                       fontSize: 16,
-                      color: MealAIColors.blueGrey,
+                      color: NomAIColors.blueGrey,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Icon(
                     Icons.access_time,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                     size: 20,
                   ),
                 ],
@@ -401,7 +401,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: MealAIColors.blackText,
+              color: NomAIColors.blackText,
             ),
           ),
           const SizedBox(height: 12),
@@ -414,7 +414,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
                 label: Text(
                   option,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : MealAIColors.blackText,
+                    color: isSelected ? Colors.white : NomAIColors.blackText,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -429,10 +429,10 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
                   onChanged(newValues);
                 },
                 backgroundColor: Colors.white,
-                selectedColor: MealAIColors.black,
+                selectedColor: NomAIColors.black,
                 checkmarkColor: Colors.white,
                 side: BorderSide(
-                  color: isSelected ? MealAIColors.black : MealAIColors.grey,
+                  color: isSelected ? NomAIColors.black : NomAIColors.grey,
                 ),
                 elevation: 0,
                 pressElevation: 1,
@@ -503,7 +503,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
                 ),
               ],
             ),
-            backgroundColor: MealAIColors.black,
+            backgroundColor: NomAIColors.black,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -531,7 +531,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
                 ),
               ],
             ),
-            backgroundColor: MealAIColors.red,
+            backgroundColor: NomAIColors.red,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -556,7 +556,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: MealAIColors.blackText),
+          icon: Icon(Icons.arrow_back_ios, color: NomAIColors.blackText),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -564,7 +564,7 @@ class _EditUserBasicInfoViewState extends State<EditUserBasicInfoView> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: MealAIColors.blackText,
+            color: NomAIColors.blackText,
             letterSpacing: -0.5,
           ),
         ),

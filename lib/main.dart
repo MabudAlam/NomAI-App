@@ -63,11 +63,11 @@ void configLoading() {
     ..loadingStyle = EasyLoadingStyle.dark
     ..indicatorSize = 40.0
     ..radius = 10.0
-    ..progressColor = MealAIColors.switchWhiteColor
-    ..backgroundColor = MealAIColors.blackText.withOpacity(0.8)
-    ..indicatorColor = MealAIColors.switchWhiteColor
-    ..textColor = MealAIColors.switchWhiteColor
-    ..maskColor = MealAIColors.blackText.withOpacity(0.5)
+    ..progressColor = NomAIColors.switchWhiteColor
+    ..backgroundColor = NomAIColors.blackText.withOpacity(0.8)
+    ..indicatorColor = NomAIColors.switchWhiteColor
+    ..textColor = NomAIColors.switchWhiteColor
+    ..maskColor = NomAIColors.blackText.withOpacity(0.5)
     ..userInteractions = true
     ..dismissOnTap = false;
 }

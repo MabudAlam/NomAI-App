@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _scannerController = Get.put(ScannerController());
+    _scannerController = Get.find<ScannerController>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeData();
@@ -144,12 +144,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: MealAIColors.blueGrey,
+        backgroundColor: NomAIColors.blueGrey,
         elevation: 0,
         title: Text(
           'NomAI',
           style: TextStyle(
-            color: MealAIColors.whiteText,
+            color: NomAIColors.whiteText,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -164,8 +164,8 @@ class _HomePageState extends State<HomePage> {
               },
               child: CircleAvatar(
                 backgroundColor: const Color(0xFF817C88),
-                child: Icon(Icons.settings_outlined,
-                    color: MealAIColors.whiteText),
+                child:
+                    Icon(Icons.settings_outlined, color: NomAIColors.whiteText),
               ),
             ),
           ),
@@ -177,17 +177,17 @@ class _HomePageState extends State<HomePage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              MealAIColors.blueGrey,
-              MealAIColors.blueGrey.withOpacity(0.9),
-              MealAIColors.blueGrey.withOpacity(0.8),
-              MealAIColors.blueGrey.withOpacity(0.7),
-              MealAIColors.blueGrey.withOpacity(0.6),
-              MealAIColors.blueGrey.withOpacity(0.5),
-              MealAIColors.blueGrey.withOpacity(0.4),
-              MealAIColors.blueGrey.withOpacity(0.3),
-              MealAIColors.blueGrey.withOpacity(0.2),
-              MealAIColors.blueGrey.withOpacity(0.1),
-              MealAIColors.whiteText,
+              NomAIColors.blueGrey,
+              NomAIColors.blueGrey.withOpacity(0.9),
+              NomAIColors.blueGrey.withOpacity(0.8),
+              NomAIColors.blueGrey.withOpacity(0.7),
+              NomAIColors.blueGrey.withOpacity(0.6),
+              NomAIColors.blueGrey.withOpacity(0.5),
+              NomAIColors.blueGrey.withOpacity(0.4),
+              NomAIColors.blueGrey.withOpacity(0.3),
+              NomAIColors.blueGrey.withOpacity(0.2),
+              NomAIColors.blueGrey.withOpacity(0.1),
+              NomAIColors.whiteText,
             ],
             stops: const [
               0.0,
@@ -213,7 +213,7 @@ class _HomePageState extends State<HomePage> {
     if (_isLoading) {
       return Center(
         child: CircularProgressIndicator(
-          color: MealAIColors.selectedTile,
+          color: NomAIColors.selectedTile,
         ),
       );
     }
@@ -226,7 +226,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               _errorMessage!,
               style: TextStyle(
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,
@@ -236,7 +236,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: _initializeData,
               child: Text('Retry'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: MealAIColors.selectedTile,
+                backgroundColor: NomAIColors.selectedTile,
               ),
             ),
           ],
@@ -249,7 +249,7 @@ class _HomePageState extends State<HomePage> {
         child: Text(
           'User data not available',
           style: TextStyle(
-            color: MealAIColors.blackText,
+            color: NomAIColors.blackText,
             fontSize: 16,
           ),
         ),
@@ -277,7 +277,7 @@ class _HomePageState extends State<HomePage> {
   //           'NomAI',
   //           textAlign: TextAlign.center,
   //           style: TextStyle(
-  //             color: MealAIColors.whiteText,
+  //             color: NomAIColors.whiteText,
   //             fontSize: 20,
   //             fontWeight: FontWeight.bold,
   //           ),
@@ -292,7 +292,7 @@ class _HomePageState extends State<HomePage> {
   //           child: CircleAvatar(
   //             backgroundColor: const Color(0xFF817C88),
   //             child:
-  //                 Icon(Icons.settings_outlined, color: MealAIColors.whiteText),
+  //                 Icon(Icons.settings_outlined, color: NomAIColors.whiteText),
   //           ),
   //         ),
   //       ),
@@ -329,12 +329,12 @@ class _HomePageState extends State<HomePage> {
         showScheduleDots: true,
         scheduleCounts: {},
         selectedShape: DateSelectedShape.circle,
-        selectedDateBackgroundColor: MealAIColors.selectedTile,
+        selectedDateBackgroundColor: NomAIColors.selectedTile,
         dayNameColor: Colors.white70,
-        dayNameSundayColor: MealAIColors.red,
+        dayNameSundayColor: NomAIColors.red,
         dayNumberColor: Colors.white,
-        dayNumberSundayColor: MealAIColors.red,
-        dayNumberSelectedColor: MealAIColors.whiteText,
+        dayNumberSundayColor: NomAIColors.red,
+        dayNumberSelectedColor: NomAIColors.whiteText,
         activeMonthTextColor: Colors.white,
         dayNameTextStyle:
             const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
@@ -374,7 +374,7 @@ class _HomePageState extends State<HomePage> {
               Text(
                 "Recently Eaten",
                 style: TextStyle(
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -387,7 +387,7 @@ class _HomePageState extends State<HomePage> {
             if (controller.isLoading && controller.dailyRecords.isEmpty) {
               return Center(
                 child: CircularProgressIndicator(
-                  color: MealAIColors.selectedTile,
+                  color: NomAIColors.selectedTile,
                 ),
               );
             }
@@ -418,6 +418,7 @@ class _HomePageState extends State<HomePage> {
                 return NutritionCard(
                   nutritionRecord: record,
                   userModel: userModel!,
+                  userId: _userId,
                 );
               },
             );

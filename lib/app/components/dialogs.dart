@@ -22,7 +22,7 @@ class AppDialogs {
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: MealAIColors.blackText.withOpacity(0.1),
+              color: NomAIColors.blackText.withOpacity(0.1),
               width: 1,
             ),
           ),
@@ -34,12 +34,12 @@ class AppDialogs {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: MealAIColors.blackText.withOpacity(0.1),
+                  color: NomAIColors.blackText.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.add,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                   size: 24,
                 ),
               ),
@@ -52,7 +52,7 @@ class AppDialogs {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -64,7 +64,7 @@ class AppDialogs {
                 message,
                 style: TextStyle(
                   fontSize: 14,
-                  color: MealAIColors.grey,
+                  color: NomAIColors.grey,
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,
@@ -83,14 +83,14 @@ class AppDialogs {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                           side: BorderSide(
-                            color: MealAIColors.grey.withOpacity(0.3),
+                            color: NomAIColors.grey.withOpacity(0.3),
                           ),
                         ),
                       ),
                       child: Text(
                         cancelText,
                         style: TextStyle(
-                          color: MealAIColors.grey,
+                          color: NomAIColors.grey,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -104,7 +104,7 @@ class AppDialogs {
                         onConfirm();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: MealAIColors.blackText,
+                        backgroundColor: NomAIColors.blackText,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -139,7 +139,7 @@ class AppDialogs {
     Get.snackbar(
       title,
       message,
-      backgroundColor: MealAIColors.blackText,
+      backgroundColor: NomAIColors.blackText,
       colorText: Colors.white,
       duration: duration,
       margin: const EdgeInsets.all(16),
@@ -170,14 +170,39 @@ class AppDialogs {
     Duration duration = const Duration(seconds: 3),
   }) {
     Get.snackbar(
-      title,
-      message,
-      backgroundColor: MealAIColors.grey,
+      '',
+      '',
+      backgroundColor: NomAIColors.grey,
       colorText: Colors.white,
       duration: duration,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
-      maxWidth: 300,
+      maxWidth: 350,
+      titleText: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 300),
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+      messageText: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 300),
+        child: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+          ),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
       icon: Container(
         width: 24,
         height: 24,
@@ -205,8 +230,8 @@ class AppDialogs {
     Get.snackbar(
       title,
       message,
-      backgroundColor: MealAIColors.greyLight,
-      colorText: MealAIColors.blackText,
+      backgroundColor: NomAIColors.greyLight,
+      colorText: NomAIColors.blackText,
       duration: duration,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
@@ -214,12 +239,12 @@ class AppDialogs {
         width: 24,
         height: 24,
         decoration: BoxDecoration(
-          color: MealAIColors.blackText.withOpacity(0.1),
+          color: NomAIColors.blackText.withOpacity(0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
           Icons.info_outline,
-          color: MealAIColors.blackText,
+          color: NomAIColors.blackText,
           size: 16,
         ),
       ),
@@ -248,7 +273,7 @@ class AppDialogs {
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: MealAIColors.blackText.withOpacity(0.1),
+              color: NomAIColors.blackText.withOpacity(0.1),
               width: 1,
             ),
           ),
@@ -262,7 +287,7 @@ class AppDialogs {
                 child: CircularProgressIndicator(
                   strokeWidth: 3,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    MealAIColors.blackText,
+                    NomAIColors.blackText,
                   ),
                 ),
               ),
@@ -275,7 +300,7 @@ class AppDialogs {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -290,7 +315,7 @@ class AppDialogs {
                   message,
                   style: TextStyle(
                     fontSize: 13,
-                    color: MealAIColors.grey,
+                    color: NomAIColors.grey,
                     height: 1.3,
                   ),
                   textAlign: TextAlign.center,

@@ -51,7 +51,7 @@ class _OnboardingHomeState extends State<OnboardingHome> {
                 children: [
                   OnboardingPage(
                     svgAsset: 'assets/svg/welcome.svg',
-                    title: 'Welcome to MealAI',
+                    title: 'Welcome to NomAI',
                     message: 'Today is the day to start tracking your health.',
                   ),
                   OnboardingPage(
@@ -75,8 +75,8 @@ class _OnboardingHomeState extends State<OnboardingHome> {
                 dotWidth: 10,
                 dotHeight: 10,
                 spacing: 16,
-                dotColor: MealAIColors.lightPrimaryVariant,
-                activeDotColor: MealAIColors.darkPrimary,
+                dotColor: NomAIColors.lightPrimaryVariant,
+                activeDotColor: NomAIColors.darkPrimary,
               ),
             ),
             const SizedBox(height: 24),
@@ -148,7 +148,7 @@ class OnboardingPage extends StatelessWidget {
             title,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: MealAIColors.lightSecondary,
+                  color: NomAIColors.lightSecondary,
                 ),
             textAlign: TextAlign.center,
           ),
@@ -156,7 +156,7 @@ class OnboardingPage extends StatelessWidget {
           Text(
             message,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: MealAIColors.lightSecondaryVariant,
+                  color: NomAIColors.lightSecondaryVariant,
                 ),
             textAlign: TextAlign.center,
           ),

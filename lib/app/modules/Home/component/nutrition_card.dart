@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/modules/Home/views/nutrition_view.dart';
+import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -16,13 +17,13 @@ import 'package:NomAi/app/utility/date_utility.dart';
 class NutritionCard extends StatelessWidget {
   final NutritionRecord nutritionRecord;
   final UserModel userModel;
-  // final void Function() onTap;
+  final String userId;
 
   const NutritionCard({
     Key? key,
     required this.nutritionRecord,
     required this.userModel,
-    // required this.onTap,
+    required this.userId,
   }) : super(key: key);
 
   Map<String, int> get _totalNutrition {
@@ -56,10 +57,12 @@ class NutritionCard extends StatelessWidget {
     final totals = _totalNutrition;
     final isProcessing =
         nutritionRecord.processingStatus == ProcessingStatus.PROCESSING;
+    final isFailed =
+        nutritionRecord.processingStatus == ProcessingStatus.FAILED;
 
     return Bounceable(
       onTap: () {
-        if (isProcessing) return;
+        if (isProcessing || isFailed) return;
         Get.to(() => NutritionView(
               nutritionRecord: nutritionRecord,
               userModel: userModel,
@@ -76,7 +79,9 @@ class NutritionCard extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: isProcessing
               ? _buildProcessingCard(context)
-              : _buildCompletedCard(context, totals),
+              : isFailed
+                  ? _buildFailedCard(context)
+                  : _buildCompletedCard(context, totals),
         ),
       ),
     );
@@ -103,7 +108,7 @@ class NutritionCard extends StatelessWidget {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                              MealAIColors.darkPrimary),
+                              NomAIColors.darkPrimary),
                         ),
                       ),
                       SizedBox(width: 12),
@@ -122,6 +127,88 @@ class NutritionCard extends StatelessWidget {
                     style: context.textTheme.bodySmall?.copyWith(
                       color: Colors.black54,
                     ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFailedCard(BuildContext context) {
+    final errorMessage = nutritionRecord.nutritionOutput?.message;
+    final scannerController = Get.find<ScannerController>();
+    return Container(
+      height: 12.h,
+      child: Row(
+        children: [
+          _buildFoodImage(context, 25.w, 12.h),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 18,
+                        height: 18,
+                        child: Icon(
+                          Icons.error_outline_rounded,
+                          color: Colors.red[400],
+                          size: 18,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          "Analysis Failed",
+                          style: context.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          scannerController.retryNutritionAnalysis(
+                            userId,
+                            nutritionRecord,
+                            context,
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: NomAIColors.selectedTile,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            "Retry",
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    errorMessage ?? "Unable to analyze the image",
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: Colors.black54,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -172,7 +259,7 @@ class NutritionCard extends StatelessWidget {
                               vertical: 0.5.h,
                             ),
                             decoration: BoxDecoration(
-                              color: MealAIColors.lightGreyTile,
+                              color: NomAIColors.lightGreyTile,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -191,7 +278,7 @@ class NutritionCard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.local_fire_department_rounded,
-                            color: MealAIColors.darkPrimary,
+                            color: NomAIColors.darkPrimary,
                             size: 16,
                           ),
                           SizedBox(width: 4),
@@ -199,7 +286,7 @@ class NutritionCard extends StatelessWidget {
                             "${totals['calories']} kcal",
                             style: context.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
-                              color: MealAIColors.darkPrimary,
+                              color: NomAIColors.darkPrimary,
                             ),
                           ),
                         ],
@@ -299,7 +386,7 @@ class NutritionCard extends StatelessWidget {
           context,
           "PROTEIN",
           "${totals['protein']}g",
-          MealAIColors.proteinColor,
+          NomAIColors.proteinColor,
           Icons.fitness_center_rounded,
         )),
         SizedBox(width: 2.w),
@@ -308,7 +395,7 @@ class NutritionCard extends StatelessWidget {
           context,
           "CARBS",
           "${totals['carbs']}g",
-          MealAIColors.carbsColor,
+          NomAIColors.carbsColor,
           Icons.grain_rounded,
         )),
         SizedBox(width: 2.w),
@@ -317,7 +404,7 @@ class NutritionCard extends StatelessWidget {
           context,
           "FAT",
           "${totals['fat']}g",
-          MealAIColors.fatColor,
+          NomAIColors.fatColor,
           Icons.opacity_rounded,
         )),
       ],
@@ -371,7 +458,7 @@ class NutritionCard extends StatelessWidget {
     return Container(
       width: 8.w,
       decoration: BoxDecoration(
-        color: MealAIColors.darkPrimary.withOpacity(0.08),
+        color: NomAIColors.darkPrimary.withOpacity(0.08),
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(16),
           bottomRight: Radius.circular(16),
@@ -380,7 +467,7 @@ class NutritionCard extends StatelessWidget {
       child: Center(
         child: Icon(
           Icons.chevron_right_rounded,
-          color: MealAIColors.darkPrimary,
+          color: NomAIColors.darkPrimary,
           size: 24,
         ),
       ),

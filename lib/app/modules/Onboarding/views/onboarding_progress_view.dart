@@ -391,7 +391,7 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
                       "Did you know?",
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: MealAIColors.blackText,
+                            color: NomAIColors.blackText,
                           ),
                     ),
                     const SizedBox(height: 12),
@@ -720,15 +720,15 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: selectedDiet == diet
-                                ? MealAIColors.whiteText
-                                : MealAIColors.blackText,
+                                ? NomAIColors.whiteText
+                                : NomAIColors.blackText,
                           ),
                     ),
                     selected: selectedDiet == diet,
                     selectedColor:
-                        MealAIColors.selectedTile, // Color when selected
+                        NomAIColors.selectedTile, // Color when selected
                     checkmarkColor:
-                        MealAIColors.whiteText, // Color of the checkmark
+                        NomAIColors.whiteText, // Color of the checkmark
                     onSelected: (selected) {
                       if (selected) {
                         setState(() {
@@ -870,13 +870,13 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: selectedAllergies.contains(allergy)
-                                ? MealAIColors.whiteText
-                                : MealAIColors.blackText,
+                                ? NomAIColors.whiteText
+                                : NomAIColors.blackText,
                           ),
                     ),
                     selected: selectedAllergies.contains(allergy),
-                    selectedColor: MealAIColors.selectedTile,
-                    checkmarkColor: MealAIColors.whiteText,
+                    selectedColor: NomAIColors.selectedTile,
+                    checkmarkColor: NomAIColors.whiteText,
                     onSelected: (selected) {
                       setState(() {
                         if (allergy == "None") {
@@ -1056,13 +1056,13 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
                       padding: EdgeInsets.all(2.w),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: MealAIColors.stepperColor,
+                        color: NomAIColors.stepperColor,
                       ),
                       child: Center(
                         child: Icon(
                           Icons.arrow_back,
                           size: 20,
-                          color: MealAIColors.blackText,
+                          color: NomAIColors.blackText,
                         ),
                       ),
                     ),
@@ -1073,8 +1073,8 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
                       maxSteps: _totalPages,
                       progressType: LinearProgressBar.progressTypeLinear,
                       currentStep: _currentPage,
-                      progressColor: MealAIColors.blackText,
-                      backgroundColor: MealAIColors.stepperColor,
+                      progressColor: NomAIColors.blackText,
+                      backgroundColor: NomAIColors.stepperColor,
                       minHeight: 0.5.h,
                     ),
                   ),

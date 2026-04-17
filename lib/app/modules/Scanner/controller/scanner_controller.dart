@@ -31,6 +31,7 @@ class ScannerController extends GetxController {
   List<NutritionRecord> dailyRecords = [];
   DateTime selectedDate = DateTime.now();
   bool isLoading = false;
+  bool isProcessing = false;
   DailyNutritionRecords? existingNutritionRecords;
 
   // Keep transient (in-memory) records per date so they persist
@@ -119,6 +120,9 @@ class ScannerController extends GetxController {
     }
 
     try {
+      isProcessing = true;
+      update();
+
       final nutritionRecordRepo = serviceLocator<NutritionRecordRepo>();
       final storageService = serviceLocator<StorageService>();
       final aiRepository = serviceLocator<AiRepository>();
@@ -225,8 +229,8 @@ class ScannerController extends GetxController {
           await nutritionRecordRepo.getNutritionData(userId, time);
 
       // Merge: start with persisted, overlay transient by recordTime
-      final mergedForDay = List<NutritionRecord>.from(
-          persistedForDay.dailyRecords);
+      final mergedForDay =
+          List<NutritionRecord>.from(persistedForDay.dailyRecords);
       final transient = _transientByDate[key] ?? const <NutritionRecord>[];
       for (final t in transient) {
         final i = mergedForDay.indexWhere((r) => r.recordTime == t.recordTime);
@@ -307,6 +311,9 @@ class ScannerController extends GetxController {
         message: "Unable to analyze the image. Please try again.",
       );
 
+      update();
+    } finally {
+      isProcessing = false;
       update();
     }
   }
@@ -390,7 +397,6 @@ class ScannerController extends GetxController {
       return;
     }
 
-    // Check if context is still valid before proceeding
     if (!context.mounted) {
       AppDialogs.showErrorSnackbar(
         title: "Cannot Retry",
@@ -399,11 +405,7 @@ class ScannerController extends GetxController {
       return;
     }
 
-    updateRecord(NutritionRecord(
-      recordTime: failedRecord.recordTime,
-      nutritionInputQuery: failedRecord.nutritionInputQuery,
-      processingStatus: ProcessingStatus.PROCESSING,
-    ));
+    removeRecord(failedRecord);
 
     final imageFile = File(failedRecord.nutritionInputQuery!.imageFilePath!);
     final scanMode =
@@ -417,17 +419,6 @@ class ScannerController extends GetxController {
         context,
       );
     } else {
-      updateRecord(NutritionRecord(
-        recordTime: failedRecord.recordTime,
-        nutritionInputQuery: failedRecord.nutritionInputQuery,
-        processingStatus: ProcessingStatus.FAILED,
-        nutritionOutput: NutritionOutput(
-          status: 404,
-          message: "Original image file not found",
-          response: null,
-        ),
-      ));
-
       AppDialogs.showErrorSnackbar(
         title: "Cannot Retry",
         message: "Original image file not found",

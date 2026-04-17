@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MealAIColors {
+class NomAIColors {
   static const Color darkPrimary = Color(0xFF000000); // #000000
   static const Color lightPrimaryVariant = Color(0xFFB0BEC5); // #B0BEC5
   static const Color darkPrimaryVariant = Color(0xFF383838); // #383838

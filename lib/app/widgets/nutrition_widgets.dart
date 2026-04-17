@@ -10,12 +10,12 @@ class NutritionWidgetService {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: MealAIColors.whiteText,
-        border: Border.all(color: MealAIColors.blackText, width: 1),
+        color: NomAIColors.whiteText,
+        border: Border.all(color: NomAIColors.blackText, width: 1),
         borderRadius: BorderRadius.circular(NutritionUIConstants.cardRadius),
         boxShadow: [
           BoxShadow(
-            color: MealAIColors.blackText.withOpacity(0.05),
+            color: NomAIColors.blackText.withOpacity(0.05),
             offset: const Offset(0, 2),
             blurRadius: 8,
           ),
@@ -72,13 +72,13 @@ class NutritionWidgetService {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: MealAIColors.blackText.withOpacity(0.1),
+                color: NomAIColors.blackText.withOpacity(0.1),
                 borderRadius:
                     BorderRadius.circular(NutritionUIConstants.smallRadius),
               ),
               child: Icon(
                 Icons.analytics,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
                 size: NutritionUIConstants.iconSize,
               ),
             ),
@@ -89,7 +89,7 @@ class NutritionWidgetService {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -112,7 +112,7 @@ class NutritionWidgetService {
       constraints: const BoxConstraints(maxWidth: 200),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: MealAIColors.greyLight,
+        color: NomAIColors.greyLight,
         borderRadius: BorderRadius.circular(NutritionUIConstants.chipRadius),
       ),
       child: Text(
@@ -120,7 +120,7 @@ class NutritionWidgetService {
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: MealAIColors.grey,
+          color: NomAIColors.grey,
         ),
         overflow: TextOverflow.ellipsis,
       ),
@@ -139,13 +139,13 @@ class NutritionWidgetService {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: MealAIColors.blackText.withOpacity(0.1),
+                color: NomAIColors.blackText.withOpacity(0.1),
                 borderRadius:
                     BorderRadius.circular(NutritionUIConstants.smallRadius),
               ),
               child: Icon(
                 Icons.pie_chart,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
                 size: NutritionUIConstants.iconSize,
               ),
             ),
@@ -156,7 +156,7 @@ class NutritionWidgetService {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
               ),
             ),
@@ -182,9 +182,9 @@ class NutritionWidgetService {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: MealAIColors.greyLight,
+        color: NomAIColors.greyLight,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: MealAIColors.grey.withOpacity(0.3)),
+        border: Border.all(color: NomAIColors.grey.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -192,7 +192,7 @@ class NutritionWidgetService {
         children: [
           Icon(
             item.icon,
-            color: MealAIColors.blackText,
+            color: NomAIColors.blackText,
             size: NutritionUIConstants.iconSize,
           ),
           const SizedBox(width: NutritionUIConstants.smallSpacing),
@@ -208,7 +208,7 @@ class NutritionWidgetService {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: MealAIColors.blackText,
+                      color: NomAIColors.blackText,
                     ),
                   ),
                 ),
@@ -219,7 +219,7 @@ class NutritionWidgetService {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: MealAIColors.grey,
+                      color: NomAIColors.grey,
                     ),
                   ),
                 ),
@@ -240,13 +240,13 @@ class NutritionWidgetService {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: MealAIColors.blackText.withOpacity(0.1),
+                color: NomAIColors.blackText.withOpacity(0.1),
                 borderRadius:
                     BorderRadius.circular(NutritionUIConstants.smallRadius),
               ),
               child: Icon(
                 Icons.search,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
                 size: NutritionUIConstants.iconSize,
               ),
             ),
@@ -257,7 +257,7 @@ class NutritionWidgetService {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
               ),
             ),
@@ -279,7 +279,7 @@ class NutritionWidgetService {
       padding: const EdgeInsets.all(NutritionUIConstants.cardPadding),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: MealAIColors.greyLight,
+        color: NomAIColors.greyLight,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: config.color.withOpacity(0.3)),
       ),
@@ -294,7 +294,7 @@ class NutritionWidgetService {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                   ),
                 ),
               ),
@@ -309,7 +309,7 @@ class NutritionWidgetService {
                   children: [
                     Icon(
                       config.icon,
-                      color: MealAIColors.whiteText,
+                      color: NomAIColors.whiteText,
                       size: 12,
                     ),
                     const SizedBox(width: 4),
@@ -318,7 +318,7 @@ class NutritionWidgetService {
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: MealAIColors.whiteText,
+                        color: NomAIColors.whiteText,
                       ),
                     ),
                   ],
@@ -331,7 +331,7 @@ class NutritionWidgetService {
             'Cal: ${ingredient.calories ?? 0} | Protein: ${ingredient.protein ?? 0}g | Carbs: ${ingredient.carbs ?? 0}g | Fat: ${ingredient.fat ?? 0}g',
             style: TextStyle(
               fontSize: 12,
-              color: MealAIColors.grey,
+              color: NomAIColors.grey,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -341,7 +341,7 @@ class NutritionWidgetService {
               ingredient.healthComments!,
               style: const TextStyle(
                 fontSize: 12,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
                 height: 1.4,
               ),
             ),
@@ -364,13 +364,13 @@ class NutritionWidgetService {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: MealAIColors.blackText.withOpacity(0.1),
+                color: NomAIColors.blackText.withOpacity(0.1),
                 borderRadius:
                     BorderRadius.circular(NutritionUIConstants.smallRadius),
               ),
               child: Icon(
                 Icons.health_and_safety,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
                 size: NutritionUIConstants.iconSize,
               ),
             ),
@@ -381,7 +381,7 @@ class NutritionWidgetService {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
               ),
             ),
@@ -413,7 +413,7 @@ class NutritionWidgetService {
                       children: [
                         Icon(
                           config.icon,
-                          color: MealAIColors.whiteText,
+                          color: NomAIColors.whiteText,
                           size: 16,
                         ),
                         const SizedBox(width: 6),
@@ -422,7 +422,7 @@ class NutritionWidgetService {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: MealAIColors.whiteText,
+                            color: NomAIColors.whiteText,
                           ),
                         ),
                       ],
@@ -436,7 +436,7 @@ class NutritionWidgetService {
                   response.overallHealthComments!,
                   style: const TextStyle(
                     fontSize: 14,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                     height: 1.5,
                   ),
                 ),
@@ -457,13 +457,13 @@ class NutritionWidgetService {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: MealAIColors.grey.withOpacity(0.1),
+                color: NomAIColors.grey.withOpacity(0.1),
                 borderRadius:
                     BorderRadius.circular(NutritionUIConstants.smallRadius),
               ),
               child: Icon(
                 Icons.warning,
-                color: MealAIColors.grey,
+                color: NomAIColors.grey,
                 size: NutritionUIConstants.iconSize,
               ),
             ),
@@ -474,7 +474,7 @@ class NutritionWidgetService {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
               ),
             ),
@@ -492,9 +492,9 @@ class NutritionWidgetService {
       padding: const EdgeInsets.all(NutritionUIConstants.cardPadding),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: MealAIColors.greyLight,
+        color: NomAIColors.greyLight,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: MealAIColors.grey.withOpacity(0.3)),
+        border: Border.all(color: NomAIColors.grey.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -504,7 +504,7 @@ class NutritionWidgetService {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: MealAIColors.blackText,
+              color: NomAIColors.blackText,
             ),
           ),
           if (concern.explanation?.isNotEmpty == true) ...[
@@ -513,7 +513,7 @@ class NutritionWidgetService {
               concern.explanation!,
               style: TextStyle(
                 fontSize: 13,
-                color: MealAIColors.grey,
+                color: NomAIColors.grey,
                 height: 1.4,
               ),
             ),
@@ -525,7 +525,7 @@ class NutritionWidgetService {
               children: [
                 Icon(
                   Icons.lightbulb,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                   size: NutritionUIConstants.smallIconSize,
                 ),
                 const SizedBox(width: 6),
@@ -538,7 +538,7 @@ class NutritionWidgetService {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: MealAIColors.blackText,
+                          color: NomAIColors.blackText,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -549,7 +549,7 @@ class NutritionWidgetService {
                             '• ${rec.food ?? ''} (${rec.quantity ?? ''}): ${rec.reasoning ?? ''}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: MealAIColors.grey,
+                              color: NomAIColors.grey,
                               height: 1.3,
                             ),
                           ),
@@ -575,13 +575,13 @@ class NutritionWidgetService {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: MealAIColors.blackText.withOpacity(0.1),
+                color: NomAIColors.blackText.withOpacity(0.1),
                 borderRadius:
                     BorderRadius.circular(NutritionUIConstants.smallRadius),
               ),
               child: Icon(
                 Icons.swap_horiz,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
                 size: NutritionUIConstants.iconSize,
               ),
             ),
@@ -592,7 +592,7 @@ class NutritionWidgetService {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: MealAIColors.blackText,
+                  color: NomAIColors.blackText,
                 ),
               ),
             ),
@@ -615,9 +615,9 @@ class NutritionWidgetService {
       padding: const EdgeInsets.all(NutritionUIConstants.cardPadding),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: MealAIColors.greyLight,
+        color: NomAIColors.greyLight,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: MealAIColors.blackText.withOpacity(0.2)),
+        border: Border.all(color: NomAIColors.blackText.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -630,7 +630,7 @@ class NutritionWidgetService {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: MealAIColors.blackText,
+                    color: NomAIColors.blackText,
                   ),
                 ),
               ),
@@ -645,7 +645,7 @@ class NutritionWidgetService {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: MealAIColors.whiteText,
+                    color: NomAIColors.whiteText,
                   ),
                 ),
               ),
@@ -656,7 +656,7 @@ class NutritionWidgetService {
             'Cal: ${alternative.calories ?? 0} | Protein: ${alternative.protein ?? 0}g | Carbs: ${alternative.carbs ?? 0}g | Fat: ${alternative.fat ?? 0}g',
             style: TextStyle(
               fontSize: 12,
-              color: MealAIColors.grey,
+              color: NomAIColors.grey,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -666,7 +666,7 @@ class NutritionWidgetService {
               alternative.healthComments!,
               style: const TextStyle(
                 fontSize: 12,
-                color: MealAIColors.blackText,
+                color: NomAIColors.blackText,
                 height: 1.4,
               ),
             ),

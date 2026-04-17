@@ -37,16 +37,16 @@ class ThemeProvider extends ChangeNotifier {
     useMaterial3: true,
     textTheme: textTheme,
     colorScheme: const ColorScheme.light(
-      primary: MealAIColors.lightPrimary,
-      secondary: MealAIColors.lightSecondary,
-      onPrimary: MealAIColors.lightOnPrimary,
-      surface: MealAIColors.lightSurface,
-      onSurface: MealAIColors.lightOnSurface,
-      outline: MealAIColors.lightSecondaryVariant,
+      primary: NomAIColors.lightPrimary,
+      secondary: NomAIColors.lightSecondary,
+      onPrimary: NomAIColors.lightOnPrimary,
+      surface: NomAIColors.lightSurface,
+      onSurface: NomAIColors.lightOnSurface,
+      outline: NomAIColors.lightSecondaryVariant,
     ),
-    scaffoldBackgroundColor: MealAIColors.lightSurface,
+    scaffoldBackgroundColor: NomAIColors.lightSurface,
     appBarTheme: const AppBarTheme(
-      backgroundColor: MealAIColors.lightSurface,
+      backgroundColor: NomAIColors.lightSurface,
     ),
     inputDecorationTheme: InputDecorationTheme(
       hintStyle: textTheme.bodyLarge,
@@ -57,44 +57,44 @@ class ThemeProvider extends ChangeNotifier {
         backgroundColor: WidgetStateProperty.resolveWith<Color>(
           (Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return MealAIColors
+              return NomAIColors
                   .lightSecondaryVariant; // Custom background color for disabled state
             }
-            return MealAIColors.lightPrimary;
+            return NomAIColors.lightPrimary;
           },
         ),
         foregroundColor: WidgetStateProperty.resolveWith<Color>(
           (Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return MealAIColors
+              return NomAIColors
                   .lightSurface; // Custom text color for disabled state
             }
-            return MealAIColors.lightSurface;
+            return NomAIColors.lightSurface;
           },
         ),
       ),
     ),
     listTileTheme: ListTileThemeData(
         titleTextStyle: textTheme.bodyLarge!.copyWith(
-          color: MealAIColors.lightOnPrimary,
+          color: NomAIColors.lightOnPrimary,
         ),
-        iconColor: MealAIColors.lightOnPrimary),
+        iconColor: NomAIColors.lightOnPrimary),
   );
 
   ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     textTheme: textTheme,
     colorScheme: const ColorScheme.dark(
-      primary: MealAIColors.darkPrimary,
-      secondary: MealAIColors.darkSecondary,
-      onPrimary: MealAIColors.darkOnPrimary,
-      surface: MealAIColors.darkSurface,
-      onSurface: MealAIColors.darkOnSurface,
-      outline: MealAIColors.darkSecondaryVariant,
+      primary: NomAIColors.darkPrimary,
+      secondary: NomAIColors.darkSecondary,
+      onPrimary: NomAIColors.darkOnPrimary,
+      surface: NomAIColors.darkSurface,
+      onSurface: NomAIColors.darkOnSurface,
+      outline: NomAIColors.darkSecondaryVariant,
     ),
-    scaffoldBackgroundColor: MealAIColors.darkSurface,
+    scaffoldBackgroundColor: NomAIColors.darkSurface,
     appBarTheme: const AppBarTheme(
-      backgroundColor: MealAIColors.darkSurface,
+      backgroundColor: NomAIColors.darkSurface,
     ),
     inputDecorationTheme: InputDecorationTheme(
       hintStyle: textTheme.bodyLarge,
@@ -105,28 +105,28 @@ class ThemeProvider extends ChangeNotifier {
         backgroundColor: WidgetStateProperty.resolveWith<Color>(
           (Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return MealAIColors
+              return NomAIColors
                   .darkSecondaryVariant; // Custom background color for disabled state
             }
-            return MealAIColors.darkPrimary;
+            return NomAIColors.darkPrimary;
           },
         ),
         foregroundColor: WidgetStateProperty.resolveWith<Color>(
           (Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return MealAIColors
+              return NomAIColors
                   .darkSurface; // Custom text color for disabled state
             }
-            return MealAIColors.darkSurface;
+            return NomAIColors.darkSurface;
           },
         ),
       ),
     ),
     listTileTheme: ListTileThemeData(
         titleTextStyle: textTheme.bodyLarge!.copyWith(
-          color: MealAIColors.darkOnPrimary,
+          color: NomAIColors.darkOnPrimary,
         ),
-        iconColor: MealAIColors.darkOnPrimary),
+        iconColor: NomAIColors.darkOnPrimary),
   );
 }
 

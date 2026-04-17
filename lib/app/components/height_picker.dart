@@ -89,9 +89,9 @@ class _HeightPickerState extends State<HeightPicker> {
               ),
               SizedBox(width: 5.w),
               Switch(
-                  activeTrackColor: MealAIColors.switchBlackColor,
-                  inactiveTrackColor: MealAIColors.lightPrimary,
-                  activeThumbColor: MealAIColors.switchWhiteColor,
+                  activeTrackColor: NomAIColors.switchBlackColor,
+                  inactiveTrackColor: NomAIColors.lightPrimary,
+                  activeThumbColor: NomAIColors.switchWhiteColor,
                   value: _selectedUnit == HeightUnit.FEET,
                   onChanged: (value) {
                     setState(() {

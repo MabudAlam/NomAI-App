@@ -18,19 +18,19 @@ class HealthScoreConfig {
     switch (level) {
       case HealthScoreLevel.good:
         return HealthScoreConfig(
-          color: MealAIColors.blackText,
+          color: NomAIColors.blackText,
           icon: Icons.check_circle,
           label: 'Good',
         );
       case HealthScoreLevel.moderate:
         return HealthScoreConfig(
-          color: MealAIColors.grey,
+          color: NomAIColors.grey,
           icon: Icons.warning,
           label: 'Moderate',
         );
       case HealthScoreLevel.poor:
         return HealthScoreConfig(
-          color: MealAIColors.grey.withOpacity(0.7),
+          color: NomAIColors.grey.withOpacity(0.7),
           icon: Icons.error,
           label: 'Poor',
         );

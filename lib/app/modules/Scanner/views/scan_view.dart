@@ -14,14 +14,14 @@ import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 
 enum ScanMode { food, barcode, gallery }
 
-class MealAiCamera extends StatefulWidget {
-  MealAiCamera({super.key});
+class NomAICamera extends StatefulWidget {
+  NomAICamera({super.key});
 
   @override
-  State<MealAiCamera> createState() => _MealAiCameraState();
+  State<NomAICamera> createState() => _NomAICameraState();
 }
 
-class _MealAiCameraState extends State<MealAiCamera> {
+class _NomAICameraState extends State<NomAICamera> {
   ScanMode _selectedscanMode = ScanMode.food;
   FlashMode _currentFlashMode = FlashMode.auto;
   final ImagePicker _picker = ImagePicker();
@@ -171,7 +171,7 @@ class _MealAiCameraState extends State<MealAiCamera> {
               decoration: _selectedscanMode == ScanMode.food
                   ? ShapeDecoration(
                       shape: FoodScannerOverlayShape(
-                        borderColor: MealAIColors.whiteText,
+                        borderColor: NomAIColors.whiteText,
                         overlayColor: Colors.black.withOpacity(0.3),
                         borderRadius: 20,
                         borderLength: 40,
@@ -224,21 +224,21 @@ class _MealAiCameraState extends State<MealAiCamera> {
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: _selectedscanMode == ScanMode.food
-                              ? MealAIColors.switchWhiteColor
-                              : MealAIColors.greyLight.withOpacity(0.5),
+                              ? NomAIColors.switchWhiteColor
+                              : NomAIColors.greyLight.withOpacity(0.5),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: [
                             Icon(Icons.fastfood_outlined,
-                                color: MealAIColors.switchBlackColor, size: 28),
+                                color: NomAIColors.switchBlackColor, size: 28),
                             Text(
                               'Scan Food',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall!
                                   .copyWith(
-                                      color: MealAIColors.switchBlackColor),
+                                      color: NomAIColors.switchBlackColor),
                             ),
                           ],
                         ),
@@ -255,21 +255,21 @@ class _MealAiCameraState extends State<MealAiCamera> {
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: _selectedscanMode == ScanMode.gallery
-                              ? MealAIColors.switchWhiteColor
-                              : MealAIColors.greyLight.withOpacity(0.5),
+                              ? NomAIColors.switchWhiteColor
+                              : NomAIColors.greyLight.withOpacity(0.5),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: [
                             Icon(Symbols.image_rounded,
-                                color: MealAIColors.switchBlackColor, size: 28),
+                                color: NomAIColors.switchBlackColor, size: 28),
                             Text(
                               'Gallery',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall!
                                   .copyWith(
-                                      color: MealAIColors.switchBlackColor),
+                                      color: NomAIColors.switchBlackColor),
                             ),
                           ],
                         ),
