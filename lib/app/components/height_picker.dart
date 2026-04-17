@@ -45,6 +45,7 @@ class _HeightPickerState extends State<HeightPicker> {
         _selectedInches = 7;
       }
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateHeight());
   }
 
   void _updateHeight() {
@@ -90,7 +91,7 @@ class _HeightPickerState extends State<HeightPicker> {
               Switch(
                   activeTrackColor: MealAIColors.switchBlackColor,
                   inactiveTrackColor: MealAIColors.lightPrimary,
-                  activeColor: MealAIColors.switchWhiteColor,
+                  activeThumbColor: MealAIColors.switchWhiteColor,
                   value: _selectedUnit == HeightUnit.FEET,
                   onChanged: (value) {
                     setState(() {
