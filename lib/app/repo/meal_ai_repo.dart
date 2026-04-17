@@ -9,7 +9,8 @@ import 'package:NomAi/app/providers/remoteconfig.dart';
 class AiRepository {
   Future<NutritionOutput> getNutritionData(
       NutritionInputQuery inputQuery) async {
-    String remoteConfigUrl = RemoteConfigService.getBaseUrl();
+    // String remoteConfigUrl = RemoteConfigService.getBaseUrl();
+    String remoteConfigUrl = "https://99f3-2a09-bac5-3e0c-11c3-00-1c5-137.ngrok-free.app";
 
     String baseUrl = remoteConfigUrl + ApiPath.getNutritionData;
 
