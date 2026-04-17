@@ -22,7 +22,10 @@ final FirebaseUserRepo _userRepository = FirebaseUserRepo();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    
+    
+  );
 
   var remoteConfigService = await RemoteConfigService.getInstance();
   await remoteConfigService!.initialise();
