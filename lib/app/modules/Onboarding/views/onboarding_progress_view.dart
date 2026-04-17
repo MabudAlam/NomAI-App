@@ -82,7 +82,7 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
           _currentPage++;
         });
       } else {
-        int age = EnhancedUserNutrition.calculateAccurateAge(birthday);
+        int age = NutritionCalculator.calculateAge(birthday);
 
         double heightInCm = convertHeightToCm(currentHeight!);
 
@@ -227,7 +227,7 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
       _selectedGender = Gender.male;
       birthday = DateTime(2002, 5, 5);
       currentHeight = "180 cm";
-      currentWeight = "112 kg";
+      currentWeight = "109 kg";
       desiredWeight = "80 kg";
       selectedHaveYouTriedApps = "Yes";
       selectedWorkoutOption = "3-5";
@@ -328,7 +328,7 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               HeightPicker(
-                initialHeight: currentHeight,
+                initialHeight: null,
                 onChange: (height) {
                   setState(() {
                     currentHeight = height;
