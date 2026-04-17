@@ -1,10 +1,13 @@
 import 'package:NomAi/app/modules/Analytics/model/analytics.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:NomAi/app/constants/enums.dart';
 import 'package:NomAi/app/models/AI/nutrition_record.dart';
 
 class NutritionRecordRepo {
-  final usersCollection = FirebaseFirestore.instance.collection('users');
+  final usersCollection =
+      FirebaseFirestore.instanceFor(app: Firebase.app(), databaseId: 'mealai')
+          .collection('users');
 
   String getRecordId(DateTime date) {
     return "${date.year}-${date.month}-${date.day}";
