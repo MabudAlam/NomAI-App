@@ -26,13 +26,7 @@ class ThemeProvider extends ChangeNotifier {
 
     bool? isDarkMode = prefs.getBool('isDarkMode');
 
-    if (isDarkMode == null) {
-      final Brightness brightness =
-          WidgetsBinding.instance.window.platformBrightness;
-      isDarkMode = brightness == Brightness.dark;
-    } else {}
-
-    setDarkMode(isDarkMode);
+    setDarkMode(isDarkMode ?? false);
   }
 
   ThemeData get currentTheme {
