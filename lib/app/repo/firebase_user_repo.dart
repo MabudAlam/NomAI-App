@@ -2,13 +2,19 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/models/Auth/user_repo.dart';
 
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
-  final usersCollection = FirebaseFirestore.instance.collection('users');
+
+  final usersCollection =
+      FirebaseFirestore.instanceFor(databaseId: 'mealai',
+      
+      app: Firebase.app()
+      ).collection('users');
 
   FirebaseUserRepo({
     FirebaseAuth? firebaseAuth,
