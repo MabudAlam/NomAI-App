@@ -40,6 +40,7 @@ class _WeightPickerState extends State<WeightPicker> {
         _selectedLbs = 155;
       }
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateWeight());
   }
 
   void _updateWeight() {
@@ -73,7 +74,7 @@ class _WeightPickerState extends State<WeightPicker> {
             Switch(
                 activeTrackColor: MealAIColors.switchBlackColor,
                 inactiveTrackColor: MealAIColors.lightPrimary,
-                activeColor: MealAIColors.switchWhiteColor,
+                activeThumbColor: MealAIColors.switchWhiteColor,
                 value: _selectedUnit == WeightUnit.LB,
                 onChanged: (value) {
                   setState(() {
