@@ -75,3 +75,7 @@ ios/Runner/GoogleService-Info.plist
 
 .vscode/
 android/app/google-services.json
+
+
+.agents
+skills-lock.json

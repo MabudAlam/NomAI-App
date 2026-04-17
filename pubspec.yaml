@@ -1,7 +1,7 @@
 name: NomAi
 description: "A new Flutter project."
 publish_to: "none"
-version: 0.1.2+40
+version: 0.1.2+41
 
 environment:
   sdk: ">=3.3.2 <4.0.0"
