@@ -10,9 +10,9 @@ class AiRepository {
   Future<NutritionOutput> getNutritionData(
       NutritionInputQuery inputQuery) async {
     // String remoteConfigUrl = RemoteConfigService.getBaseUrl();
-    String remoteConfigUrl = "https://46d0-2a09-bac5-3e0d-1a46-00-29e-85.ngrok-free.app";
+    String remoteConfigUrl = ApiUrl.baseUrl;
 
-    String baseUrl = remoteConfigUrl + ApiPath.getNutritionData;
+    String baseUrl = remoteConfigUrl + ApiPath.nutrtionByImage;
 
     try {
       final response = await http.post(
@@ -24,6 +24,8 @@ class AiRepository {
       if (response.statusCode == 200) {
         return NutritionOutput.fromJson(json.decode(response.body));
       } else {
+        print(
+            "API request failed with status ${response.statusCode}: ${response.body}");
         return NutritionOutput(
           status: response.statusCode,
           message:
