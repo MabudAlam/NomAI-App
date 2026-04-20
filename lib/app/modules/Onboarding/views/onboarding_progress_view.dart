@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:linear_progress_bar/linear_progress_bar.dart';
 import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/components/buttons.dart';
+import 'package:NomAi/app/components/dialogs.dart';
 import 'package:NomAi/app/components/height_picker.dart';
 import 'package:NomAi/app/components/tiles.dart';
 import 'package:NomAi/app/components/weight_picker.dart';
@@ -138,8 +139,9 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
         ));
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please make a selection to continue.")),
+      AppDialogs.showInfoSnackbar(
+        title: 'Selection Required',
+        message: 'Please make a selection to continue.',
       );
     }
   }

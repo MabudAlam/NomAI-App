@@ -5,6 +5,7 @@ import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/repo/firebase_user_repo.dart';
 import 'package:NomAi/app/components/buttons.dart';
+import 'package:NomAi/app/components/dialogs.dart';
 import 'package:get/get.dart';
 
 class AdjustGoalsView extends StatefulWidget {
@@ -313,56 +314,16 @@ class _AdjustGoalsViewState extends State<AdjustGoalsView> {
 
       if (mounted) {
         Navigator.pop(context, updatedMacros);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check_circle_outline, color: Colors.white),
-                const SizedBox(width: 12),
-                Text(
-                  'Goals updated successfully!',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: NomAIColors.black,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            margin: const EdgeInsets.all(16),
-          ),
+        AppDialogs.showSuccessSnackbar(
+          title: 'Success',
+          message: 'Goals updated successfully!',
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.error_outline, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Failed to update goals. Please try again.',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: NomAIColors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            margin: const EdgeInsets.all(16),
-          ),
+        AppDialogs.showErrorSnackbar(
+          title: 'Error',
+          message: 'Failed to update goals. Please try again.',
         );
       }
     } finally {

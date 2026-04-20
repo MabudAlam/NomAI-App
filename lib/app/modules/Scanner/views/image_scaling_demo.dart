@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/utility/image_utility.dart';
+import 'package:NomAi/app/components/dialogs.dart';
 
 class ImageDownscaleDemo extends StatefulWidget {
   final String imagePath;
@@ -45,8 +46,9 @@ class _ImageDownscaleDemoState extends State<ImageDownscaleDemo> {
         _resizedSize = resizedFile.lengthSync();
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error downscaling image: $e')),
+      AppDialogs.showErrorSnackbar(
+        title: 'Error',
+        message: 'Error downscaling image',
       );
     } finally {
       setState(() {
