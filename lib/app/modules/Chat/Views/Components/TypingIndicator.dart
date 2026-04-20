@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
 
 class TypingIndicator extends StatelessWidget {
@@ -9,24 +10,41 @@ class TypingIndicator extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8, top: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        margin: EdgeInsets.only(bottom: 1.h, top: 0.5.h),
+        padding: EdgeInsets.symmetric(horizontal: 3.5.w, vertical: 1.5.h),
         decoration: BoxDecoration(
           color: NomAIColors.lightSurface,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomLeft: Radius.circular(4),
-            bottomRight: Radius.circular(16),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(2.h),
+            topRight: Radius.circular(2.h),
+            bottomLeft: Radius.circular(0.5.h),
+            bottomRight: Radius.circular(2.h),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: NomAIColors.blackText.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Text(
+              'NomAI is thinking',
+              style: TextStyle(
+                color: NomAIColors.blackText,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(width: 1.w),
             DotAnimation(delay: 0),
-            const SizedBox(width: 4),
+            SizedBox(width: 0.8.w),
             DotAnimation(delay: 200),
-            const SizedBox(width: 4),
+            SizedBox(width: 0.8.w),
             DotAnimation(delay: 400),
           ],
         ),
@@ -77,10 +95,12 @@ class _DotAnimationState extends State<DotAnimation>
       animation: _animation,
       builder: (context, child) {
         return Container(
-          width: 8,
-          height: 8,
+          width: 0.8.h,
+          height: 0.8.h,
           decoration: BoxDecoration(
-            color: NomAIColors.grey.withValues(alpha: 0.3 + (_animation.value * 0.7)),
+            color: NomAIColors.blackText.withValues(
+              alpha: 0.3 + (_animation.value * 0.7),
+            ),
             shape: BoxShape.circle,
           ),
         );
