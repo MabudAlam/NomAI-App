@@ -1,4 +1,5 @@
 import 'package:NomAi/app/components/empty.dart';
+import 'package:NomAi/app/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -147,7 +148,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: NomAIColors.blueGrey,
         elevation: 0,
         title: Text(
-          'NomAI',
+          AppConstants.appName,
           style: TextStyle(
             color: NomAIColors.whiteText,
             fontSize: 20,

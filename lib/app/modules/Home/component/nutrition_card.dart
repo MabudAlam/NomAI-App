@@ -74,7 +74,7 @@ class NutritionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         child: Material(
-          color: Colors.white,
+          color: NomAIColors.lightSurface,
           borderRadius: BorderRadius.circular(16),
           clipBehavior: Clip.antiAlias,
           child: isProcessing
@@ -116,7 +116,7 @@ class NutritionCard extends StatelessWidget {
                         "Analyzing your food...",
                         style: context.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: NomAIColors.blackText,
                         ),
                       ),
                     ],
@@ -125,7 +125,7 @@ class NutritionCard extends StatelessWidget {
                   Text(
                     "We're calculating the nutritional value",
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: Colors.black54,
+                      color: NomAIColors.blackText.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -159,7 +159,7 @@ class NutritionCard extends StatelessWidget {
                         height: 18,
                         child: Icon(
                           Icons.error_outline_rounded,
-                          color: Colors.red[400],
+                          color: NomAIColors.darkError,
                           size: 18,
                         ),
                       ),
@@ -169,7 +169,7 @@ class NutritionCard extends StatelessWidget {
                           "Analysis Failed",
                           style: context.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            color: NomAIColors.blackText,
                           ),
                         ),
                       ),
@@ -187,13 +187,13 @@ class NutritionCard extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: NomAIColors.selectedTile,
+                            color: NomAIColors.blackText,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
                             "Retry",
                             style: context.textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
+                              color: NomAIColors.whiteText,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -205,7 +205,7 @@ class NutritionCard extends StatelessWidget {
                   Text(
                     errorMessage ?? "Unable to analyze the image",
                     style: context.textTheme.bodySmall?.copyWith(
-                      color: Colors.black54,
+                      color: NomAIColors.blackText.withValues(alpha: 0.5),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -259,7 +259,7 @@ class NutritionCard extends StatelessWidget {
                               vertical: 0.5.h,
                             ),
                             decoration: BoxDecoration(
-                              color: NomAIColors.lightGreyTile,
+                              color: NomAIColors.greyLight,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -267,7 +267,8 @@ class NutritionCard extends StatelessWidget {
                                 nutritionRecord.recordTime!.toLocal(),
                               ),
                               style: context.textTheme.bodySmall?.copyWith(
-                                color: Colors.black54,
+                                color: NomAIColors.blackText
+                                    .withValues(alpha: 0.5),
                               ),
                             ),
                           )
@@ -339,8 +340,8 @@ class NutritionCard extends StatelessWidget {
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [
-                    Colors.black.withOpacity(0.2),
-                    Colors.transparent,
+                    NomAIColors.blackText.withOpacity(0.2),
+                    NomAIColors.blackText.withOpacity(0.0),
                   ],
                 ),
               ),
@@ -353,11 +354,11 @@ class NutritionCard extends StatelessWidget {
 
   Widget _buildImagePlaceholder() {
     return Container(
-      color: Colors.grey[200],
+      color: NomAIColors.greyLight,
       child: Center(
         child: Icon(
           Icons.restaurant,
-          color: Colors.grey[400],
+          color: NomAIColors.grey,
           size: 32,
         ),
       ),
@@ -366,11 +367,11 @@ class NutritionCard extends StatelessWidget {
 
   Widget _buildImageError() {
     return Container(
-      color: Colors.grey[200],
+      color: NomAIColors.greyLight,
       child: Center(
         child: Icon(
           Icons.error_outline,
-          color: Colors.red[300],
+          color: NomAIColors.darkError,
           size: 32,
         ),
       ),
@@ -442,7 +443,7 @@ class NutritionCard extends StatelessWidget {
               Text(
                 label,
                 style: context.textTheme.bodySmall?.copyWith(
-                  color: color.withOpacity(0.8),
+                  color: NomAIColors.blackText.withValues(alpha: 0.5),
                   fontSize: 6.sp,
                   fontWeight: FontWeight.w500,
                 ),
