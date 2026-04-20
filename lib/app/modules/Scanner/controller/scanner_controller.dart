@@ -28,7 +28,7 @@ class ScannerController extends GetxController {
   RxInt consumedProtein = 0.obs;
   RxInt maximumCarb = 0.obs;
   RxInt consumedCarb = 0.obs;
-  List<NutritionRecord> dailyRecords = [];
+  RxList<NutritionRecord> dailyRecords = <NutritionRecord>[].obs;
   DateTime selectedDate = DateTime.now();
   bool isLoading = false;
   bool isProcessing = false;
@@ -77,7 +77,6 @@ class ScannerController extends GetxController {
   void updateRecord(NutritionRecord record) {
     final key = _dateKey(record.recordTime!);
 
-    // Update transient cache
     final list = _transientByDate.putIfAbsent(key, () => []);
     final tIndex = list.indexWhere((r) => r.recordTime == record.recordTime);
     if (tIndex >= 0) {
@@ -86,15 +85,12 @@ class ScannerController extends GetxController {
       list.add(record);
     }
 
-    // Update currently displayed list only if it matches the selected date
-    if (_dateKey(selectedDate) == key) {
-      final index =
-          dailyRecords.indexWhere((r) => r.recordTime == record.recordTime);
-      if (index >= 0) {
-        dailyRecords[index] = record;
-      } else {
-        dailyRecords.add(record);
-      }
+    final index =
+        dailyRecords.indexWhere((r) => r.recordTime == record.recordTime);
+    if (index >= 0) {
+      dailyRecords[index] = record;
+    } else {
+      dailyRecords.add(record);
     }
 
     update();
@@ -346,7 +342,7 @@ class ScannerController extends GetxController {
       }
 
       existingNutritionRecords = records;
-      dailyRecords = merged;
+      dailyRecords.value = merged;
 
       consumedCalories.value = records.dailyConsumedCalories;
       burnedCalories.value = records.dailyBurnedCalories;
