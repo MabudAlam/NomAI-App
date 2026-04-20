@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/modules/Chat/Controllers/ChatController.dart';
 import 'package:NomAi/app/modules/Chat/Views/Components/ImagePreviewWidget.dart';
 import 'package:NomAi/app/modules/Chat/Views/Components/ImagePickerButton.dart';
@@ -22,9 +23,9 @@ class ImagePreviewColumn extends StatelessWidget {
           if (controller.selectedImage.value != null) {
             return ImagePreviewWidget(controller: controller);
           }
-          return const SizedBox(width: 48, height: 48);
+          return SizedBox(width: 6.h, height: 6.h);
         }),
-        const SizedBox(height: 8),
+        SizedBox(height: 1.h),
         ImagePickerButton(controller: controller),
       ],
     );
