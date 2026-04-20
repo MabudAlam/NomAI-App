@@ -1,5 +1,7 @@
+import 'package:NomAi/app/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/modules/Chat/Controllers/ChatController.dart';
 import 'package:NomAi/app/modules/Chat/Views/Components/ImagePickerButton.dart';
@@ -14,7 +16,7 @@ class MessageInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(12, 8, 12, 12),
+      padding: EdgeInsets.fromLTRB(3.w, 1.h, 3.w, 1.5.h),
       child: Obx(() {
         final hasImage = controller.selectedImage.value != null ||
             controller.isUploading.value;
@@ -28,30 +30,33 @@ class MessageInput extends StatelessWidget {
                   ImagePreviewColumn(controller: controller)
                 else
                   ImagePickerButton(controller: controller),
-                const SizedBox(width: 8),
+                SizedBox(width: 2.w),
                 Expanded(
                   child: TextField(
                     controller: controller.textController,
+                    maxLines: 1,
+                    maxLength: AppConstants.chatMessageMaxLength,
                     decoration: InputDecoration(
                       hintText: 'Message...',
                       hintStyle: TextStyle(color: NomAIColors.grey),
                       filled: true,
                       fillColor: NomAIColors.lightSurface,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(3.h),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 4.w,
+                        vertical: 1.5.h,
                       ),
+                      counterText: '',
                     ),
                     style: TextStyle(color: NomAIColors.blackText),
                     textInputAction: TextInputAction.send,
                     onSubmitted: (_) => controller.sendMessage(),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 2.w),
                 SendButton(controller: controller),
               ],
             ),
