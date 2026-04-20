@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:NomAi/app/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:davinci/davinci.dart';
@@ -72,8 +73,7 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
               margin: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
               child: ElevatedButton.icon(
                 onPressed: _handleShare,
-                icon:
-                    Icon(Icons.share, color: NomAIColors.whiteText, size: 18),
+                icon: Icon(Icons.share, color: NomAIColors.whiteText, size: 18),
                 label: Text(
                   'Share',
                   style: TextStyle(
@@ -206,7 +206,7 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'NomAI',
+                  AppConstants.appName,
                   style: TextStyle(
                     color: NomAIColors.whiteText,
                     fontSize: 18,

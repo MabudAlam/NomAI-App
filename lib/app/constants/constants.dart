@@ -2,6 +2,7 @@ import 'dart:math';
 
 class AppConstants {
   static String appName = "NomAI";
+  static const int chatMessageMaxLength = 500;
 
   static final List<String> nutritionFunFacts = [
     "Drinking water before meals can help you eat fewer calories and may be effective for weight loss.",
