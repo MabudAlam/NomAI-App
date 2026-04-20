@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
 
 class UploadingIndicator extends StatelessWidget {
@@ -7,18 +8,18 @@ class UploadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 48,
-      height: 48,
+      width: 6.h,
+      height: 6.h,
       decoration: BoxDecoration(
         color: NomAIColors.lightSurface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(1.5.h),
       ),
       child: Center(
         child: SizedBox(
-          width: 20,
-          height: 20,
+          width: 2.5.h,
+          height: 2.5.h,
           child: CircularProgressIndicator(
-            strokeWidth: 2,
+            strokeWidth: 0.3.h,
             color: NomAIColors.grey,
           ),
         ),
