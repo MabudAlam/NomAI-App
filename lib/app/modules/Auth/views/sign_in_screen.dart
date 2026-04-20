@@ -45,15 +45,9 @@ class _SignInScreenState extends State<SignInScreen> {
             _errorMsg = 'Sign in failed';
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(_errorMsg ?? 'Sign in failed'),
-              backgroundColor: NomAIColors.grey,
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
+          AppDialogs.showErrorSnackbar(
+            title: 'Sign In Failed',
+            message: _errorMsg ?? 'Please try again.',
           );
         }
       },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_state.dart';
@@ -74,7 +75,7 @@ class _NomAiChatViewState extends State<NomAiChatView> {
               }
               return Column(
                 children: [
-                  const ChatHeader(),
+                  // const ChatHeader(),
                   Expanded(
                     child: Obx(() {
                       if (controller.isFetchingHistory.value) {
@@ -103,9 +104,9 @@ class _NomAiChatViewState extends State<NomAiChatView> {
   Widget _buildMessagesList() {
     return ListView.builder(
       controller: _scrollController,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: controller.messages.length +
-          (controller.isLoading.value ? 1 : 0),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+      itemCount:
+          controller.messages.length + (controller.isLoading.value ? 1 : 0),
       itemBuilder: (context, index) {
         if (index == controller.messages.length) {
           return const TypingIndicator();
@@ -113,22 +114,27 @@ class _NomAiChatViewState extends State<NomAiChatView> {
         final message = controller.messages[index];
         return Column(
           children: [
-            ChatBubble(message: message),
-            if (message.nutritionData?.response != null)
+            ChatBubble(
+              message: message,
+            ),
+            if (message.nutritionData?.response != null &&
+                message.nutritionData!.response!.portionSize != 0 &&
+                message.nutritionData!.response!.confidenceScore! >= 0.5)
               Padding(
-                padding: const EdgeInsets.only(top: 12),
+                padding: EdgeInsets.only(top: 0.5.h),
                 child: Obx(() => NutritionAnalysisCard(
-                  response: message.nutritionData!.response!,
-                  onAddToLog: controller.updatingLogStatusForMessages.contains(message.messageId)
-                      ? null
-                      : message.isAddedToLogs
+                      response: message.nutritionData!.response!,
+                      onAddToLog: controller.updatingLogStatusForMessages
+                              .contains(message.messageId)
                           ? null
-                          : () => controller.addToLog(
-                                message.messageId,
-                                message.nutritionData!.response!,
-                              ),
-                  isAlreadyAdded: message.isAddedToLogs,
-                )),
+                          : message.isAddedToLogs
+                              ? null
+                              : () => controller.addToLog(
+                                    message.messageId,
+                                    message.nutritionData!.response!,
+                                  ),
+                      isAlreadyAdded: message.isAddedToLogs,
+                    )),
               ),
           ],
         );
