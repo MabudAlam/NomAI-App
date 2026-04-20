@@ -26,6 +26,40 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
+class DisabledButton extends StatelessWidget {
+  final String tile;
+  final IconData? icon;
+
+  const DisabledButton({super.key, required this.tile, this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: null,
+      style: ElevatedButton.styleFrom(
+        disabledBackgroundColor: NomAIColors.greyLight,
+        disabledForegroundColor: NomAIColors.blackText.withValues(alpha: 0.4),
+        minimumSize: const Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 0,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 18),
+            const SizedBox(width: 8),
+          ],
+          Text(tile),
+        ],
+      ),
+    );
+  }
+}
+
 class SecondaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
