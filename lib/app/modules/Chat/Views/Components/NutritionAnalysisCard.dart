@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/models/Chat/ChatPostModel.dart';
+import 'package:NomAi/app/components/buttons.dart';
 
 class NutritionAnalysisCard extends StatefulWidget {
   final ResponseData response;
@@ -42,8 +42,7 @@ class _NutritionAnalysisCardState extends State<NutritionAnalysisCard> {
 
   int get _totalFat {
     if (widget.response.ingredients == null) return 0;
-    return widget.response.ingredients!
-        .fold(0, (sum, i) => sum + (i.fat ?? 0));
+    return widget.response.ingredients!.fold(0, (sum, i) => sum + (i.fat ?? 0));
   }
 
   @override
@@ -56,7 +55,8 @@ class _NutritionAnalysisCardState extends State<NutritionAnalysisCard> {
         decoration: BoxDecoration(
           color: NomAIColors.lightSurface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: NomAIColors.blackText.withValues(alpha: 0.08)),
+          border:
+              Border.all(color: NomAIColors.blackText.withValues(alpha: 0.08)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +97,7 @@ class _NutritionAnalysisCardState extends State<NutritionAnalysisCard> {
                               Text(
                                 '${widget.response.portionSize?.toInt()}g',
                                 style: TextStyle(
-                                  color: NomAIColors.grey,
+                                  color: NomAIColors.blackText,
                                   fontSize: 12,
                                 ),
                               ),
@@ -105,7 +105,8 @@ class _NutritionAnalysisCardState extends State<NutritionAnalysisCard> {
                         ),
                       ),
                       if (widget.response.overallHealthScore != null)
-                        _HealthScoreBadge(score: widget.response.overallHealthScore!),
+                        _HealthScoreBadge(
+                            score: widget.response.overallHealthScore!),
                       const SizedBox(width: 8),
                       Icon(
                         _isExpanded
@@ -126,7 +127,9 @@ class _NutritionAnalysisCardState extends State<NutritionAnalysisCard> {
               ),
             ),
             if (_isExpanded) ...[
-              Divider(height: 1, color: NomAIColors.blackText.withValues(alpha: 0.08)),
+              Divider(
+                  height: 1,
+                  color: NomAIColors.blackText.withValues(alpha: 0.08)),
               _ExpandedContent(
                 response: widget.response,
                 onAddToLog: widget.onAddToLog,
@@ -157,13 +160,29 @@ class _CompactNutritionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _CompactNutrient(label: 'Cal', value: calories, color: NomAIColors.blueGrey),
+        _CompactNutrient(
+            label: 'Cal',
+            value: calories,
+            color: NomAIColors.blueGrey,
+            icon: Icons.local_fire_department_rounded),
         const SizedBox(width: 16),
-        _CompactNutrient(label: 'P', value: protein, color: NomAIColors.proteinColor),
+        _CompactNutrient(
+            label: 'P',
+            value: protein,
+            color: NomAIColors.proteinColor,
+            icon: Icons.fitness_center_rounded),
         const SizedBox(width: 16),
-        _CompactNutrient(label: 'C', value: carbs, color: NomAIColors.carbsColor),
+        _CompactNutrient(
+            label: 'C',
+            value: carbs,
+            color: NomAIColors.carbsColor,
+            icon: Icons.grain_rounded),
         const SizedBox(width: 16),
-        _CompactNutrient(label: 'F', value: fat, color: NomAIColors.fatColor),
+        _CompactNutrient(
+            label: 'F',
+            value: fat,
+            color: NomAIColors.fatColor,
+            icon: Icons.opacity_rounded),
       ],
     );
   }
@@ -173,11 +192,13 @@ class _CompactNutrient extends StatelessWidget {
   final String label;
   final int value;
   final Color color;
+  final IconData icon;
 
   const _CompactNutrient({
     required this.label,
     required this.value,
     required this.color,
+    required this.icon,
   });
 
   @override
@@ -185,19 +206,12 @@ class _CompactNutrient extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
+        Icon(icon, color: color, size: 13),
         const SizedBox(width: 4),
         Text(
           '$label: ',
           style: TextStyle(
-            color: NomAIColors.grey,
+            color: NomAIColors.blackText,
             fontSize: 12,
           ),
         ),
@@ -270,13 +284,14 @@ class _ExpandedContent extends StatelessWidget {
             Text(
               response.overallHealthComments!,
               style: TextStyle(
-                color: NomAIColors.grey,
+                color: NomAIColors.blackText,
                 fontSize: 12,
               ),
             ),
             const SizedBox(height: 12),
           ],
-          if (response.ingredients != null && response.ingredients!.isNotEmpty) ...[
+          if (response.ingredients != null &&
+              response.ingredients!.isNotEmpty) ...[
             _SectionTitle(title: 'Ingredients', icon: Icons.list_alt),
             const SizedBox(height: 8),
             Column(
@@ -291,7 +306,10 @@ class _ExpandedContent extends StatelessWidget {
           ],
           if (response.primaryConcerns != null &&
               response.primaryConcerns!.isNotEmpty) ...[
-            _SectionTitle(title: 'Concerns', icon: Icons.warning_amber),
+            _SectionTitle(
+                title: 'Concerns',
+                icon: Icons.warning_amber,
+                color: NomAIColors.darkError),
             const SizedBox(height: 8),
             ...response.primaryConcerns!.map(
               (c) => Padding(
@@ -303,7 +321,11 @@ class _ExpandedContent extends StatelessWidget {
           ],
           if (response.suggestAlternatives != null &&
               response.suggestAlternatives!.isNotEmpty) ...[
-            _SectionTitle(title: 'Better Alternatives', icon: Icons.swap_horiz),
+            _SectionTitle(
+              title: 'Better Alternatives',
+              icon: Icons.swap_horiz,
+              color: NomAIColors.lightSuccess,
+            ),
             const SizedBox(height: 8),
             ...response.suggestAlternatives!.map(
               (a) => Padding(
@@ -326,19 +348,21 @@ class _ExpandedContent extends StatelessWidget {
 class _SectionTitle extends StatelessWidget {
   final String title;
   final IconData icon;
+  final Color? color;
 
-  const _SectionTitle({required this.title, required this.icon});
+  const _SectionTitle({required this.title, required this.icon, this.color});
 
   @override
   Widget build(BuildContext context) {
+    final c = color ?? NomAIColors.blackText;
     return Row(
       children: [
-        Icon(icon, color: NomAIColors.blackText, size: 16),
+        Icon(icon, color: c, size: 16),
         const SizedBox(width: 6),
         Text(
           title,
           style: TextStyle(
-            color: NomAIColors.blackText,
+            color: c,
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
@@ -360,7 +384,8 @@ class _IngredientDetailCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: NomAIColors.grey.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: NomAIColors.blackText.withValues(alpha: 0.06)),
+        border:
+            Border.all(color: NomAIColors.blackText.withValues(alpha: 0.06)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,21 +409,38 @@ class _IngredientDetailCard extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: [
-              _MiniNutrient(label: 'Cal', value: ingredient.calories ?? 0, color: NomAIColors.blueGrey),
+              _MiniNutrient(
+                  label: 'Cal',
+                  value: ingredient.calories ?? 0,
+                  color: NomAIColors.blueGrey,
+                  icon: Icons.local_fire_department_rounded),
               const SizedBox(width: 12),
-              _MiniNutrient(label: 'P', value: ingredient.protein ?? 0, color: NomAIColors.proteinColor),
+              _MiniNutrient(
+                  label: 'P',
+                  value: ingredient.protein ?? 0,
+                  color: NomAIColors.proteinColor,
+                  icon: Icons.fitness_center_rounded),
               const SizedBox(width: 12),
-              _MiniNutrient(label: 'C', value: ingredient.carbs ?? 0, color: NomAIColors.carbsColor),
+              _MiniNutrient(
+                  label: 'C',
+                  value: ingredient.carbs ?? 0,
+                  color: NomAIColors.carbsColor,
+                  icon: Icons.grain_rounded),
               const SizedBox(width: 12),
-              _MiniNutrient(label: 'F', value: ingredient.fat ?? 0, color: NomAIColors.fatColor),
+              _MiniNutrient(
+                  label: 'F',
+                  value: ingredient.fat ?? 0,
+                  color: NomAIColors.fatColor,
+                  icon: Icons.opacity_rounded),
             ],
           ),
-          if (ingredient.healthComments != null && ingredient.healthComments!.isNotEmpty) ...[
+          if (ingredient.healthComments != null &&
+              ingredient.healthComments!.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
               ingredient.healthComments!,
               style: TextStyle(
-                color: NomAIColors.grey,
+                color: NomAIColors.blackText,
                 fontSize: 11,
               ),
             ),
@@ -413,11 +455,13 @@ class _MiniNutrient extends StatelessWidget {
   final String label;
   final int value;
   final Color color;
+  final IconData icon;
 
   const _MiniNutrient({
     required this.label,
     required this.value,
     required this.color,
+    required this.icon,
   });
 
   @override
@@ -425,11 +469,7 @@ class _MiniNutrient extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 6,
-          height: 6,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
+        Icon(icon, color: color, size: 11),
         const SizedBox(width: 4),
         Text(
           '$label: $value',
@@ -488,7 +528,7 @@ class _ConcernItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: NomAIColors.darkError.withValues(alpha: 0.08),
+        color: NomAIColors.blackText.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -496,13 +536,13 @@ class _ConcernItem extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.warning_amber, color: NomAIColors.darkError, size: 14),
+              Icon(Icons.warning_amber, color: NomAIColors.blackText, size: 14),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   concern.issue ?? '',
                   style: TextStyle(
-                    color: NomAIColors.darkError,
+                    color: NomAIColors.blackText,
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
                   ),
@@ -510,7 +550,8 @@ class _ConcernItem extends StatelessWidget {
               ),
             ],
           ),
-          if (concern.recommendations != null && concern.recommendations!.isNotEmpty) ...[
+          if (concern.recommendations != null &&
+              concern.recommendations!.isNotEmpty) ...[
             const SizedBox(height: 6),
             ...concern.recommendations!.map(
               (r) => Padding(
@@ -518,7 +559,8 @@ class _ConcernItem extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.arrow_right, color: NomAIColors.darkSuccess, size: 14),
+                    Icon(Icons.arrow_right,
+                        color: NomAIColors.blackText, size: 14),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
@@ -551,7 +593,7 @@ class _AlternativeItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: NomAIColors.darkSuccess.withValues(alpha: 0.08),
+        color: NomAIColors.blackText.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -568,13 +610,33 @@ class _AlternativeItem extends StatelessWidget {
                     fontSize: 12,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '${alternative.calories ?? 0} cal • P: ${alternative.protein ?? 0}g • C: ${alternative.carbs ?? 0}g • F: ${alternative.fat ?? 0}g',
-                  style: TextStyle(
-                    color: NomAIColors.grey,
-                    fontSize: 10,
-                  ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    _MiniNutrient(
+                        label: 'Cal',
+                        value: alternative.calories ?? 0,
+                        color: NomAIColors.blueGrey,
+                        icon: Icons.local_fire_department_rounded),
+                    const SizedBox(width: 10),
+                    _MiniNutrient(
+                        label: 'P',
+                        value: alternative.protein ?? 0,
+                        color: NomAIColors.proteinColor,
+                        icon: Icons.fitness_center_rounded),
+                    const SizedBox(width: 10),
+                    _MiniNutrient(
+                        label: 'C',
+                        value: alternative.carbs ?? 0,
+                        color: NomAIColors.carbsColor,
+                        icon: Icons.grain_rounded),
+                    const SizedBox(width: 10),
+                    _MiniNutrient(
+                        label: 'F',
+                        value: alternative.fat ?? 0,
+                        color: NomAIColors.fatColor,
+                        icon: Icons.opacity_rounded),
+                  ],
                 ),
               ],
             ),
@@ -583,13 +645,13 @@ class _AlternativeItem extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: NomAIColors.darkSuccess.withValues(alpha: 0.15),
+                color: NomAIColors.blueGrey,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 '${alternative.healthScore}',
-                style: TextStyle(
-                  color: NomAIColors.darkSuccess,
+                style: const TextStyle(
+                  color: NomAIColors.whiteText,
                   fontWeight: FontWeight.bold,
                   fontSize: 11,
                 ),
@@ -616,67 +678,17 @@ class _AddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLoading = onAddToLog == null && !isAlreadyAdded;
 
-    return Bounceable(
-      onTap: onAddToLog,
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(top: 8),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isLoading
-              ? NomAIColors.grey
-              : isAlreadyAdded
-                  ? NomAIColors.darkSuccess.withValues(alpha: 0.15)
-                  : NomAIColors.blueGrey,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isLoading) ...[
-              SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: NomAIColors.whiteText,
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Adding...',
-                style: TextStyle(
-                  color: NomAIColors.whiteText,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-            ] else if (isAlreadyAdded) ...[
-              Icon(Icons.check, color: NomAIColors.darkSuccess, size: 18),
-              const SizedBox(width: 6),
-              Text(
-                'Added to Log',
-                style: TextStyle(
-                  color: NomAIColors.darkSuccess,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-            ] else ...[
-              const Icon(Icons.add, color: NomAIColors.whiteText, size: 18),
-              const SizedBox(width: 6),
-              const Text(
-                'Add to Daily Log',
-                style: TextStyle(
-                  color: NomAIColors.whiteText,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: isAlreadyAdded
+          ? DisabledButton(
+              tile: 'Added to Daily Log',
+              icon: Icons.check_circle_rounded,
+            )
+          : PrimaryButton(
+              tile: isLoading ? 'Adding...' : 'Add to Daily Log',
+              onPressed: isLoading ? () {} : onAddToLog!,
+            ),
     );
   }
 }
