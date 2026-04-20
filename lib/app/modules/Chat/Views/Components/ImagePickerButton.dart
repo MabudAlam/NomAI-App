@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/modules/Chat/Controllers/ChatController.dart';
 
@@ -12,7 +13,7 @@ class ImagePickerButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showPicker(context),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(1.5.h),
         decoration: BoxDecoration(
           color: NomAIColors.lightSurface,
           shape: BoxShape.circle,
@@ -20,7 +21,7 @@ class ImagePickerButton extends StatelessWidget {
         child: Icon(
           Icons.camera_alt,
           color: NomAIColors.blackText,
-          size: 22,
+          size: 18.sp,
         ),
       ),
     );
@@ -30,23 +31,23 @@ class ImagePickerButton extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: NomAIColors.lightSurface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(2.h)),
       ),
       builder: (context) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 8),
+            SizedBox(height: 1.h),
             Container(
-              width: 40,
-              height: 4,
+              width: 5.w,
+              height: 0.5.h,
               decoration: BoxDecoration(
                 color: NomAIColors.grey.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(0.3.h),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 2.h),
             ListTile(
               leading: Icon(Icons.photo_library, color: NomAIColors.blackText),
               title: Text('Gallery',
@@ -65,7 +66,7 @@ class ImagePickerButton extends StatelessWidget {
                 controller.pickImageFromCamera();
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 2.h),
           ],
         ),
       ),
