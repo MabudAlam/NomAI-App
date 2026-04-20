@@ -11,17 +11,18 @@ class EmptyChatState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.chat_bubble_outline,
-            size: 56,
-            color: NomAIColors.whiteText.withValues(alpha: 0.8),
+          Image.asset(
+            'assets/png/logo.png',
+            width: 12.h,
+            height: 12.h,
           ),
-          SizedBox(height: 1.5.h),
+          SizedBox(height: 2.h),
           Text(
-            'Start a conversation',
+            'How can I help you today?',
             style: TextStyle(
-              color: NomAIColors.whiteText.withValues(alpha: 0.8),
-              fontSize: 16,
+              color: NomAIColors.blackText,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
