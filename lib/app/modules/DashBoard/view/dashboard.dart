@@ -168,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           HomePage(),
           AnalyticsView(),
-         NomAiChatView(),
+          NomAiChatView(),
         ],
       ),
     );
