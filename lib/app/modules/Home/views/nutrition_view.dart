@@ -5,6 +5,8 @@ import 'package:NomAi/app/models/AI/nutrition_input.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:NomAi/app/repo/nutrition_record_repo.dart';
+import 'package:NomAi/app/repo/storage_service.dart';
+import 'package:NomAi/app/utility/registry_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -148,29 +150,201 @@ class _NutritionViewState extends State<NutritionView> {
     NutritionResponse response = nutritionRecord.nutritionOutput!.response!;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(context),
           SliverToBoxAdapter(
-            child: Column(
-              children: [
-                _buildFoodHeaderCard(context, response),
-                _buildNutritionSummaryCard(context, response),
-                if (response.overallHealthComments != null &&
-                    response.overallHealthComments!.isNotEmpty)
-                  _buildHealthInsightsCard(context, response),
-                if (response.ingredients != null &&
-                    response.ingredients!.isNotEmpty)
-                  _buildIngredientsCard(context, response),
-                if (response.primaryConcerns != null &&
-                    response.primaryConcerns!.isNotEmpty)
-                  _buildPrimaryConcernsCard(context, response),
-                if (response.suggestAlternatives != null &&
-                    response.suggestAlternatives!.isNotEmpty)
-                  _buildAlternativesCard(context, response),
-                SizedBox(height: 3.h),
-              ],
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 2.h),
+                  _buildFoodHeaderCard(context, response),
+                  SizedBox(height: 2.h),
+                  _buildNutritionSummaryCard(context, response),
+                  if (response.overallHealthComments != null &&
+                      response.overallHealthComments!.isNotEmpty) ...[
+                    SizedBox(height: 2.h),
+                    _buildHealthInsightsCard(context, response),
+                  ],
+                  if (response.ingredients != null &&
+                      response.ingredients!.isNotEmpty) ...[
+                    SizedBox(height: 2.h),
+                    _buildIngredientsCard(context, response),
+                  ],
+                  if (response.primaryConcerns != null &&
+                      response.primaryConcerns!.isNotEmpty) ...[
+                    SizedBox(height: 2.h),
+                    _buildPrimaryConcernsCard(context, response),
+                  ],
+                  if (response.suggestAlternatives != null &&
+                      response.suggestAlternatives!.isNotEmpty) ...[
+                    SizedBox(height: 2.h),
+                    _buildAlternativesCard(context, response),
+                  ],
+                  SizedBox(height: 3.h),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _uploadImage(BuildContext context) async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Select Image Source',
+                style: context.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: NomAIColors.black,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildImageSourceOption(
+                    context,
+                    icon: Icons.camera_alt,
+                    label: 'Camera',
+                    onTap: () => Navigator.pop(context, ImageSource.camera),
+                  ),
+                  _buildImageSourceOption(
+                    context,
+                    icon: Icons.photo_library,
+                    label: 'Gallery',
+                    onTap: () => Navigator.pop(context, ImageSource.gallery),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: source);
+
+    if (image == null) return;
+
+    AppDialogs.showLoadingDialog(
+      title: "Uploading Image",
+      message: "Please wait...",
+    );
+
+    try {
+      final storageService = serviceLocator<StorageService>();
+      final imageUrl = await storageService.uploadImage(File(image.path));
+
+      if (imageUrl == null) {
+        AppDialogs.hideDialog();
+        if (context.mounted) {
+          AppDialogs.showErrorSnackbar(
+            title: "Error",
+            message: "Failed to upload image. Please try again.",
+          );
+        }
+        return;
+      }
+
+      final recordTime = nutritionRecord.recordTime ?? DateTime.now();
+
+      final updatedQuery = NutritionInputQuery(
+        imageUrl: imageUrl,
+        imageFilePath: image.path,
+        scanMode: nutritionRecord.nutritionInputQuery?.scanMode,
+        food_description: nutritionRecord.nutritionInputQuery?.food_description,
+        dietaryPreferences:
+            nutritionRecord.nutritionInputQuery?.dietaryPreferences,
+        allergies: nutritionRecord.nutritionInputQuery?.allergies,
+        selectedGoals: nutritionRecord.nutritionInputQuery?.selectedGoals,
+      );
+
+      final updatedRecord = NutritionRecord(
+        nutritionOutput: nutritionRecord.nutritionOutput,
+        recordTime: nutritionRecord.recordTime,
+        nutritionInputQuery: updatedQuery,
+        processingStatus: nutritionRecord.processingStatus,
+      );
+
+      final nutritionRecordRepo = NutritionRecordRepo();
+      final result = await nutritionRecordRepo.updateMealEntry(
+          userModel.userId, updatedRecord, recordTime, recordTime);
+
+      AppDialogs.hideDialog();
+
+      if (result == QueryStatus.SUCCESS) {
+        final scannerController = Get.put(ScannerController());
+        await scannerController.getRecordByDate(userModel.userId, recordTime);
+        if (context.mounted) {
+          AppDialogs.showSuccessSnackbar(
+            title: "Success",
+            message: "Image uploaded successfully!",
+          );
+          Navigator.pop(context);
+        }
+      } else {
+        if (context.mounted) {
+          AppDialogs.showErrorSnackbar(
+            title: "Error",
+            message: "Failed to save image. Please try again.",
+          );
+        }
+      }
+    } catch (e) {
+      AppDialogs.hideDialog();
+      if (context.mounted) {
+        AppDialogs.showErrorSnackbar(
+          title: "Error",
+          message: "Failed to upload image: $e",
+        );
+      }
+    }
+  }
+
+  Widget _buildImageSourceOption(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: NomAIColors.black.withOpacity(0.1),
+            ),
+            child: Icon(icon, size: 32, color: NomAIColors.black),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: context.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: NomAIColors.black,
             ),
           ),
         ],
@@ -536,17 +710,17 @@ class _NutritionViewState extends State<NutritionView> {
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.9),
+            color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: NomAIColors.black.withOpacity(0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
           child: const Icon(Icons.arrow_back_ios_new,
-              color: Colors.black87, size: 20),
+              color: NomAIColors.black, size: 20),
         ),
       ),
       actions: [
@@ -567,17 +741,17 @@ class _NutritionViewState extends State<NutritionView> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: NomAIColors.black.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child: const Icon(Icons.ios_share,
-                color: NomAIColors.lightSuccess, size: 20),
+            child:
+                const Icon(Icons.ios_share, color: NomAIColors.black, size: 20),
           ),
         ),
         Bounceable(
@@ -604,10 +778,10 @@ class _NutritionViewState extends State<NutritionView> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: NomAIColors.black.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -615,7 +789,7 @@ class _NutritionViewState extends State<NutritionView> {
             ),
             child: Icon(
               _isEditing ? Icons.check : Icons.edit_outlined,
-              color: _isEditing ? Colors.green : Colors.blue,
+              color: NomAIColors.black,
               size: 20,
             ),
           ),
@@ -633,10 +807,10 @@ class _NutritionViewState extends State<NutritionView> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: NomAIColors.black.withOpacity(0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -644,7 +818,7 @@ class _NutritionViewState extends State<NutritionView> {
               ),
               child: const Icon(
                 Icons.close,
-                color: Colors.red,
+                color: NomAIColors.red,
                 size: 20,
               ),
             ),
@@ -656,17 +830,17 @@ class _NutritionViewState extends State<NutritionView> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: NomAIColors.black.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child:
-                const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+            child: const Icon(Icons.delete_outline,
+                color: NomAIColors.red, size: 20),
           ),
         ),
       ],
@@ -677,52 +851,94 @@ class _NutritionViewState extends State<NutritionView> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withOpacity(0.3),
+                NomAIColors.black.withOpacity(0.3),
                 Colors.transparent,
-                Colors.black.withOpacity(0.7),
+                NomAIColors.black.withOpacity(0.7),
               ],
             ),
           ),
-          child: nutritionRecord.nutritionInputQuery?.imageUrl != null
+          child: nutritionRecord.nutritionInputQuery?.imageUrl != null &&
+                  nutritionRecord.nutritionInputQuery!.imageUrl!.isNotEmpty
               ? CachedNetworkImage(
                   imageUrl:
                       nutritionRecord.nutritionInputQuery!.imageUrl.toString(),
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
-                    color: Colors.grey.shade200,
-                    child: const Center(
-                      child: CircularProgressIndicator(color: Colors.black54),
+                    color: NomAIColors.greyLight,
+                    child: Center(
+                      child:
+                          CircularProgressIndicator(color: NomAIColors.black),
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(
-                    color: Colors.grey.shade200,
-                    child: const Center(
+                    color: NomAIColors.greyLight,
+                    child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.restaurant, size: 48, color: Colors.grey),
+                          Icon(Icons.restaurant,
+                              size: 48,
+                              color: NomAIColors.black.withOpacity(0.3)),
                           SizedBox(height: 8),
                           Text('No Image Available',
-                              style: TextStyle(color: Colors.grey)),
+                              style: TextStyle(
+                                  color: NomAIColors.black.withOpacity(0.3))),
                         ],
                       ),
                     ),
                   ),
                 )
-              : Container(
-                  color: Colors.grey.shade200,
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.restaurant, size: 48, color: Colors.grey),
-                        SizedBox(height: 8),
-                        Text('No Image Available',
-                            style: TextStyle(color: Colors.grey)),
-                      ],
+              : _isEditing
+                  ? Container(
+                      color: NomAIColors.greyLight,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () => _uploadImage(context),
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: NomAIColors.black.withOpacity(0.1),
+                                ),
+                                child: Icon(
+                                  Icons.add_a_photo,
+                                  size: 48,
+                                  color: NomAIColors.black.withOpacity(0.5),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              'Tap to add image',
+                              style: TextStyle(
+                                color: NomAIColors.black.withOpacity(0.5),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Container(
+                      color: NomAIColors.greyLight,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.restaurant,
+                                size: 48,
+                                color: NomAIColors.black.withOpacity(0.3)),
+                            SizedBox(height: 8),
+                            Text('No Image Available',
+                                style: TextStyle(
+                                    color: NomAIColors.black.withOpacity(0.3))),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
         ),
       ),
     );
@@ -730,67 +946,43 @@ class _NutritionViewState extends State<NutritionView> {
 
   Widget _buildFoodHeaderCard(
       BuildContext context, NutritionResponse response) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(4.w, 2.h, 4.w, 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+    return Column(
+      children: [
+        TextFormField(
+          controller: _foodNameController,
+          focusNode: _foodNameFocusNode,
+          textAlign: TextAlign.center,
+          style: context.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: NomAIColors.black,
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Text(
-          //   response.foodName ?? 'Unknown Food',
-          //   style: context.textTheme.headlineSmall?.copyWith(
-          //     fontWeight: FontWeight.bold,
-          //     color: Colors.black87,
-          //   ),
-          //   textAlign: TextAlign.center,
-          // ),
-
-          TextFormField(
-            controller: _foodNameController,
-            focusNode: _foodNameFocusNode,
-            textAlign: TextAlign.center,
-            style: context.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-            cursorColor: Colors.black,
-            decoration: _isEditing
-                ? const InputDecoration(
-                    hintText: 'Enter Food Name',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 2),
-                    ),
-                  )
-                : const InputDecoration(
-                    hintText: 'Enter Food Name',
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
+          cursorColor: NomAIColors.black,
+          decoration: _isEditing
+              ? const InputDecoration(
+                  hintText: 'Enter Food Name',
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: NomAIColors.black),
                   ),
-            readOnly: !_isEditing,
-            onTapOutside: (_) => _foodNameFocusNode.unfocus(),
-          ),
-          if (response.overallHealthScore != null) ...[
-            SizedBox(height: 2.h),
-            HealthScoreWidget(nutritionRecord: nutritionRecord),
-          ],
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: NomAIColors.black, width: 2),
+                  ),
+                )
+              : const InputDecoration(
+                  hintText: 'Enter Food Name',
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                ),
+          readOnly: !_isEditing,
+          onTapOutside: (_) => _foodNameFocusNode.unfocus(),
+        ),
+        if (response.overallHealthScore != null) ...[
+          SizedBox(height: 2.h),
+          HealthScoreWidget(nutritionRecord: nutritionRecord),
         ],
-      ),
+      ],
     );
   }
 
@@ -810,148 +1002,121 @@ class _NutritionViewState extends State<NutritionView> {
       }
     }
 
-    return Container(
-      margin: EdgeInsets.fromLTRB(4.w, 1.h, 4.w, 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.analytics_outlined,
-                    color: Colors.blue.shade600, size: 20),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.analytics_outlined, color: NomAIColors.black, size: 20),
+            SizedBox(width: 2.w),
+            Text(
+              'Nutrition Facts',
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: NomAIColors.black,
               ),
-              SizedBox(width: 2.w),
-              Text(
-                'Nutrition Facts',
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 3.h),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.orange.shade400, Colors.orange.shade300],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Calories',
-                  style: context.textTheme.titleMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+          ],
+        ),
+        SizedBox(height: 3.h),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          decoration: BoxDecoration(
+            color: NomAIColors.black,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Calories',
+                style: context.textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
                 ),
-                _isEditing
-                    ? SizedBox(
-                        width: 120,
-                        child: TextField(
-                          controller: _caloriesController,
-                          focusNode: _caloriesFocusNode,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.right,
-                          style: context.textTheme.titleLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          cursorColor: Colors.black,
-                          decoration: const InputDecoration(
-                            isDense: true,
-                            hintText: 'kcal',
-                            hintStyle: TextStyle(color: Colors.white70),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 2),
-                            ),
-                          ),
-                          onTapOutside: (_) => _caloriesFocusNode.unfocus(),
-                        ),
-                      )
-                    : Text(
-                        '$totalCalories kcal',
+              ),
+              _isEditing
+                  ? SizedBox(
+                      width: 120,
+                      child: TextField(
+                        controller: _caloriesController,
+                        focusNode: _caloriesFocusNode,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.right,
                         style: context.textTheme.titleLarge?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
+                        cursorColor: Colors.white,
+                        decoration: const InputDecoration(
+                          isDense: true,
+                          hintText: 'kcal',
+                          hintStyle: TextStyle(color: Colors.white54),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white54),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.white, width: 2),
+                          ),
+                        ),
+                        onTapOutside: (_) => _caloriesFocusNode.unfocus(),
                       ),
-              ],
-            ),
-          ),
-          SizedBox(height: 2.h),
-          Row(
-            children: [
-              Expanded(
-                child: _buildEnhancedNutrientBox(
-                  context,
-                  'Carbs',
-                  '$totalCarbs',
-                  'g',
-                  NomAIColors.carbsColor,
-                  Icons.grain,
-                  controller: _carbsController,
-                  focusNode: _carbsFocusNode,
-                ),
-              ),
-              SizedBox(width: 3.w),
-              Expanded(
-                child: _buildEnhancedNutrientBox(
-                  context,
-                  'Protein',
-                  '$totalProtein',
-                  'g',
-                  NomAIColors.proteinColor,
-                  Icons.fitness_center,
-                  controller: _proteinController,
-                  focusNode: _proteinFocusNode,
-                ),
-              ),
-              SizedBox(width: 3.w),
-              Expanded(
-                child: _buildEnhancedNutrientBox(
-                  context,
-                  'Fat',
-                  '$totalFat',
-                  'g',
-                  NomAIColors.fatColor,
-                  Icons.water_drop,
-                  controller: _fatController,
-                  focusNode: _fatFocusNode,
-                ),
-              ),
+                    )
+                  : Text(
+                      '$totalCalories kcal',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ],
           ),
-        ],
-      ),
+        ),
+        SizedBox(height: 2.h),
+        Row(
+          children: [
+            Expanded(
+              child: _buildEnhancedNutrientBox(
+                context,
+                'Carbs',
+                '$totalCarbs',
+                'g',
+                NomAIColors.carbsColor,
+                Icons.grain,
+                controller: _carbsController,
+                focusNode: _carbsFocusNode,
+              ),
+            ),
+            SizedBox(width: 3.w),
+            Expanded(
+              child: _buildEnhancedNutrientBox(
+                context,
+                'Protein',
+                '$totalProtein',
+                'g',
+                NomAIColors.proteinColor,
+                Icons.fitness_center,
+                controller: _proteinController,
+                focusNode: _proteinFocusNode,
+              ),
+            ),
+            SizedBox(width: 3.w),
+            Expanded(
+              child: _buildEnhancedNutrientBox(
+                context,
+                'Fat',
+                '$totalFat',
+                'g',
+                NomAIColors.fatColor,
+                Icons.water_drop,
+                controller: _fatController,
+                focusNode: _fatFocusNode,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -960,7 +1125,7 @@ class _NutritionViewState extends State<NutritionView> {
     String label,
     String value,
     String unit,
-    Color backgroundColor,
+    Color color,
     IconData icon, {
     TextEditingController? controller,
     FocusNode? focusNode,
@@ -968,19 +1133,18 @@ class _NutritionViewState extends State<NutritionView> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
-        color: backgroundColor.withOpacity(0.2),
+        color: NomAIColors.greyLight,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: backgroundColor.withOpacity(0.3)),
       ),
       child: Column(
         children: [
-          Icon(icon, color: backgroundColor, size: 24),
+          Icon(icon, color: color, size: 24),
           const SizedBox(height: 8),
           Text(
             label,
             style: context.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              color: NomAIColors.black,
             ),
           ),
           const SizedBox(height: 4),
@@ -999,17 +1163,17 @@ class _NutritionViewState extends State<NutritionView> {
                         textAlign: TextAlign.right,
                         style: context.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: backgroundColor,
+                          color: color,
                         ),
-                        cursorColor: Colors.black,
+                        cursorColor: color,
                         decoration: const InputDecoration(
                           isDense: true,
                           enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black),
+                            borderSide: BorderSide(color: NomAIColors.black),
                           ),
                           focusedBorder: UnderlineInputBorder(
                             borderSide:
-                                BorderSide(color: Colors.black, width: 2),
+                                BorderSide(color: NomAIColors.black, width: 2),
                           ),
                         ),
                         onTapOutside: (_) => focusNode?.unfocus(),
@@ -1019,7 +1183,7 @@ class _NutritionViewState extends State<NutritionView> {
                     Text(
                       unit,
                       style: context.textTheme.bodySmall?.copyWith(
-                        color: Colors.black54,
+                        color: NomAIColors.black.withOpacity(0.6),
                       ),
                     ),
                   ],
@@ -1033,14 +1197,14 @@ class _NutritionViewState extends State<NutritionView> {
                       value,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: backgroundColor,
+                        color: color,
                       ),
                     ),
                     const SizedBox(width: 2),
                     Text(
                       unit,
                       style: context.textTheme.bodySmall?.copyWith(
-                        color: Colors.black54,
+                        color: NomAIColors.black.withOpacity(0.6),
                       ),
                     ),
                   ],
@@ -1052,119 +1216,74 @@ class _NutritionViewState extends State<NutritionView> {
 
   Widget _buildHealthInsightsCard(
       BuildContext context, NutritionResponse response) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(4.w, 1.h, 4.w, 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.psychology_outlined,
-                    color: Colors.green.shade600, size: 20),
-              ),
-              SizedBox(width: 2.w),
-              Text(
-                'Health Insights',
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.green.shade200),
-            ),
-            child: Text(
-              response.overallHealthComments ?? '',
-              style: context.textTheme.bodyMedium?.copyWith(
-                height: 1.5,
-                color: Colors.black87,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.psychology_outlined, color: NomAIColors.black, size: 20),
+            SizedBox(width: 2.w),
+            Text(
+              'Health Insights',
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: NomAIColors.black,
               ),
             ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: NomAIColors.greyLight,
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
-      ),
+          child: Text(
+            response.overallHealthComments ?? '',
+            style: context.textTheme.bodyMedium?.copyWith(
+              height: 1.5,
+              color: NomAIColors.black,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildIngredientsCard(
       BuildContext context, NutritionResponse response) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(4.w, 1.h, 4.w, 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.purple.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.restaurant_menu,
-                    color: Colors.purple.shade600, size: 20),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.restaurant_menu, color: NomAIColors.black, size: 20),
+            SizedBox(width: 2.w),
+            Text(
+              'Ingredients',
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: NomAIColors.black,
               ),
-              SizedBox(width: 2.w),
-              Text(
-                'Ingredients',
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 2.h),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: response.ingredients?.length ?? 0,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final ingredient = response.ingredients![index];
-              return Container(
+            ),
+          ],
+        ),
+        SizedBox(height: 2.h),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          itemCount: response.ingredients?.length ?? 0,
+          itemBuilder: (context, index) {
+            final ingredient = response.ingredients![index];
+            return Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
+                  color: NomAIColors.greyLight,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade200),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1175,7 +1294,7 @@ class _NutritionViewState extends State<NutritionView> {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: Colors.purple.shade400,
+                            color: NomAIColors.black,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -1185,7 +1304,7 @@ class _NutritionViewState extends State<NutritionView> {
                             ingredient.name ?? 'Unknown',
                             style: context.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: NomAIColors.black,
                             ),
                           ),
                         ),
@@ -1199,7 +1318,7 @@ class _NutritionViewState extends State<NutritionView> {
                         child: Text(
                           ingredient.healthComments!,
                           style: context.textTheme.bodySmall?.copyWith(
-                            color: Colors.grey.shade700,
+                            color: NomAIColors.black.withOpacity(0.6),
                             height: 1.4,
                           ),
                         ),
@@ -1207,68 +1326,49 @@ class _NutritionViewState extends State<NutritionView> {
                     ],
                   ],
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 
   Widget _buildPrimaryConcernsCard(
       BuildContext context, NutritionResponse response) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(4.w, 1.h, 4.w, 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.warning_amber_outlined,
-                    color: Colors.orange.shade600, size: 20),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.warning_amber_outlined,
+                color: NomAIColors.red, size: 20),
+            SizedBox(width: 2.w),
+            Text(
+              'Primary Concerns',
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: NomAIColors.black,
               ),
-              SizedBox(width: 2.w),
-              Text(
-                'Primary Concerns',
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 2.h),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: response.primaryConcerns?.length ?? 0,
-            separatorBuilder: (context, index) => const SizedBox(height: 16),
-            itemBuilder: (context, index) {
-              final concern = response.primaryConcerns![index];
-              return Container(
+            ),
+          ],
+        ),
+        SizedBox(height: 2.h),
+        ListView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: response.primaryConcerns?.length ?? 0,
+          itemBuilder: (context, index) {
+            final concern = response.primaryConcerns![index];
+            return Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
+                  color: NomAIColors.red.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.orange.shade200),
+                  border: Border.all(color: NomAIColors.red.withOpacity(0.2)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1276,14 +1376,14 @@ class _NutritionViewState extends State<NutritionView> {
                     Row(
                       children: [
                         Icon(Icons.error_outline,
-                            color: Colors.orange.shade600, size: 20),
+                            color: NomAIColors.red, size: 20),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             concern.issue ?? 'Unknown Concern',
                             style: context.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.orange.shade800,
+                              color: NomAIColors.red,
                             ),
                           ),
                         ),
@@ -1293,7 +1393,7 @@ class _NutritionViewState extends State<NutritionView> {
                     Text(
                       concern.explanation ?? 'No explanation available',
                       style: context.textTheme.bodyMedium?.copyWith(
-                        color: Colors.black87,
+                        color: NomAIColors.black,
                         height: 1.4,
                       ),
                     ),
@@ -1304,108 +1404,91 @@ class _NutritionViewState extends State<NutritionView> {
                         'Recommendations:',
                         style: context.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: NomAIColors.black,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      for (Recommendation suggestion
-                          in concern.recommendations!)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(top: 6),
-                                width: 4,
-                                height: 4,
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.shade600,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  '${suggestion.food} - ${suggestion.reasoning} (${suggestion.quantity})',
-                                  style: context.textTheme.bodySmall?.copyWith(
-                                    color: Colors.black87,
-                                    height: 1.3,
+                      SizedBox(height: 8),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
+                        itemCount: concern.recommendations?.length ?? 0,
+                        itemBuilder: (context, recIndex) {
+                          final suggestion = concern.recommendations![recIndex];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 6),
+                                  width: 4,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: NomAIColors.red,
+                                    shape: BoxShape.circle,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    '${suggestion.food} - ${suggestion.reasoning} (${suggestion.quantity})',
+                                    style:
+                                        context.textTheme.bodySmall?.copyWith(
+                                      color: NomAIColors.black,
+                                      height: 1.3,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ],
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 
   Widget _buildAlternativesCard(
       BuildContext context, NutritionResponse response) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(4.w, 1.h, 4.w, 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.lightbulb_outline,
-                    color: Colors.green.shade600, size: 20),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.lightbulb_outline, color: NomAIColors.black, size: 20),
+            SizedBox(width: 2.w),
+            Text(
+              'Healthier Alternatives',
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: NomAIColors.black,
               ),
-              SizedBox(width: 2.w),
-              Text(
-                'Healthier Alternatives',
-                style: context.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 2.h),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: response.suggestAlternatives?.length ?? 0,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final alternative = response.suggestAlternatives![index];
-              return Container(
+            ),
+          ],
+        ),
+        SizedBox(height: 2.h),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          itemCount: response.suggestAlternatives?.length ?? 0,
+          itemBuilder: (context, index) {
+            final alternative = response.suggestAlternatives![index];
+            return Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.green.shade50, Colors.green.shade100],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: NomAIColors.greyLight,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.green.shade200),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1413,14 +1496,14 @@ class _NutritionViewState extends State<NutritionView> {
                     Row(
                       children: [
                         Icon(Icons.trending_up,
-                            color: Colors.green.shade600, size: 20),
+                            color: NomAIColors.black, size: 20),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             alternative.name ?? 'Unknown',
                             style: context.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.green.shade800,
+                              color: NomAIColors.black,
                             ),
                           ),
                         ),
@@ -1429,7 +1512,7 @@ class _NutritionViewState extends State<NutritionView> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Colors.green.shade600,
+                              color: NomAIColors.black,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -1448,18 +1531,18 @@ class _NutritionViewState extends State<NutritionView> {
                       Text(
                         alternative.healthComments!,
                         style: context.textTheme.bodySmall?.copyWith(
-                          color: Colors.black87,
+                          color: NomAIColors.black.withOpacity(0.7),
                           height: 1.4,
                         ),
                       ),
                     ],
                   ],
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -1487,17 +1570,8 @@ class HealthScoreWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            _getProgressColor(scorePercent).withOpacity(0.1),
-            _getProgressColor(scorePercent).withOpacity(0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: NomAIColors.greyLight,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: _getProgressColor(scorePercent).withOpacity(0.3)),
       ),
       child: Row(
         children: [
@@ -1508,7 +1582,7 @@ class HealthScoreWidget extends StatelessWidget {
                 Text(
                   "Meal Time",
                   style: context.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey.shade600,
+                    color: NomAIColors.black.withOpacity(0.5),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1519,7 +1593,7 @@ class HealthScoreWidget extends StatelessWidget {
                   ),
                   style: context.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: NomAIColors.black,
                   ),
                 ),
               ],
@@ -1533,7 +1607,7 @@ class HealthScoreWidget extends StatelessWidget {
                 animation: true,
                 animationDuration: 1200,
                 percent: scorePercent,
-                backgroundColor: Colors.grey.shade200,
+                backgroundColor: NomAIColors.black.withOpacity(0.1),
                 progressColor: _getProgressColor(scorePercent),
                 circularStrokeCap: CircularStrokeCap.round,
                 center: Text(
@@ -1560,10 +1634,8 @@ class HealthScoreWidget extends StatelessWidget {
   }
 
   Color _getProgressColor(double percent) {
-    if (percent >= 0.8) return Colors.green.shade600;
-    if (percent >= 0.6) return Colors.orange.shade600;
-    if (percent >= 0.4) return Colors.orange.shade700;
-    return Colors.red.shade600;
+    if (percent >= 0.6) return NomAIColors.black;
+    return NomAIColors.red;
   }
 
   String _getHealthRating(int score) {
