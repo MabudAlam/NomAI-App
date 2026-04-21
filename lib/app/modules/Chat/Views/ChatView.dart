@@ -13,6 +13,7 @@ import 'package:NomAi/app/modules/Chat/Views/Components/EmptyChatState.dart';
 import 'package:NomAi/app/modules/Chat/Views/Components/MessageInput.dart';
 import 'package:NomAi/app/modules/Chat/Views/Components/NutritionAnalysisCard.dart';
 import 'package:NomAi/app/modules/Chat/Views/Components/TypingIndicator.dart';
+import 'package:NomAi/app/components/shimmer.dart';
 
 class NomAiChatView extends StatefulWidget {
   const NomAiChatView({super.key});
@@ -79,10 +80,9 @@ class _NomAiChatViewState extends State<NomAiChatView> {
                   Expanded(
                     child: Obx(() {
                       if (controller.isFetchingHistory.value) {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: NomAIColors.whiteText,
-                          ),
+                        return const ShimmerChatWithNutrition(
+                          messageCount: 6,
+                          nutritionIndices: [2, 4],
                         );
                       }
                       if (controller.messages.isEmpty) {
