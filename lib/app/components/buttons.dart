@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
 
 class PrimaryButton extends StatelessWidget {
@@ -22,6 +23,77 @@ class PrimaryButton extends StatelessWidget {
         ),
       ),
       child: Text(tile),
+    );
+  }
+}
+
+class PrimaryButtonWithIcon extends StatelessWidget {
+  final String tile;
+  final IconData icon;
+  final void Function() onPressed;
+  final double? width;
+  final bool isLoading;
+
+  const PrimaryButtonWithIcon({
+    super.key,
+    required this.tile,
+    required this.icon,
+    required this.onPressed,
+    this.width,
+    this.isLoading = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width ?? 30.w,
+      height: 5.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(3.w),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 0.8.h,
+            offset: Offset(0, 0.25.h),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: isLoading ? null : () => onPressed(),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: NomAIColors.black,
+          foregroundColor: NomAIColors.whiteText,
+          minimumSize: Size(0, 5.h),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(3.w),
+          ),
+          elevation: 0,
+        ),
+        child: isLoading
+            ? SizedBox(
+                width: 3.w,
+                height: 3.w,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 0.5.w,
+                ),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 5.w),
+                  SizedBox(width: 1.w),
+                  Text(
+                    tile,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 }

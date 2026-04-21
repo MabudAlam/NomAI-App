@@ -54,6 +54,7 @@ class NutritionResponseModel {
   final List<dynamic>? suggestAlternatives;
   final int? overallHealthScore;
   final String? overallHealthComments;
+  final bool? isEaten;
 
   NutritionResponseModel({
     this.message,
@@ -67,6 +68,7 @@ class NutritionResponseModel {
     this.suggestAlternatives,
     this.overallHealthScore,
     this.overallHealthComments,
+    this.isEaten,
   });
 
   factory NutritionResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -86,6 +88,36 @@ class NutritionResponseModel {
         suggestAlternatives: json['suggestAlternatives'],
         overallHealthScore: json['overallHealthScore'],
         overallHealthComments: json['overallHealthComments'],
+        isEaten: json['isEaten'] ?? false,
+      );
+
+  NutritionResponseModel copyWith({
+    String? message,
+    String? imageUrl,
+    String? foodName,
+    String? portion,
+    double? portionSize,
+    int? confidenceScore,
+    List<NutritionInfo>? ingredients,
+    List<dynamic>? primaryConcerns,
+    List<dynamic>? suggestAlternatives,
+    int? overallHealthScore,
+    String? overallHealthComments,
+    bool? isEaten,
+  }) =>
+      NutritionResponseModel(
+        message: message ?? this.message,
+        imageUrl: imageUrl ?? this.imageUrl,
+        foodName: foodName ?? this.foodName,
+        portion: portion ?? this.portion,
+        portionSize: portionSize ?? this.portionSize,
+        confidenceScore: confidenceScore ?? this.confidenceScore,
+        ingredients: ingredients ?? this.ingredients,
+        primaryConcerns: primaryConcerns ?? this.primaryConcerns,
+        suggestAlternatives: suggestAlternatives ?? this.suggestAlternatives,
+        overallHealthScore: overallHealthScore ?? this.overallHealthScore,
+        overallHealthComments: overallHealthComments ?? this.overallHealthComments,
+        isEaten: isEaten ?? this.isEaten,
       );
 
   Map<String, dynamic> toJson() => {
@@ -104,14 +136,15 @@ class NutritionResponseModel {
           'overallHealthScore': overallHealthScore,
         if (overallHealthComments != null)
           'overallHealthComments': overallHealthComments,
+        if (isEaten != null) 'isEaten': isEaten,
       };
 }
 
 class MealsStructure {
-  final NutritionResponseModel? breakfast;
-  final NutritionResponseModel? lunch;
-  final NutritionResponseModel? dinner;
-  final List<NutritionResponseModel>? snacks;
+  NutritionResponseModel? breakfast;
+  NutritionResponseModel? lunch;
+  NutritionResponseModel? dinner;
+  List<NutritionResponseModel>? snacks;
 
   MealsStructure({
     this.breakfast,
@@ -141,6 +174,32 @@ class MealsStructure {
         if (dinner != null) 'dinner': dinner!.toJson(),
         if (snacks != null) 'snacks': snacks!.map((x) => x.toJson()).toList(),
       };
+
+  void updateMeal(String mealType, NutritionResponseModel updatedMeal) {
+    switch (mealType) {
+      case 'breakfast':
+        breakfast = updatedMeal;
+        break;
+      case 'lunch':
+        lunch = updatedMeal;
+        break;
+      case 'dinner':
+        dinner = updatedMeal;
+        break;
+      case 'snacks':
+        if (snacks != null) {
+          final index = snacks!.indexWhere((s) => s.foodName == updatedMeal.foodName);
+          if (index != -1) {
+            snacks![index] = updatedMeal;
+          } else {
+            snacks!.add(updatedMeal);
+          }
+        } else {
+          snacks = [updatedMeal];
+        }
+        break;
+    }
+  }
 }
 
 class NutritionSummary {
@@ -179,9 +238,9 @@ class NutritionSummary {
 class DailyDietEntry {
   final int? dayIndex;
   final String? dayName;
-  final MealsStructure? meals;
+  MealsStructure? meals;
   final NutritionSummary? totalNutrition;
-  final NutritionResponseModel? cheatMealOfTheDay;
+  NutritionResponseModel? cheatMealOfTheDay;
 
   DailyDietEntry({
     this.dayIndex,

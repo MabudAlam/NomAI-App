@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:NomAi/app/components/buttons.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/models/Diet/diet_output.dart';
 
-class MealCard extends StatelessWidget {
+class MealCard extends StatefulWidget {
   final String title;
   final NutritionResponseModel meal;
   final IconData icon;
   final VoidCallback? onChange;
+  final VoidCallback? onAddToLog;
 
   const MealCard({
     super.key,
@@ -15,21 +17,47 @@ class MealCard extends StatelessWidget {
     required this.meal,
     required this.icon,
     this.onChange,
+    this.onAddToLog,
   });
 
+  @override
+  State<MealCard> createState() => _MealCardState();
+}
+
+class _MealCardState extends State<MealCard> {
+  bool _isAddingToLog = false;
+
+  Future<void> _handleAddToLog() async {
+    if (_isAddingToLog || widget.onAddToLog == null) return;
+
+    setState(() => _isAddingToLog = true);
+    try {
+      widget.onAddToLog!();
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (mounted) setState(() => _isAddingToLog = false);
+    }
+  }
+
   int get _totalCalories =>
-      meal.ingredients?.fold<int>(0, (sum, ing) => sum + (ing.calories ?? 0)) ??
+      widget.meal.ingredients
+          ?.fold<int>(0, (sum, ing) => sum + (ing.calories ?? 0)) ??
       0;
 
   int get _totalProtein =>
-      meal.ingredients?.fold<int>(0, (sum, ing) => sum + (ing.protein ?? 0)) ??
+      widget.meal.ingredients
+          ?.fold<int>(0, (sum, ing) => sum + (ing.protein ?? 0)) ??
       0;
 
   int get _totalCarbs =>
-      meal.ingredients?.fold<int>(0, (sum, ing) => sum + (ing.carbs ?? 0)) ?? 0;
+      widget.meal.ingredients
+          ?.fold<int>(0, (sum, ing) => sum + (ing.carbs ?? 0)) ??
+      0;
 
   int get _totalFat =>
-      meal.ingredients?.fold<int>(0, (sum, ing) => sum + (ing.fat ?? 0)) ?? 0;
+      widget.meal.ingredients
+          ?.fold<int>(0, (sum, ing) => sum + (ing.fat ?? 0)) ??
+      0;
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +73,10 @@ class MealCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: NomAIColors.black, size: 20),
+              Icon(widget.icon, color: NomAIColors.black, size: 20),
               SizedBox(width: 2.w),
               Text(
-                title,
+                widget.title,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: NomAIColors.black,
@@ -62,7 +90,7 @@ class MealCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(3.w),
                 ),
                 child: Text(
-                  '${meal.overallHealthScore ?? 0}/10',
+                  '${widget.meal.overallHealthScore ?? 0}/10',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -73,15 +101,15 @@ class MealCard extends StatelessWidget {
           ),
           SizedBox(height: 1.h),
           Text(
-            meal.foodName ?? 'Unknown',
+            widget.meal.foodName ?? 'Unknown',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: NomAIColors.black,
                 ),
           ),
-          if (meal.overallHealthComments != null) ...[
+          if (widget.meal.overallHealthComments != null) ...[
             SizedBox(height: 1.h),
             Text(
-              meal.overallHealthComments!,
+              widget.meal.overallHealthComments!,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: NomAIColors.black.withValues(alpha: 0.7),
                   ),
@@ -113,9 +141,10 @@ class MealCard extends StatelessWidget {
               ],
             ),
           ),
-          if (meal.ingredients != null && meal.ingredients!.isNotEmpty) ...[
+          if (widget.meal.ingredients != null &&
+              widget.meal.ingredients!.isNotEmpty) ...[
             SizedBox(height: 1.5.h),
-            ...meal.ingredients!.map((ing) => Container(
+            ...widget.meal.ingredients!.map((ing) => Container(
                   margin: EdgeInsets.only(bottom: 0.8.h),
                   padding: EdgeInsets.all(2.w),
                   decoration: BoxDecoration(
@@ -176,19 +205,54 @@ class MealCard extends StatelessWidget {
                   ),
                 )),
           ],
-          if (onChange != null) ...[
+          if (widget.onChange != null || widget.onAddToLog != null) ...[
             SizedBox(height: 1.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton.icon(
-                  onPressed: onChange,
-                  icon: Icon(Icons.swap_horiz, size: 16),
-                  label: const Text('Change'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: NomAIColors.black,
+                if (widget.onAddToLog != null)
+                  widget.meal.isEaten == true
+                      ? Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 3.w, vertical: 1.h),
+                          decoration: BoxDecoration(
+                            color: NomAIColors.darkSuccess.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(3.w),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.check_circle,
+                                  color: NomAIColors.darkSuccess, size: 2.w),
+                              SizedBox(width: 1.w),
+                              Text(
+                                'Eaten',
+                                style: TextStyle(
+                                  color: NomAIColors.darkSuccess,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : PrimaryButtonWithIcon(
+                          tile: 'Add',
+                          icon: Icons.add,
+                          onPressed: _handleAddToLog,
+                          isLoading: _isAddingToLog,
+                        ),
+                if (widget.onChange != null) ...[
+                  SizedBox(width: 8),
+                  TextButton.icon(
+                    onPressed: widget.onChange,
+                    icon: Icon(Icons.swap_horiz, size: 16),
+                    label: const Text('Change'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: NomAIColors.black,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ],

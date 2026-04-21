@@ -359,6 +359,11 @@ class _DietViewState extends State<DietView> {
               title: 'Breakfast',
               meal: day.meals!.breakfast!,
               icon: Icons.wb_sunny,
+              onAddToLog: () => _controller.markMealAsEaten(
+                dayIndex: _controller.selectedDayIndex.value,
+                mealType: 'breakfast',
+                meal: day.meals!.breakfast!,
+              ),
               onChange: () => Get.bottomSheet(
                     ChangeMealSheet(
                         currentMeal: day.meals!.breakfast!,
@@ -371,6 +376,11 @@ class _DietViewState extends State<DietView> {
               title: 'Lunch',
               meal: day.meals!.lunch!,
               icon: Icons.wb_cloudy,
+              onAddToLog: () => _controller.markMealAsEaten(
+                dayIndex: _controller.selectedDayIndex.value,
+                mealType: 'lunch',
+                meal: day.meals!.lunch!,
+              ),
               onChange: () => Get.bottomSheet(
                     ChangeMealSheet(
                         currentMeal: day.meals!.lunch!, mealType: 'lunch'),
@@ -382,6 +392,11 @@ class _DietViewState extends State<DietView> {
               title: 'Dinner',
               meal: day.meals!.dinner!,
               icon: Icons.nightlight,
+              onAddToLog: () => _controller.markMealAsEaten(
+                dayIndex: _controller.selectedDayIndex.value,
+                mealType: 'dinner',
+                meal: day.meals!.dinner!,
+              ),
               onChange: () => Get.bottomSheet(
                     ChangeMealSheet(
                         currentMeal: day.meals!.dinner!, mealType: 'dinner'),
@@ -389,15 +404,26 @@ class _DietViewState extends State<DietView> {
                     ignoreSafeArea: false,
                   )),
         if (day.meals?.snacks != null && day.meals!.snacks!.isNotEmpty)
-          ...day.meals!.snacks!.map((snack) => MealCard(
-              title: 'Snack',
-              meal: snack,
-              icon: Icons.cookie_outlined)),
+          ...day.meals!.snacks!.asMap().entries.map((entry) => MealCard(
+                title: 'Snack ${(entry.key + 1).toString()}',
+                meal: entry.value,
+                icon: Icons.cookie_outlined,
+                onAddToLog: () => _controller.markMealAsEaten(
+                  dayIndex: _controller.selectedDayIndex.value,
+                  mealType: 'snacks',
+                  meal: entry.value,
+                ),
+              )),
         if (day.cheatMealOfTheDay != null)
           MealCard(
               title: 'Cheat Meal',
               meal: day.cheatMealOfTheDay!,
-              icon: Icons.local_fire_department),
+              icon: Icons.local_fire_department,
+              onAddToLog: () => _controller.markMealAsEaten(
+                dayIndex: _controller.selectedDayIndex.value,
+                mealType: 'cheatMeal',
+                meal: day.cheatMealOfTheDay!,
+              )),
       ],
     );
   }
@@ -456,7 +482,8 @@ class _DietViewState extends State<DietView> {
                   'Fiber (g)', fiberController, TextInputType.number),
               _buildInputField('Fat (g)', fatController, TextInputType.number),
               _buildMultilineInputField(
-                  'Additional Instructions', promptController, maxLines: 4, maxLength: 600),
+                  'Additional Instructions', promptController,
+                  maxLines: 4, maxLength: 600),
               SizedBox(height: 24),
               Obx(() => SizedBox(
                     width: double.infinity,

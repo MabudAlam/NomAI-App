@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:NomAi/app/constants/colors.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 class EmptyIllustrations extends StatelessWidget {
@@ -40,6 +41,18 @@ class EmptyIllustrations extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              title,
+              style: context.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: NomAIColors.blackText.withOpacity(0.8),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(height: imageHeight ?? 4.h),
           SizedBox(
             height: imageHeight,
             child: SvgPicture.asset(
@@ -49,26 +62,17 @@ class EmptyIllustrations extends StatelessWidget {
               fit: BoxFit.contain,
             ),
           ),
-          SizedBox(height: 2.h),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              title,
-              // style: (headerTextStyle ?? context.subtitle1)
-              //     .copyWith(color: FeatsColors.dark),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          SizedBox(height: 1.h),
+          SizedBox(height: 1.5.h),
           SizedBox(
             width: width ?? 80.w,
             child: Padding(
               padding: EdgeInsets.fromLTRB(8.sp, 0, 8.sp, 0),
               child: Text(
                 message,
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: NomAIColors.blackText.withOpacity(0.6),
+                ),
                 textAlign: TextAlign.center,
-                // style: (contentTextStyle ?? context.subtitle2)
-                //     .copyWith(color: FeatsColors.dark),
               ),
             ),
           )

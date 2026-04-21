@@ -1,10 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:NomAi/app/constants/colors.dart';
+import 'package:NomAi/app/constants/enums.dart';
+import 'package:NomAi/app/models/AI/nutrition_input.dart';
+import 'package:NomAi/app/models/AI/nutrition_output.dart';
+import 'package:NomAi/app/models/AI/nutrition_record.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/models/Diet/diet_input.dart';
 import 'package:NomAi/app/models/Diet/diet_output.dart';
+import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
+import 'package:NomAi/app/modules/Scanner/views/scan_view.dart';
 import 'package:NomAi/app/repo/diet_repo.dart';
+import 'package:NomAi/app/repo/nutrition_record_repo.dart';
+import 'package:NomAi/app/utility/registry_service.dart';
 
 class DietController extends GetxController {
   final DietRepo _dietRepo = DietRepo();
@@ -242,5 +251,181 @@ class DietController extends GetxController {
     } finally {
       isCopyingDiet.value = false;
     }
+  }
+
+  Future<bool> markMealAsEaten({
+    required int dayIndex,
+    required String mealType,
+    required NutritionResponseModel meal,
+  }) async {
+    if (userId.isEmpty) return false;
+
+    try {
+      debugPrint('DietController: Marking $mealType on day $dayIndex as eaten');
+
+      final updatedMeal = meal.copyWith(isEaten: true);
+
+      final success = await _dietRepo.updateMeal(
+        userId: userId,
+        dayIndex: dayIndex,
+        mealType: mealType,
+        meal: updatedMeal,
+      );
+
+      if (success) {
+        _updateMealLocally(dayIndex, mealType, updatedMeal);
+        await _addMealToLog(meal);
+        debugPrint('DietController: Meal marked as eaten and added to log');
+        Get.snackbar(
+          'Added to Log',
+          'Meal has been marked as eaten and added to your daily log.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: NomAIColors.black,
+          colorText: NomAIColors.whiteText,
+          duration: const Duration(seconds: 2),
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to mark meal as eaten.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: NomAIColors.darkError,
+          colorText: NomAIColors.whiteText,
+        );
+      }
+
+      return success;
+    } catch (e) {
+      debugPrint('DietController: ERROR marking meal as eaten: $e');
+      Get.snackbar(
+        'Error',
+        'Something went wrong. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: NomAIColors.darkError,
+        colorText: NomAIColors.whiteText,
+      );
+      return false;
+    }
+  }
+
+  Future<void> _addMealToLog(NutritionResponseModel meal) async {
+    if (userId.isEmpty) return;
+
+    try {
+      final ingredients = meal.ingredients
+          ?.map((ing) => Ingredient(
+                name: ing.name,
+                calories: ing.calories,
+                protein: ing.protein,
+                carbs: ing.carbs,
+                fiber: ing.fiber,
+                fat: ing.fat,
+                sugar: null,
+                sodium: null,
+                healthScore: ing.healthScore,
+                healthComments: ing.healthComments,
+              ))
+          .toList();
+
+      final nutritionOutput = NutritionOutput(
+        status: 200,
+        response: NutritionResponse(
+          foodName: meal.foodName,
+          portion: meal.portion,
+          portionSize: meal.portionSize,
+          overallHealthScore: meal.overallHealthScore,
+          overallHealthComments: meal.overallHealthComments,
+          ingredients: ingredients,
+        ),
+      );
+
+      final nutritionRecord = NutritionRecord(
+        nutritionOutput: nutritionOutput,
+        recordTime: DateTime.now(),
+        nutritionInputQuery: NutritionInputQuery(
+          imageUrl: meal.imageUrl ?? '',
+          scanMode: ScanMode.food,
+        ),
+        processingStatus: ProcessingStatus.COMPLETED,
+      );
+
+      final scannerController = Get.find<ScannerController>();
+      scannerController.addRecord(nutritionRecord);
+
+      final nutritionRecordRepo = serviceLocator<NutritionRecordRepo>();
+      final existingRecords = await nutritionRecordRepo.getNutritionData(
+        userId,
+        DateTime.now(),
+      );
+
+      int totalConsumedCalories = existingRecords.dailyConsumedCalories;
+      int totalConsumedProtein = existingRecords.dailyConsumedProtein;
+      int totalConsumedFat = existingRecords.dailyConsumedFat;
+      int totalConsumedCarb = existingRecords.dailyConsumedCarb;
+
+      if (ingredients != null) {
+        for (final ing in ingredients) {
+          totalConsumedCalories += ing.calories ?? 0;
+          totalConsumedProtein += ing.protein ?? 0;
+          totalConsumedFat += ing.fat ?? 0;
+          totalConsumedCarb += ing.carbs ?? 0;
+        }
+      }
+
+      final dailyRecords =
+          List<NutritionRecord>.from(existingRecords.dailyRecords)
+            ..add(nutritionRecord);
+
+      final dailyNutritionRecords = DailyNutritionRecords(
+        dailyRecords: dailyRecords,
+        recordDate: DateTime.now(),
+        recordId: existingRecords.recordId,
+        dailyConsumedCalories: totalConsumedCalories,
+        dailyBurnedCalories: existingRecords.dailyBurnedCalories,
+        dailyConsumedProtein: totalConsumedProtein,
+        dailyConsumedFat: totalConsumedFat,
+        dailyConsumedCarb: totalConsumedCarb,
+      );
+
+      await nutritionRecordRepo.saveNutritionData(
+        dailyNutritionRecords,
+        userId,
+      );
+
+      scannerController.updateNutritionValues(
+        conCalories: totalConsumedCalories,
+        conProtein: totalConsumedProtein,
+        conFat: totalConsumedFat,
+        conCarb: totalConsumedCarb,
+      );
+
+      debugPrint('DietController: Meal added to daily log');
+    } catch (e) {
+      debugPrint('DietController: ERROR adding to log: $e');
+    }
+  }
+
+  void _updateMealLocally(int dayIndex, String mealType, NutritionResponseModel updatedMeal) {
+    if (weeklyDiet.value == null) return;
+
+    final dailyDiets = weeklyDiet.value!.dailyDiets;
+    if (dailyDiets == null || dayIndex >= dailyDiets.length) return;
+
+    final day = dailyDiets[dayIndex];
+    if (day.meals == null) return;
+
+    switch (mealType) {
+      case 'breakfast':
+      case 'lunch':
+      case 'dinner':
+      case 'snacks':
+        day.meals!.updateMeal(mealType, updatedMeal);
+        break;
+      case 'cheatMeal':
+        day.cheatMealOfTheDay = updatedMeal;
+        break;
+    }
+
+    weeklyDiet.refresh();
   }
 }
