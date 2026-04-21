@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import 'package:NomAi/app/constants/colors.dart';
+import 'package:NomAi/app/components/shimmer.dart';
 import 'package:NomAi/app/modules/Analytics/model/analytics.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_state.dart';
@@ -43,9 +44,9 @@ class _AnalyticsViewState extends State<AnalyticsView> {
     int totalProtein = 0;
     int totalFat = 0;
     int totalCarbs = 0;
-    int totalMeals = 0;
     int maxDayCalories = 0;
     int totalWater = 0;
+    int totalMeals = 0;
 
     for (final d in days) {
       totalCalories += d.totalCalories;
@@ -63,42 +64,34 @@ class _AnalyticsViewState extends State<AnalyticsView> {
     final avgCarbs = (totalCarbs / divisor).round();
     final avgFat = (totalFat / divisor).round();
     final avgWater = (totalWater / divisor).round();
-    final monthLabel = DateFormat('MMMM yyyy').format(_selectedMonth);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 2.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.w),
-          child: Row(
-            children: [
-              _MonthButton(icon: Icons.chevron_left, onTap: _prevMonth),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    monthLabel,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: NomAIColors.whiteText,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              _MonthButton(icon: Icons.chevron_right, onTap: _nextMonth),
-            ],
+          child: _buildMetricCards(
+            totalCalories: totalCalories,
+            totalProtein: totalProtein,
+            totalCarbs: totalCarbs,
+            totalFat: totalFat,
+            totalWater: totalWater,
           ),
         ),
-        SizedBox(height: 2.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 3.w),
-          child: _metricPicker(),
-        ),
-        SizedBox(height: 1.h),
+        SizedBox(height: 1.5.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.w),
-          child: _buildMonthlyChart(days),
+          child: _buildMonthlyChart(
+            days,
+            monthTotal: _valueForSelectedMetric(
+              totalCalories: totalCalories,
+              totalProtein: totalProtein,
+              totalCarbs: totalCarbs,
+              totalFat: totalFat,
+              totalWater: totalWater,
+            ),
+            totalMeals: totalMeals,
+          ),
         ),
         SizedBox(height: 1.5.h),
         Padding(
@@ -109,8 +102,8 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             decoration: BoxDecoration(
               color: NomAIColors.lightSurface,
               borderRadius: BorderRadius.circular(3.w),
-              border:
-                  Border.all(color: NomAIColors.blackText.withOpacity(0.08)),
+              border: Border.all(
+                  color: NomAIColors.blackText.withValues(alpha: 0.08)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -157,12 +150,37 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             .entries
             .map((e) => _dailyTile(e.value, e.key, maxDayCalories))
             .toList(),
-        SizedBox(height: 2.h),
+        SizedBox(height: MediaQuery.of(context).padding.bottom + 14.h),
       ],
     );
   }
 
-  Widget _buildMonthlyChart(List<DailyAnalytics> days) {
+  Widget _buildMonthHeader(String monthLabel) {
+    return Row(
+      children: [
+        _MonthButton(icon: Icons.chevron_left, onTap: _prevMonth),
+        Expanded(
+          child: Center(
+            child: Text(
+              monthLabel,
+              style: TextStyle(
+                fontSize: 14,
+                color: NomAIColors.whiteText,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        _MonthButton(icon: Icons.chevron_right, onTap: _nextMonth),
+      ],
+    );
+  }
+
+  Widget _buildMonthlyChart(
+    List<DailyAnalytics> days, {
+    required int monthTotal,
+    required int totalMeals,
+  }) {
     if (days.isEmpty) return const SizedBox.shrink();
 
     final sorted = [...days]..sort((a, b) => a.date.compareTo(b.date));
@@ -189,118 +207,173 @@ class _AnalyticsViewState extends State<AnalyticsView> {
         decoration: BoxDecoration(
           color: NomAIColors.lightSurface,
           borderRadius: BorderRadius.circular(3.w),
-          border: Border.all(color: NomAIColors.blackText.withOpacity(0.08)),
+          border:
+              Border.all(color: NomAIColors.blackText.withValues(alpha: 0.08)),
         ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(3.w, 1.5.h, 4.w, 1.5.h),
-          child: LineChart(
-            LineChartData(
-              minX: minDay.toDouble(),
-              maxX: maxDay.toDouble(),
-              minY: 0,
-              maxY: chartMaxY,
-              lineTouchData: LineTouchData(
-                enabled: true,
-                handleBuiltInTouches: true,
-                touchTooltipData: LineTouchTooltipData(
-                  tooltipPadding:
-                      const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                  getTooltipItems: (touchedSpots) {
-                    return touchedSpots.map((ts) {
-                      final day = ts.x.toInt();
-                      final value = ts.y.toInt();
-                      final label = _metricLabel(_selectedMetric);
-                      return LineTooltipItem(
-                        'Day $day\n$value $label',
-                        const TextStyle(
-                            color: Colors.black,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600),
-                      );
-                    }).toList();
-                  },
-                ),
-              ),
-              gridData: FlGridData(
-                show: true,
-                drawVerticalLine: false,
-                getDrawingHorizontalLine: (value) => FlLine(
-                  color: Colors.black.withOpacity(0.08),
-                  strokeWidth: 1,
-                ),
-                horizontalInterval: yInterval,
-              ),
-              titlesData: FlTitlesData(
-                rightTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 14.w,
-                    interval: yInterval,
-                    getTitlesWidget: (value, meta) {
-                      if (value < 0) return const SizedBox.shrink();
-                      return Text(
-                        value.toInt().toString(),
-                        style: const TextStyle(
-                            fontSize: 10, color: NomAIColors.blackText),
-                      );
-                    },
-                  ),
-                ),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    interval: _niceXInterval(minDay, maxDay),
-                    getTitlesWidget: (value, meta) {
-                      final v = value.toInt();
-                      return Padding(
-                        padding: EdgeInsets.only(top: 0.6.h),
-                        child: Text(
-                          v.toString(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${_metricTitle(_selectedMetric)} trend',
                           style: const TextStyle(
-                              fontSize: 10, color: NomAIColors.blackText),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: NomAIColors.blackText,
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(
-                show: true,
-                border: Border(
-                  left: BorderSide(
-                      color: Colors.black.withOpacity(0.2), width: 1),
-                  bottom: BorderSide(
-                      color: Colors.black.withOpacity(0.2), width: 1),
-                  right: const BorderSide(color: Colors.transparent),
-                  top: const BorderSide(color: Colors.transparent),
-                ),
-              ),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: spots,
-                  isCurved: true,
-                  color: NomAIColors.blackText,
-                  barWidth: 2,
-                  isStrokeCapRound: true,
-                  dotData: FlDotData(
-                    show: true,
-                    getDotPainter: (spot, p, bar, i) => FlDotCirclePainter(
-                      radius: 3,
-                      color: NomAIColors.blackText,
-                      strokeWidth: 0,
+                        SizedBox(height: 0.4.h),
+                        Text(
+                          '$monthTotal ${_metricLabel(_selectedMetric)} · $totalMeals meals this month',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: NomAIColors.grey,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  belowBarData: BarAreaData(
-                    show: true,
-                    color: NomAIColors.blackText.withOpacity(0.06),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 2.5.w, vertical: 0.8.h),
+                    decoration: BoxDecoration(
+                      color: NomAIColors.blackText,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      _metricTitle(_selectedMetric),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 1.2.h),
+              Expanded(
+                child: LineChart(
+                  LineChartData(
+                    minX: minDay.toDouble(),
+                    maxX: maxDay.toDouble(),
+                    minY: 0,
+                    maxY: chartMaxY,
+                    lineTouchData: LineTouchData(
+                      enabled: true,
+                      handleBuiltInTouches: true,
+                      touchTooltipData: LineTouchTooltipData(
+                        tooltipPadding: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 8),
+                        getTooltipItems: (touchedSpots) {
+                          return touchedSpots.map((ts) {
+                            final day = ts.x.toInt();
+                            final value = ts.y.toInt();
+                            final label = _metricLabel(_selectedMetric);
+                            return LineTooltipItem(
+                              'Day $day\n$value $label',
+                              const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600),
+                            );
+                          }).toList();
+                        },
+                      ),
+                    ),
+                    gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      getDrawingHorizontalLine: (value) => FlLine(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        strokeWidth: 1,
+                      ),
+                      horizontalInterval: yInterval,
+                    ),
+                    titlesData: FlTitlesData(
+                      rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 14.w,
+                          interval: yInterval,
+                          getTitlesWidget: (value, meta) {
+                            if (value < 0) return const SizedBox.shrink();
+                            return Text(
+                              value.toInt().toString(),
+                              style: const TextStyle(
+                                  fontSize: 10, color: NomAIColors.blackText),
+                            );
+                          },
+                        ),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          interval: _niceXInterval(minDay, maxDay),
+                          getTitlesWidget: (value, meta) {
+                            final v = value.toInt();
+                            return Padding(
+                              padding: EdgeInsets.only(top: 0.6.h),
+                              child: Text(
+                                v.toString(),
+                                style: const TextStyle(
+                                    fontSize: 10, color: NomAIColors.blackText),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    borderData: FlBorderData(
+                      show: true,
+                      border: Border(
+                        left: BorderSide(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            width: 1),
+                        bottom: BorderSide(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            width: 1),
+                        right: const BorderSide(color: Colors.transparent),
+                        top: const BorderSide(color: Colors.transparent),
+                      ),
+                    ),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: spots,
+                        isCurved: true,
+                        color: NomAIColors.blackText,
+                        barWidth: 2,
+                        isStrokeCapRound: true,
+                        dotData: FlDotData(
+                          show: true,
+                          getDotPainter: (spot, p, bar, i) =>
+                              FlDotCirclePainter(
+                            radius: 3,
+                            color: NomAIColors.blackText,
+                            strokeWidth: 0,
+                          ),
+                        ),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: NomAIColors.blackText.withValues(alpha: 0.06),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -321,30 +394,6 @@ class _AnalyticsViewState extends State<AnalyticsView> {
     if (maxY <= 2000) return 250;
     if (maxY <= 3000) return 500;
     return 1000;
-  }
-
-  Widget _metric(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: NomAIColors.blackText,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: NomAIColors.grey,
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _avgMetric(String label, String value) {
@@ -374,6 +423,160 @@ class _AnalyticsViewState extends State<AnalyticsView> {
     );
   }
 
+  Widget _buildMetricCards({
+    required int totalCalories,
+    required int totalProtein,
+    required int totalCarbs,
+    required int totalFat,
+    required int totalWater,
+  }) {
+    final items = [
+      _MetricCardData(
+        metric: _Metric.calories,
+        label: 'Calories',
+        value: totalCalories,
+        unit: 'cal',
+        color: const Color(0xFF111111),
+      ),
+      _MetricCardData(
+        metric: _Metric.protein,
+        label: 'Protein',
+        value: totalProtein,
+        unit: 'g',
+        color: const Color(0xFFE91E63),
+      ),
+      _MetricCardData(
+        metric: _Metric.carbs,
+        label: 'Carbs',
+        value: totalCarbs,
+        unit: 'g',
+        color: const Color(0xFF6BAA3A),
+      ),
+      _MetricCardData(
+        metric: _Metric.fat,
+        label: 'Fat',
+        value: totalFat,
+        unit: 'g',
+        color: const Color(0xFF2F80ED),
+      ),
+      _MetricCardData(
+        metric: _Metric.water,
+        label: 'Water',
+        value: totalWater,
+        unit: 'mL',
+        color: NomAIColors.waterColor,
+      ),
+    ];
+
+    return Wrap(
+      spacing: 2.2.w,
+      runSpacing: 1.2.h,
+      children: items
+          .map(
+            (item) => GestureDetector(
+              onTap: () => setState(() => _selectedMetric = item.metric),
+              child: Container(
+                width: 29.w,
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.1.h),
+                decoration: BoxDecoration(
+                  color: _selectedMetric == item.metric
+                      ? NomAIColors.blackText
+                      : NomAIColors.lightSurface,
+                  borderRadius: BorderRadius.circular(3.w),
+                  border: Border.all(
+                    color: _selectedMetric == item.metric
+                        ? NomAIColors.blackText
+                        : NomAIColors.blackText.withValues(alpha: 0.08),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: item.color,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        SizedBox(width: 2.w),
+                        Expanded(
+                          child: Text(
+                            item.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: _selectedMetric == item.metric
+                                  ? Colors.white
+                                  : NomAIColors.blackText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 0.8.h),
+                    Text(
+                      '${item.value} ${item.unit}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: _selectedMetric == item.metric
+                            ? Colors.white
+                            : NomAIColors.blackText,
+                      ),
+                    ),
+                    SizedBox(height: 0.5.h),
+                    Text(
+                      'Tap for trend',
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: _selectedMetric == item.metric
+                            ? Colors.white.withValues(alpha: 0.8)
+                            : NomAIColors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  int _valueForSelectedMetric({
+    required int totalCalories,
+    required int totalProtein,
+    required int totalCarbs,
+    required int totalFat,
+    required int totalWater,
+  }) {
+    switch (_selectedMetric) {
+      case _Metric.calories:
+        return totalCalories;
+      case _Metric.protein:
+        return totalProtein;
+      case _Metric.carbs:
+        return totalCarbs;
+      case _Metric.fat:
+        return totalFat;
+      case _Metric.water:
+        return totalWater;
+    }
+  }
+
   Widget _dailyTile(DailyAnalytics d, int index, int maxDayCalories) {
     final dayLabel = DateFormat('dd MMM').format(d.date);
     final percent =
@@ -390,7 +593,8 @@ class _AnalyticsViewState extends State<AnalyticsView> {
         decoration: BoxDecoration(
           color: NomAIColors.lightSurface,
           borderRadius: BorderRadius.circular(3.w),
-          border: Border.all(color: NomAIColors.blackText.withOpacity(0.08)),
+          border:
+              Border.all(color: NomAIColors.blackText.withValues(alpha: 0.08)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,7 +621,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
                       Container(
                         height: 0.6.h,
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.06),
+                          color: Colors.black.withValues(alpha: 0.06),
                           borderRadius: BorderRadius.circular(1.w),
                         ),
                         child: FractionallySizedBox(
@@ -452,7 +656,7 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             ),
             if (expanded) ...[
               SizedBox(height: 1.h),
-              Divider(color: Colors.black.withOpacity(0.08), height: 1),
+              Divider(color: Colors.black.withValues(alpha: 0.08), height: 1),
               SizedBox(height: 1.h),
               _expandedMetrics(d),
               if ((d.overAllSummary ?? '').isNotEmpty) ...[
@@ -508,45 +712,6 @@ class _AnalyticsViewState extends State<AnalyticsView> {
           ),
         ],
       ),
-    );
-  }
-
-  // Metric/Month helpers
-  Widget _metricPicker() {
-    final items = const [
-      _Metric.calories,
-      _Metric.protein,
-      _Metric.carbs,
-      _Metric.fat,
-      _Metric.water,
-    ];
-    return Wrap(
-      spacing: 2.w,
-      runSpacing: 1.h,
-      children: items.map((m) {
-        final selected = m == _selectedMetric;
-        return GestureDetector(
-          onTap: () => setState(() => _selectedMetric = m),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
-            decoration: BoxDecoration(
-              color: selected ? NomAIColors.blackText : Colors.transparent,
-              borderRadius: BorderRadius.circular(5.w),
-              border: Border.all(
-                color: NomAIColors.blackText.withOpacity(0.25),
-              ),
-            ),
-            child: Text(
-              _metricTitle(m),
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : NomAIColors.blackText,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 
@@ -627,7 +792,8 @@ class _AnalyticsViewState extends State<AnalyticsView> {
         height: 8.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4.w),
-          border: Border.all(color: NomAIColors.blackText.withOpacity(0.2)),
+          border:
+              Border.all(color: NomAIColors.blackText.withValues(alpha: 0.2)),
           color: NomAIColors.lightSurface,
         ),
         child: Icon(icon, size: 4.w, color: NomAIColors.blackText),
@@ -660,15 +826,15 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             end: Alignment.bottomCenter,
             colors: [
               NomAIColors.blueGrey,
-              NomAIColors.blueGrey.withOpacity(0.9),
-              NomAIColors.blueGrey.withOpacity(0.8),
-              NomAIColors.blueGrey.withOpacity(0.7),
-              NomAIColors.blueGrey.withOpacity(0.6),
-              NomAIColors.blueGrey.withOpacity(0.5),
-              NomAIColors.blueGrey.withOpacity(0.4),
-              NomAIColors.blueGrey.withOpacity(0.3),
-              NomAIColors.blueGrey.withOpacity(0.2),
-              NomAIColors.blueGrey.withOpacity(0.1),
+              NomAIColors.blueGrey.withValues(alpha: 0.9),
+              NomAIColors.blueGrey.withValues(alpha: 0.8),
+              NomAIColors.blueGrey.withValues(alpha: 0.7),
+              NomAIColors.blueGrey.withValues(alpha: 0.6),
+              NomAIColors.blueGrey.withValues(alpha: 0.5),
+              NomAIColors.blueGrey.withValues(alpha: 0.4),
+              NomAIColors.blueGrey.withValues(alpha: 0.3),
+              NomAIColors.blueGrey.withValues(alpha: 0.2),
+              NomAIColors.blueGrey.withValues(alpha: 0.1),
               NomAIColors.whiteText,
             ],
             stops: const [
@@ -689,32 +855,49 @@ class _AnalyticsViewState extends State<AnalyticsView> {
         child: BlocBuilder<UserBloc, UserState>(
           builder: (context, state) {
             if (state is UserLoading || state is UserInitial) {
-              return const Center(child: CircularProgressIndicator());
+              return const _AnalyticsShimmerState();
             }
             if (state is UserLoaded) {
               _userId ??= state.userModel.userId;
               _future ??= serviceLocator<NutritionRecordRepo>()
                   .getMonthlyAnalytics(state.userModel.userId, _selectedMonth);
-              return FutureBuilder<MonthlyAnalytics?>(
-                future: _future,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        'Failed to load analytics',
-                        style: TextStyle(color: NomAIColors.red),
-                      ),
-                    );
-                  }
-                  final data = snapshot.data;
-                  if (data == null || data.dailyAnalytics.isEmpty) {
-                    return _buildEmptyState();
-                  }
-                  return SingleChildScrollView(child: _buildSummary(data));
-                },
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 2.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: _buildMonthHeader(
+                      DateFormat('MMMM yyyy').format(_selectedMonth),
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Expanded(
+                    child: FutureBuilder<MonthlyAnalytics?>(
+                      future: _future,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const _AnalyticsLoadingContent();
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              'Failed to load analytics',
+                              style: TextStyle(color: NomAIColors.red),
+                            ),
+                          );
+                        }
+                        final data = snapshot.data;
+                        if (data == null || data.dailyAnalytics.isEmpty) {
+                          return _buildEmptyState();
+                        }
+                        return SingleChildScrollView(
+                            child: _buildSummary(data));
+                      },
+                    ),
+                  ),
+                ],
               );
             }
             if (state is UserError) {
@@ -738,26 +921,6 @@ class _AnalyticsViewState extends State<AnalyticsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.w),
-            child: Row(
-              children: [
-                _MonthButton(icon: Icons.chevron_left, onTap: _prevMonth),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      monthLabel,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: NomAIColors.grey,
-                      ),
-                    ),
-                  ),
-                ),
-                _MonthButton(icon: Icons.chevron_right, onTap: _nextMonth),
-              ],
-            ),
-          ),
           EmptyIllustrations(
             removeHeightValue: true,
             title: "No records yet",
@@ -766,11 +929,118 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             width: 50.w,
             height: 40.h,
           ),
-          SizedBox(height: 100.h),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 14.h),
         ],
       ),
     );
   }
+}
+
+class _AnalyticsLoadingContent extends StatelessWidget {
+  const _AnalyticsLoadingContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 1.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
+            child: ShimmerCard(height: 28.h, padding: EdgeInsets.all(4.w)),
+          ),
+          SizedBox(height: 1.5.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
+            child: ShimmerCard(height: 12.h, padding: EdgeInsets.all(4.w)),
+          ),
+          SizedBox(height: 2.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
+            child: ShimmerText(width: 36.w, height: 16),
+          ),
+          SizedBox(height: 1.h),
+          ...List.generate(
+            4,
+            (index) => Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 0.8.h),
+              child: ShimmerCard(height: 10.h),
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 14.h),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnalyticsShimmerState extends StatelessWidget {
+  const _AnalyticsShimmerState();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 2.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ShimmerCircle(size: 7.w),
+                SizedBox(width: 2.w),
+                Expanded(
+                  child: Center(
+                    child: ShimmerText(width: 28.w, height: 14),
+                  ),
+                ),
+                SizedBox(width: 2.w),
+                ShimmerCircle(size: 7.w),
+              ],
+            ),
+          ),
+          SizedBox(height: 2.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 3.w),
+            child: Wrap(
+              spacing: 2.w,
+              runSpacing: 1.h,
+              children: List.generate(
+                5,
+                (index) => Padding(
+                  padding: EdgeInsets.zero,
+                  child: ShimmerChip(
+                    width: index == 0 ? 24.w : 18.w,
+                    height: 4.2.h,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const _AnalyticsLoadingContent(),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetricCardData {
+  final _Metric metric;
+  final String label;
+  final int value;
+  final String unit;
+  final Color color;
+
+  const _MetricCardData({
+    required this.metric,
+    required this.label,
+    required this.value,
+    required this.unit,
+    required this.color,
+  });
 }
 
 enum _Metric { calories, protein, carbs, fat, water }

@@ -401,7 +401,7 @@ class ShimmerChatBubble extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: isUser
-                      ? Colors.white.withOpacity(0.2)
+                      ? Colors.white.withValues(alpha: 0.2)
                       : NomAIColors.greyLight,
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -412,7 +412,7 @@ class ShimmerChatBubble extends StatelessWidget {
                 width: 150,
                 decoration: BoxDecoration(
                   color: isUser
-                      ? Colors.white.withOpacity(0.2)
+                      ? Colors.white.withValues(alpha: 0.2)
                       : NomAIColors.greyLight,
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -423,7 +423,7 @@ class ShimmerChatBubble extends StatelessWidget {
                 width: 100,
                 decoration: BoxDecoration(
                   color: isUser
-                      ? Colors.white.withOpacity(0.2)
+                      ? Colors.white.withValues(alpha: 0.2)
                       : NomAIColors.greyLight,
                   borderRadius: BorderRadius.circular(4),
                 ),

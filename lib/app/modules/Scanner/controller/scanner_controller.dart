@@ -28,6 +28,8 @@ class ScannerController extends GetxController {
   RxInt consumedProtein = 0.obs;
   RxInt maximumCarb = 0.obs;
   RxInt consumedCarb = 0.obs;
+  RxInt maximumWater = 0.obs;
+  RxInt consumedWater = 0.obs;
   RxList<NutritionRecord> dailyRecords = <NutritionRecord>[].obs;
   DateTime selectedDate = DateTime.now();
   bool isLoading = false;
@@ -369,6 +371,7 @@ class ScannerController extends GetxController {
     int? conProtein,
     int? maxCarb,
     int? conCarb,
+    int? maxWater,
   }) {
     if (maxCalories != null) maximumCalories.value = maxCalories;
     if (conCalories != null) consumedCalories.value = conCalories;
@@ -379,8 +382,33 @@ class ScannerController extends GetxController {
     if (conProtein != null) consumedProtein.value = conProtein;
     if (maxCarb != null) maximumCarb.value = maxCarb;
     if (conCarb != null) consumedCarb.value = conCarb;
+    if (maxWater != null) maximumWater.value = maxWater;
 
     update();
+  }
+
+  Future<void> loadWaterIntake(String userId) async {
+    if (userId.isEmpty) return;
+    try {
+      final repo = serviceLocator<NutritionRecordRepo>();
+      consumedWater.value = await repo.getWaterIntake(userId, selectedDate);
+      update();
+    } catch (e) {
+      debugPrint('loadWaterIntake error: $e');
+    }
+  }
+
+  Future<void> addWater(String userId, int ml) async {
+    if (userId.isEmpty) return;
+
+    try {
+      final repo = serviceLocator<NutritionRecordRepo>();
+      await repo.addWater(userId, selectedDate, ml);
+      consumedWater.value = await repo.getWaterIntake(userId, selectedDate);
+      update();
+    } catch (e) {
+      debugPrint('addWater error: $e');
+    }
   }
 
   Future<void> retryNutritionAnalysis(

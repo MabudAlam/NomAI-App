@@ -21,10 +21,9 @@ class NutritionRecordRepo {
   Future<void> _updateMonthlyAnalyticsForDate(
       String userId, DateTime date) async {
     try {
-      // Get the daily record for the date
       final daily = await getNutritionData(userId, date);
+      final existingWater = await getWaterIntake(userId, date);
 
-      // Build DailyAnalytics from the daily record
       final dailyAnalytics = DailyAnalytics(
         date: DateTime(date.year, date.month, date.day),
         totalCalories: daily.dailyConsumedCalories,
@@ -33,10 +32,9 @@ class NutritionRecordRepo {
         totalCarbs: daily.dailyConsumedCarb,
         mealCount: daily.dailyRecords.length,
         totalCaloriesBurned: daily.dailyBurnedCalories,
-        waterIntake: 0,
+        waterIntake: existingWater,
       );
 
-      // Fetch existing monthly analytics doc
       final monthId = getMonthId(date);
       final analyticsDocRef =
           usersCollection.doc(userId).collection('analytics').doc(monthId);
@@ -57,7 +55,6 @@ class NutritionRecordRepo {
       int existingIndex = dailyList.indexWhere((e) {
         final s = e['date'] as String?;
         if (s == null) return false;
-        // Compare by YYYY-MM-DD portion
         return s.substring(0, 10) == targetDayIso.substring(0, 10);
       });
 
@@ -66,7 +63,6 @@ class NutritionRecordRepo {
         dailyList[existingIndex] = newEntry;
       } else {
         dailyList.add(newEntry);
-        // sort by date ascending for consistency
         dailyList.sort((a, b) {
           final da = DateTime.parse(a['date'] as String);
           final db = DateTime.parse(b['date'] as String);
@@ -79,6 +75,86 @@ class NutritionRecordRepo {
         'lastModified': DateTime.now().toIso8601String(),
       });
     } catch (e) {}
+  }
+
+  Future<int> getWaterIntake(String userId, DateTime date) async {
+    try {
+      final monthId = getMonthId(date);
+      final analyticsDocRef =
+          usersCollection.doc(userId).collection('analytics').doc(monthId);
+      final snap = await analyticsDocRef.get();
+
+      if (!snap.exists || snap.data() == null) return 0;
+
+      final data = snap.data()!;
+      final list = (data['dailyAnalytics'] as List?) ?? [];
+      final targetDayIso = DateTime(date.year, date.month, date.day).toIso8601String().substring(0, 10);
+
+      for (final entry in list) {
+        final e = Map<String, dynamic>.from(entry as Map);
+        final s = e['date'] as String?;
+        if (s != null && s.substring(0, 10) == targetDayIso) {
+          return (e['waterIntake'] as num?)?.toInt() ?? 0;
+        }
+      }
+      return 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  Future<void> addWater(String userId, DateTime date, int ml) async {
+    try {
+      final monthId = getMonthId(date);
+      final analyticsDocRef =
+          usersCollection.doc(userId).collection('analytics').doc(monthId);
+
+      final snap = await analyticsDocRef.get();
+      List<Map<String, dynamic>> dailyList = [];
+
+      if (snap.exists && snap.data() != null) {
+        final data = snap.data()!;
+        final list = (data['dailyAnalytics'] as List?) ?? [];
+        dailyList =
+            list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      }
+
+      final targetDay = DateTime(date.year, date.month, date.day);
+      final targetDayIso = targetDay.toIso8601String();
+      int existingIndex = dailyList.indexWhere((e) {
+        final s = e['date'] as String?;
+        if (s == null) return false;
+        return s.substring(0, 10) == targetDayIso.substring(0, 10);
+      });
+
+      int currentWater = 0;
+      if (existingIndex >= 0) {
+        currentWater = (dailyList[existingIndex]['waterIntake'] as num?)?.toInt() ?? 0;
+        dailyList.removeAt(existingIndex);
+      }
+
+      final newWater = currentWater + ml;
+      final newEntry = Map<String, dynamic>.from(
+          DailyAnalytics(date: targetDay, waterIntake: newWater).toJson());
+
+      if (existingIndex >= 0) {
+        dailyList.insert(existingIndex, newEntry);
+      } else {
+        dailyList.add(newEntry);
+        dailyList.sort((a, b) {
+          final da = DateTime.parse(a['date'] as String);
+          final db = DateTime.parse(b['date'] as String);
+          return da.compareTo(db);
+        });
+      }
+
+      await analyticsDocRef.set({
+        'dailyAnalytics': dailyList,
+        'lastModified': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<QueryStatus> saveNutritionData(

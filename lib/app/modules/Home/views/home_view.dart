@@ -16,10 +16,8 @@ import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_event.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_state.dart';
 import 'package:NomAi/app/modules/Home/component/nutrition_card.dart';
-import 'package:NomAi/app/modules/Home/views/nutrition_view.dart';
 import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:NomAi/app/modules/Settings/views/settings.dart';
-import 'package:NomAi/app/repo/firebase_user_repo.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -35,7 +33,6 @@ class _HomePageState extends State<HomePage> {
   DateTime _selectedDate = DateTime.now();
 
   late AuthenticationBloc authenticationBloc;
-  final FirebaseUserRepo _userRepository = FirebaseUserRepo();
 
   UserModel? userModel;
   bool _isLoading = true;
@@ -91,6 +88,7 @@ class _HomePageState extends State<HomePage> {
         // Sync controller's selected date with current selection
         _scannerController.selectedDate = _selectedDate;
         _updateNutritionValues(userState.userModel);
+        _scannerController.loadWaterIntake(_userId);
         _fetchRecords();
       } else {
         userBloc.add(LoadUserModel(_userId));
@@ -104,6 +102,7 @@ class _HomePageState extends State<HomePage> {
             // Sync controller's selected date with current selection
             _scannerController.selectedDate = _selectedDate;
             _updateNutritionValues(state.userModel);
+            _scannerController.loadWaterIntake(_userId);
             _fetchRecords();
             break;
           } else if (state is UserError) {
@@ -127,6 +126,7 @@ class _HomePageState extends State<HomePage> {
     if (_userId.isNotEmpty) {
       _scannerController.getRecordByDate(
           _userId, _scannerController.selectedDate);
+      _scannerController.loadWaterIntake(_userId);
     }
   }
 
@@ -137,6 +137,7 @@ class _HomePageState extends State<HomePage> {
         maxFat: userModel.userInfo!.userMacros.fat,
         maxProtein: userModel.userInfo!.userMacros.protein,
         maxCarb: userModel.userInfo!.userMacros.carbs,
+        maxWater: userModel.userInfo!.userMacros.water,
       );
     }
   }
@@ -179,15 +180,15 @@ class _HomePageState extends State<HomePage> {
             end: Alignment.bottomCenter,
             colors: [
               NomAIColors.blueGrey,
-              NomAIColors.blueGrey.withOpacity(0.9),
-              NomAIColors.blueGrey.withOpacity(0.8),
-              NomAIColors.blueGrey.withOpacity(0.7),
-              NomAIColors.blueGrey.withOpacity(0.6),
-              NomAIColors.blueGrey.withOpacity(0.5),
-              NomAIColors.blueGrey.withOpacity(0.4),
-              NomAIColors.blueGrey.withOpacity(0.3),
-              NomAIColors.blueGrey.withOpacity(0.2),
-              NomAIColors.blueGrey.withOpacity(0.1),
+              NomAIColors.blueGrey.withValues(alpha: 0.9),
+              NomAIColors.blueGrey.withValues(alpha: 0.8),
+              NomAIColors.blueGrey.withValues(alpha: 0.7),
+              NomAIColors.blueGrey.withValues(alpha: 0.6),
+              NomAIColors.blueGrey.withValues(alpha: 0.5),
+              NomAIColors.blueGrey.withValues(alpha: 0.4),
+              NomAIColors.blueGrey.withValues(alpha: 0.3),
+              NomAIColors.blueGrey.withValues(alpha: 0.2),
+              NomAIColors.blueGrey.withValues(alpha: 0.1),
               NomAIColors.whiteText,
             ],
             stops: const [
@@ -325,7 +326,7 @@ class _HomePageState extends State<HomePage> {
 
           _scannerController.selectedDate = _selectedDate;
 
-          _scannerController.getRecordByDate(_userId, date);
+          _fetchRecords();
         },
         showScheduleDots: true,
         scheduleCounts: {},
@@ -360,6 +361,7 @@ class _HomePageState extends State<HomePage> {
           consumedProtein: controller.consumedProtein.value,
           maximumCarb: controller.maximumCarb.value,
           consumedCarb: controller.consumedCarb.value,
+          userId: _userId,
         );
       },
     );

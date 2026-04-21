@@ -3,6 +3,7 @@ import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
+import 'package:NomAi/app/components/water_tracker_card.dart';
 
 class NutritionTrackerCard extends StatelessWidget {
   final int maximumCalories;
@@ -14,6 +15,7 @@ class NutritionTrackerCard extends StatelessWidget {
   final int consumedProtein;
   final int maximumCarb;
   final int consumedCarb;
+  final String userId;
 
   const NutritionTrackerCard({
     Key? key,
@@ -26,6 +28,7 @@ class NutritionTrackerCard extends StatelessWidget {
     required this.consumedProtein,
     required this.maximumCarb,
     required this.consumedCarb,
+    required this.userId,
   }) : super(key: key);
 
   @override
@@ -78,8 +81,8 @@ class NutritionTrackerCard extends StatelessWidget {
                                   horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
                                 color: exceededLimit
-                                    ? Colors.red.withOpacity(0.1)
-                                    : Colors.green.withOpacity(0.1),
+                                    ? Colors.red.withValues(alpha: 0.1)
+                                    : Colors.green.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -126,8 +129,8 @@ class NutritionTrackerCard extends StatelessWidget {
                                   ),
                                   decoration: BoxDecoration(
                                     color: exceededLimit
-                                        ? Colors.red.withOpacity(0.05)
-                                        : Colors.grey.withOpacity(0.05),
+                                        ? Colors.red.withValues(alpha: 0.05)
+                                        : Colors.grey.withValues(alpha: 0.05),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Column(
@@ -277,47 +280,7 @@ class NutritionTrackerCard extends StatelessWidget {
                 NomAIColors.fatColor,
                 Icons.opacity,
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCalorieInfoBox(
-      String label, int value, IconData icon, Color color) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: color,
-            size: 16,
-          ),
-          SizedBox(width: 4),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.grey.shade700,
-                  fontSize: 12,
-                ),
-              ),
-              Text(
-                "$value",
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
+              WaterTrackerCard(userId: userId),
             ],
           ),
         ],
@@ -336,6 +299,12 @@ class NutritionTrackerCard extends StatelessWidget {
       String label, int value, int max, Color color, IconData icon) {
     double percent = (value / max).clamp(0.0, 1.0);
     bool exceededLimit = value > max;
+    final compactLabel = switch (label) {
+      "Proteins" => "Protein",
+      "Carbs" => "Carbs",
+      "Fats" => "Fats",
+      _ => label,
+    };
 
     return Expanded(
       child: Bounceable(
@@ -361,12 +330,17 @@ class NutritionTrackerCard extends StatelessWidget {
                       Icon(icon,
                           color: exceededLimit ? Colors.red : color, size: 16),
                       SizedBox(width: 4),
-                      Text(
-                        label,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                      Flexible(
+                        child: Text(
+                          compactLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],
@@ -379,7 +353,7 @@ class NutritionTrackerCard extends StatelessWidget {
                           text: "$value",
                           style: TextStyle(
                             color: exceededLimit ? Colors.red : Colors.black,
-                            fontSize: 14,
+                            fontSize: 13,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -387,7 +361,7 @@ class NutritionTrackerCard extends StatelessWidget {
                           text: "/$max g",
                           style: TextStyle(
                             color: Colors.grey.shade700,
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
