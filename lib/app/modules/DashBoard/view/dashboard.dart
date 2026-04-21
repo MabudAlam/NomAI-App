@@ -5,11 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_bloc.dart';
+import 'package:NomAi/app/modules/Auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/modules/Home/views/home_view.dart';
 import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:NomAi/app/modules/Scanner/views/scan_view.dart';
+import 'package:NomAi/app/modules/Diet/views/diet_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -156,6 +158,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             _buildNavItem(
               index: 2,
+              label: 'Diet',
+              selectedIcon: Icons.restaurant_menu,
+              unselectedIcon: Icons.restaurant_menu_outlined,
+            ),
+            _buildNavItem(
+              index: 3,
               label: 'Chat',
               selectedIcon: Icons.chat, // filled
               unselectedIcon: Icons.chat_outlined, // outline
@@ -168,6 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           HomePage(),
           AnalyticsView(),
+          const DietView(),
           NomAiChatView(),
         ],
       ),
