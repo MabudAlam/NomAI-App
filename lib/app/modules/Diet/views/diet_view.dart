@@ -54,34 +54,72 @@ class _DietViewState extends State<DietView> {
     return Obx(() {
       if (_controller.isLoading.value) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: NomAIColors.blueGrey,
           appBar: _buildAppBar(),
-          body: _buildLoadingShimmer(),
+          body: _buildGradientBody(_buildLoadingShimmer()),
         );
       }
 
       if (_controller.weeklyDiet.value == null) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: NomAIColors.blueGrey,
           appBar: _buildAppBar(),
-          body: _buildNoDietView(),
+          body: _buildGradientBody(_buildNoDietView()),
         );
       }
 
       if (_controller.isDietExpired) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: NomAIColors.blueGrey,
           appBar: _buildAppBar(),
-          body: _buildExpiredDietView(),
+          body: _buildGradientBody(_buildExpiredDietView()),
         );
       }
 
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: NomAIColors.blueGrey,
         appBar: _buildAppBar(),
-        body: _buildDietContent(),
+        body: _buildGradientBody(_buildDietContent()),
       );
     });
+  }
+
+  Widget _buildGradientBody(Widget child) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            NomAIColors.blueGrey,
+            NomAIColors.blueGrey.withOpacity(0.9),
+            NomAIColors.blueGrey.withOpacity(0.8),
+            NomAIColors.blueGrey.withOpacity(0.7),
+            NomAIColors.blueGrey.withOpacity(0.6),
+            NomAIColors.blueGrey.withOpacity(0.5),
+            NomAIColors.blueGrey.withOpacity(0.4),
+            NomAIColors.blueGrey.withOpacity(0.3),
+            NomAIColors.blueGrey.withOpacity(0.2),
+            NomAIColors.blueGrey.withOpacity(0.1),
+            NomAIColors.whiteText,
+          ],
+          stops: const [
+            0.0,
+            0.1,
+            0.2,
+            0.3,
+            0.4,
+            0.5,
+            0.6,
+            0.7,
+            0.8,
+            0.9,
+            1.0,
+          ],
+        ),
+      ),
+      child: child,
+    );
   }
 
   Widget _buildLoadingShimmer() {
@@ -115,17 +153,18 @@ class _DietViewState extends State<DietView> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: NomAIColors.blueGrey,
       elevation: 0,
-      title: Text(
+      title: const Text(
         'Weekly Diet Plan',
-        style: context.textTheme.titleLarge?.copyWith(
+        style: TextStyle(
+          color: NomAIColors.whiteText,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: NomAIColors.black,
         ),
       ),
       centerTitle: true,
-      iconTheme: const IconThemeData(color: NomAIColors.black),
+      iconTheme: const IconThemeData(color: NomAIColors.whiteText),
       actions: [
         IconButton(
           onPressed: () => Get.to(() => const DietHistoryPage()),
@@ -416,8 +455,8 @@ class _DietViewState extends State<DietView> {
               _buildInputField(
                   'Fiber (g)', fiberController, TextInputType.number),
               _buildInputField('Fat (g)', fatController, TextInputType.number),
-              _buildInputField('Additional Instructions', promptController,
-                  TextInputType.text),
+              _buildMultilineInputField(
+                  'Additional Instructions', promptController, maxLines: 4, maxLength: 600),
               SizedBox(height: 24),
               Obx(() => SizedBox(
                     width: double.infinity,
@@ -508,6 +547,49 @@ class _DietViewState extends State<DietView> {
               ),
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMultilineInputField(
+    String label,
+    TextEditingController controller, {
+    int maxLines = 4,
+    int maxLength = 600,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: context.textTheme.bodySmall?.copyWith(
+              color: NomAIColors.black.withOpacity(0.6),
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            keyboardType: TextInputType.multiline,
+            maxLines: maxLines,
+            maxLength: maxLength,
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: NomAIColors.black,
+            ),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: NomAIColors.greyLight,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              counterText: '',
             ),
           ),
         ],

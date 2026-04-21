@@ -46,27 +46,63 @@ class _DietHistoryPageState extends State<DietHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: NomAIColors.blueGrey,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: NomAIColors.blueGrey,
         elevation: 0,
         leading: IconButton(
           icon: Icon(_isViewingDiet ? Icons.arrow_back : Icons.arrow_back),
-          color: NomAIColors.black,
+          color: NomAIColors.whiteText,
           onPressed: _isViewingDiet ? _closeDietView : () => Get.back(),
         ),
         title: Text(
           _isViewingDiet ? 'Diet Details' : 'Past Diet Plans',
-          style: context.textTheme.titleLarge?.copyWith(
+          style: const TextStyle(
+            color: NomAIColors.whiteText,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: NomAIColors.black,
           ),
         ),
         centerTitle: true,
+        iconTheme: const IconThemeData(color: NomAIColors.whiteText),
       ),
-      body: _isViewingDiet && _selectedDiet != null
-          ? _buildDietDetailView(_selectedDiet!)
-          : _buildHistoryList(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              NomAIColors.blueGrey,
+              NomAIColors.blueGrey.withOpacity(0.9),
+              NomAIColors.blueGrey.withOpacity(0.8),
+              NomAIColors.blueGrey.withOpacity(0.7),
+              NomAIColors.blueGrey.withOpacity(0.6),
+              NomAIColors.blueGrey.withOpacity(0.5),
+              NomAIColors.blueGrey.withOpacity(0.4),
+              NomAIColors.blueGrey.withOpacity(0.3),
+              NomAIColors.blueGrey.withOpacity(0.2),
+              NomAIColors.blueGrey.withOpacity(0.1),
+              NomAIColors.whiteText,
+            ],
+            stops: const [
+              0.0,
+              0.1,
+              0.2,
+              0.3,
+              0.4,
+              0.5,
+              0.6,
+              0.7,
+              0.8,
+              0.9,
+              1.0,
+            ],
+          ),
+        ),
+        child: _isViewingDiet && _selectedDiet != null
+            ? _buildDietDetailView(_selectedDiet!)
+            : _buildHistoryList(),
+      ),
     );
   }
 
@@ -512,7 +548,7 @@ class _DietHistoryPageState extends State<DietHistoryPage> {
     );
 
     if (confirmed == true) {
-      final success = await _controller.copyPastDiet(diet.id ?? '');
+      final success = await _controller.copyPastDiet(diet.dietId ?? '');
       if (success) {
         Get.back();
         Get.snackbar(

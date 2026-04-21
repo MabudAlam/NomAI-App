@@ -74,7 +74,8 @@ class DietRepo {
       );
 
       debugPrint('DietRepo: getDietHistory response status: ${response.statusCode}');
-      debugPrint('DietRepo: getDietHistory response body: ${response.body}');
+      debugPrint('DietRepo: getDietHistory raw response: ${response.body}');
+      debugPrint('DietRepo: parsing history response now...');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -263,8 +264,12 @@ class DietRepo {
     try {
       debugPrint('DietRepo: Copying diet $dietId for user $userId');
 
+      final url = '${ApiUrl.baseUrl}${ApiPath.copyDiet(userId, dietId)}';
+      debugPrint('DietRepo: copyDiet URL: $url');
+      debugPrint('DietRepo: copyDiet request body: {}');
+
       final response = await http.post(
-        Uri.parse('${ApiUrl.baseUrl}${ApiPath.copyDiet(userId, dietId)}'),
+        Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
       );
 

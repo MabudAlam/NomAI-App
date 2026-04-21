@@ -1,6 +1,6 @@
 class ApiUrl {
   static const String baseUrl =
-      "https://71ad-2a09-bac5-3e0c-16b4-00-243-93.ngrok-free.app";
+      "https://43bc-2a09-bac5-3e09-1a8c-00-2a5-d.ngrok-free.app";
 }
 
 class ApiPath {
@@ -17,8 +17,7 @@ class ApiPath {
 
   static String getActiveDiet(String userId) => "/api/v1/diet/$userId";
 
-  static String getDietHistory(String userId) =>
-      "/api/v1/diet/$userId/history";
+  static String getDietHistory(String userId) => "/api/v1/diet/$userId/history";
 
   static String suggestAlternate(String userId) =>
       "/api/v1/diet/$userId/suggest-alternate";

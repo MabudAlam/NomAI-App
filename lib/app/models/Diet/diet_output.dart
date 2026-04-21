@@ -124,12 +124,10 @@ class MealsStructure {
         breakfast: json['breakfast'] == null
             ? null
             : NutritionResponseModel.fromJson(json['breakfast']),
-        lunch: json['lunch'] == null
-            ? null
-            : NutritionResponseModel.fromJson(json['lunch']),
-        dinner: json['dinner'] == null
-            ? null
-            : NutritionResponseModel.fromJson(json['dinner']),
+        lunch:
+            json['lunch'] == null ? null : NutritionResponseModel.fromJson(json['lunch']),
+        dinner:
+            json['dinner'] == null ? null : NutritionResponseModel.fromJson(json['dinner']),
         snacks: json['snacks'] == null
             ? null
             : (json['snacks'] as List)
@@ -196,9 +194,7 @@ class DailyDietEntry {
   factory DailyDietEntry.fromJson(Map<String, dynamic> json) => DailyDietEntry(
         dayIndex: json['dayIndex'],
         dayName: json['dayName'],
-        meals: json['meals'] == null
-            ? null
-            : MealsStructure.fromJson(json['meals']),
+        meals: json['meals'] == null ? null : MealsStructure.fromJson(json['meals']),
         totalNutrition: json['totalNutrition'] == null
             ? null
             : NutritionSummary.fromJson(json['totalNutrition']),
@@ -218,7 +214,7 @@ class DailyDietEntry {
 }
 
 class WeeklyDietOutput {
-  final String? id;
+  final String? dietId;
   final String? userId;
   final String? weekStartDate;
   final String? weekEndDate;
@@ -229,7 +225,7 @@ class WeeklyDietOutput {
   final String? updatedAt;
 
   WeeklyDietOutput({
-    this.id,
+    this.dietId,
     this.userId,
     this.weekStartDate,
     this.weekEndDate,
@@ -242,7 +238,7 @@ class WeeklyDietOutput {
 
   factory WeeklyDietOutput.fromJson(Map<String, dynamic> json) =>
       WeeklyDietOutput(
-        id: json['id'],
+        dietId: json['dietId'],
         userId: json['userId'],
         weekStartDate: json['weekStartDate'],
         weekEndDate: json['weekEndDate'],
@@ -260,7 +256,7 @@ class WeeklyDietOutput {
       );
 
   Map<String, dynamic> toJson() => {
-        if (id != null) 'id': id,
+        if (dietId != null) 'dietId': dietId,
         if (userId != null) 'userId': userId,
         if (weekStartDate != null) 'weekStartDate': weekStartDate,
         if (weekEndDate != null) 'weekEndDate': weekEndDate,
