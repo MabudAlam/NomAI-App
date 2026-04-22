@@ -1,6 +1,7 @@
+import 'package:NomAi/app/providers/remoteconfig.dart';
+
 class ApiUrl {
-  static const String baseUrl =
-      "https://nomai-service-760266971868.us-central1.run.app";
+  static String get baseUrl => RemoteConfigService.getBaseUrl();
 }
 
 class ApiPath {

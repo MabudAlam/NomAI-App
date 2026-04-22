@@ -43,7 +43,7 @@ dependencies:
   material_symbols_icons: ^4.2808.0
   percent_indicator: ^4.2.5
   photo_view: ^0.15.0
-  share_plus: ^7.2.2
+  share_plus: ^10.0.0
   shared_preferences: ^2.5.2
   shimmer: ^3.0.0
   sizer: ^3.0.5
@@ -57,6 +57,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   pwa_install: ^0.0.6
+  widgets_to_image: ^2.0.1
 
 flutter:
   uses-material-design: true

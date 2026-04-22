@@ -1,13 +1,10 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:NomAi/app/constants/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:davinci/davinci.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:sizer/sizer.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:widgets_to_image/widgets_to_image.dart';
+import 'package:NomAi/app/constants/constants.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/models/AI/nutrition_record.dart';
 import 'package:NomAi/app/models/AI/nutrition_output.dart';
@@ -29,23 +26,13 @@ class SocialMediaShareWidget extends StatefulWidget {
 }
 
 class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
-  GlobalKey? imageKey;
+  final WidgetsToImageController _controller = WidgetsToImageController();
   bool _isGenerating = false;
-  Uint8List? imageData;
-  File? imageFile;
 
-  /// [getFile] returns the File from Uint8List data
-  Future getFile(Uint8List u8Image, String imageName) async {
-    /// getting the temp directory of the app.
-    String dir = (await getApplicationDocumentsDirectory()).path;
-
-    /// Saving the file with the file name in temp directory.
-    File file = File('$dir/$imageName.png');
-
-    /// the image file is created
-    await file.writeAsBytes(u8Image);
-
-    return file;
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -85,8 +72,7 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: NomAIColors.blackText,
                   elevation: 0,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -98,27 +84,27 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(4.w),
-          child: Davinci(
-            builder: (key) {
-              imageKey = key;
-              return _buildShareableWidget();
-            },
+          // WidgetsToImage wraps the card and exposes a controller.
+          // controller.capture() returns Uint8List on every platform — 
+          // no dart:io, no path_provider, no conditional imports needed.
+          child: WidgetsToImage(
+            controller: _controller,
+            child: _buildShareableWidget(),
           ),
         ),
       ),
     );
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // Share card UI
+  // ─────────────────────────────────────────────────────────────────────────
+
   Widget _buildShareableWidget() {
     final response = widget.nutritionRecord.nutritionOutput?.response;
     if (response == null) return const SizedBox();
 
-    // Calculate totals
-    int totalCalories = 0;
-    int totalProtein = 0;
-    int totalCarbs = 0;
-    int totalFat = 0;
-
+    int totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
     if (response.ingredients != null) {
       for (var ingredient in response.ingredients!) {
         totalCalories += ingredient.calories ?? 0;
@@ -130,14 +116,11 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
 
     return Container(
       width: 90.w,
-      constraints: BoxConstraints(maxWidth: 400),
+      constraints: const BoxConstraints(maxWidth: 400),
       decoration: BoxDecoration(
         color: NomAIColors.whiteText,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: NomAIColors.blackText.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: NomAIColors.blackText.withOpacity(0.1), width: 1),
         boxShadow: [
           BoxShadow(
             color: NomAIColors.blackText.withOpacity(0.05),
@@ -149,26 +132,14 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Header section
           _buildHeader(),
-
-          // Food image section - only show if image exists
           if (widget.nutritionRecord.nutritionInputQuery?.imageUrl != null &&
               widget.nutritionRecord.nutritionInputQuery!.imageUrl!.isNotEmpty)
             _buildFoodImageSection(),
-
-          // Food info section
           _buildFoodInfoSection(response, totalCalories),
-
-          // Nutrition breakdown
-          _buildNutritionBreakdown(
-              totalCalories, totalProtein, totalCarbs, totalFat),
-
-          // Health score section
+          _buildNutritionBreakdown(totalCalories, totalProtein, totalCarbs, totalFat),
           if (response.overallHealthScore != null)
             _buildHealthScoreSection(response.overallHealthScore!),
-
-          // Footer
           _buildFooter(),
         ],
       ),
@@ -194,11 +165,7 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
               color: NomAIColors.whiteText,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              Icons.restaurant_menu,
-              color: NomAIColors.blackText,
-              size: 20,
-            ),
+            child: Icon(Icons.restaurant_menu, color: NomAIColors.blackText, size: 20),
           ),
           SizedBox(width: 3.w),
           Expanded(
@@ -219,7 +186,6 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
                   style: TextStyle(
                     color: NomAIColors.whiteText.withOpacity(0.8),
                     fontSize: 12,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
@@ -246,10 +212,7 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
       margin: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: NomAIColors.blackText.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: NomAIColors.blackText.withOpacity(0.1), width: 1),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -268,11 +231,8 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
                   ),
                 ),
               ),
-              errorWidget: (context, url, error) =>
-                  const SizedBox.shrink(), // Return empty widget on error
+              errorWidget: (context, url, error) => const SizedBox.shrink(),
             ),
-
-            // Time stamp
             Positioned(
               bottom: 8,
               right: 8,
@@ -284,8 +244,7 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
                 ),
                 child: Text(
                   DateUtility.getTimeFromDateTime(
-                    widget.nutritionRecord.recordTime?.toLocal() ??
-                        DateTime.now(),
+                    widget.nutritionRecord.recordTime?.toLocal() ?? DateTime.now(),
                   ),
                   style: TextStyle(
                     color: NomAIColors.whiteText,
@@ -336,8 +295,7 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
     );
   }
 
-  Widget _buildNutritionBreakdown(
-      int calories, int protein, int carbs, int fat) {
+  Widget _buildNutritionBreakdown(int calories, int protein, int carbs, int fat) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
       padding: EdgeInsets.all(3.w),
@@ -358,27 +316,9 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
           SizedBox(height: 2.h),
           Row(
             children: [
-              Expanded(
-                child: _buildNutrientColumn(
-                  'Protein',
-                  '${protein}g',
-                  Icons.fitness_center,
-                ),
-              ),
-              Expanded(
-                child: _buildNutrientColumn(
-                  'Carbs',
-                  '${carbs}g',
-                  Icons.grain,
-                ),
-              ),
-              Expanded(
-                child: _buildNutrientColumn(
-                  'Fat',
-                  '${fat}g',
-                  Icons.water_drop,
-                ),
-              ),
+              Expanded(child: _buildNutrientColumn('Protein', '${protein}g', Icons.fitness_center)),
+              Expanded(child: _buildNutrientColumn('Carbs', '${carbs}g', Icons.grain)),
+              Expanded(child: _buildNutrientColumn('Fat', '${fat}g', Icons.water_drop)),
             ],
           ),
         ],
@@ -409,29 +349,21 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
         const SizedBox(height: 4),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: NomAIColors.blackText,
-          ),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: NomAIColors.blackText),
         ),
       ],
     );
   }
 
   Widget _buildHealthScoreSection(int healthScore) {
-    String scoreText = _getHealthScoreText(healthScore);
-
+    final scoreText = _getHealthScoreText(healthScore);
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
         color: NomAIColors.lightGreyTile,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: NomAIColors.blackText.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: NomAIColors.blackText.withOpacity(0.1), width: 1),
       ),
       child: Row(
         children: [
@@ -441,11 +373,7 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
               color: NomAIColors.blackText,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              Icons.favorite,
-              color: NomAIColors.whiteText,
-              size: 20,
-            ),
+            child: Icon(Icons.favorite, color: NomAIColors.whiteText, size: 20),
           ),
           SizedBox(width: 3.w),
           Expanded(
@@ -490,18 +418,13 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.smartphone,
-            size: 14,
-            color: NomAIColors.blackText.withOpacity(0.6),
-          ),
+          Icon(Icons.smartphone, size: 14, color: NomAIColors.blackText.withOpacity(0.6)),
           SizedBox(width: 1.w),
           Text(
             'Track your nutrition with NomAI',
             style: TextStyle(
               fontSize: 12,
               color: NomAIColors.blackText.withOpacity(0.6),
-              fontWeight: FontWeight.w400,
             ),
           ),
         ],
@@ -516,14 +439,13 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
     return 'Poor';
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // Share handler
+  // ─────────────────────────────────────────────────────────────────────────
+
   Future<void> _handleShare() async {
     if (_isGenerating) return;
-
-    setState(() {
-      _isGenerating = true;
-    });
-
-    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    setState(() => _isGenerating = true);
 
     AppDialogs.showLoadingDialog(
       title: "Generating Share Image",
@@ -531,66 +453,55 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
     );
 
     try {
-      imageData = await DavinciCapture.click(
-        context: context,
-        imageKey!,
-        fileName: "MealShare",
-        pixelRatio: pixelRatio,
-        returnImageUint8List: true,
-        openFilePreview: false,
-      );
-
-      imageFile = await getFile(
-        imageData!,
-        "MealShare",
+      // Returns Uint8List on mobile AND web — no dart:io anywhere.
+      final Uint8List? bytes = await _controller.capture(
+        options: CaptureOptions(
+          pixelRatio: MediaQuery.of(context).devicePixelRatio,
+        ),
       );
 
       AppDialogs.hideDialog();
 
-      // Share using share_plus
-      try {
-        final response = widget.nutritionRecord.nutritionOutput?.response;
-        String foodName = response?.foodName ?? "My delicious meal";
+      if (bytes == null) {
+        AppDialogs.showErrorSnackbar(
+          title: "Error",
+          message: "Could not capture the share image. Please try again.",
+        );
+        return;
+      }
 
-        // Calculate nutrition totals for the share message
-        int totalCalories = 0;
-        int totalProtein = 0;
-        int totalCarbs = 0;
-        int totalFat = 0;
+      final response = widget.nutritionRecord.nutritionOutput?.response;
+      final String foodName = response?.foodName ?? "My delicious meal";
 
-        if (response?.ingredients != null) {
-          for (var ingredient in response!.ingredients!) {
-            totalCalories += ingredient.calories ?? 0;
-            totalProtein += ingredient.protein ?? 0;
-            totalCarbs += ingredient.carbs ?? 0;
-            totalFat += ingredient.fat ?? 0;
-          }
+      int totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
+      if (response?.ingredients != null) {
+        for (var ingredient in response!.ingredients!) {
+          totalCalories += ingredient.calories ?? 0;
+          totalProtein += ingredient.protein ?? 0;
+          totalCarbs += ingredient.carbs ?? 0;
+          totalFat += ingredient.fat ?? 0;
         }
+      }
 
-        String shareText = '''🍽️ Just tracked "$foodName" with NomAI! 
+      final String shareText = '''🍽️ Just tracked "$foodName" with NomAI!
 
 📊 Nutrition breakdown:
 • $totalCalories calories
 • ${totalProtein}g protein
-• ${totalCarbs}g carbs  
+• ${totalCarbs}g carbs
 • ${totalFat}g fat
 
-🤖 AI-powered nutrition tracking made simple! Get instant nutrition analysis from just a photo.
+🤖 AI-powered nutrition tracking made simple!
 
 📱 Download NomAI: https://play.google.com/store/apps/details?id=com.nomai.app
 
-#NomAI #NutritionTracking #HealthyEating #AInutrition #FoodTracking #HealthTech''';
+#NomAI #NutritionTracking #HealthyEating #AInutrition''';
 
-        Share.shareXFiles(
-          [XFile(imageFile!.path)],
-          text: shareText,
-        );
-      } catch (error) {
-        AppDialogs.showErrorSnackbar(
-          title: "Share Failed",
-          message: "Unable to share your meal. Please try again.",
-        );
-      }
+      await Share.shareXFiles(
+        [XFile.fromData(bytes, mimeType: 'image/png')],
+        text: shareText,
+        fileNameOverrides: ['MealShare.png'],
+      );
     } catch (e) {
       AppDialogs.hideDialog();
       AppDialogs.showErrorSnackbar(
@@ -598,9 +509,7 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
         message: "Failed to generate share image. Please try again.",
       );
     } finally {
-      setState(() {
-        _isGenerating = false;
-      });
+      setState(() => _isGenerating = false);
     }
   }
 }
