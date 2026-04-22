@@ -6,6 +6,7 @@ import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:NomAi/app/repo/nutrition_record_repo.dart';
 import 'package:NomAi/app/repo/storage_service.dart';
+import 'package:NomAi/app/utility/haptic_service.dart';
 import 'package:NomAi/app/utility/registry_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -704,7 +705,10 @@ class _NutritionViewState extends State<NutritionView> {
       elevation: 0,
       backgroundColor: Colors.white,
       leading: Bounceable(
-        onTap: () => Navigator.pop(context),
+        onTap: () async {
+          await HapticService.selection();
+          Navigator.pop(context);
+        },
         child: Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -724,7 +728,8 @@ class _NutritionViewState extends State<NutritionView> {
       ),
       actions: [
         Bounceable(
-          onTap: () {
+          onTap: () async {
+            await HapticService.selection();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -755,6 +760,7 @@ class _NutritionViewState extends State<NutritionView> {
         ),
         Bounceable(
           onTap: () async {
+            await HapticService.selection();
             if (_isEditing) {
               await _performMealUpdate(
                 context,
@@ -795,7 +801,8 @@ class _NutritionViewState extends State<NutritionView> {
         ),
         if (_isEditing)
           Bounceable(
-            onTap: () {
+            onTap: () async {
+              await HapticService.selection();
               setState(() {
                 _resetEditingControllers();
                 _isEditing = false;
@@ -823,7 +830,10 @@ class _NutritionViewState extends State<NutritionView> {
             ),
           ),
         Bounceable(
-          onTap: () => _handleDeleteMeal(context),
+          onTap: () async {
+            await HapticService.selection();
+            await _handleDeleteMeal(context);
+          },
           child: Container(
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.all(8),

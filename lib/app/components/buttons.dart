@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
+import 'package:NomAi/app/utility/haptic_service.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String tile;
@@ -11,7 +12,8 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
+        await HapticService.light();
         onPressed();
       },
       style: ElevatedButton.styleFrom(
@@ -59,7 +61,12 @@ class PrimaryButtonWithIcon extends StatelessWidget {
         ],
       ),
       child: ElevatedButton(
-        onPressed: isLoading ? null : () => onPressed(),
+        onPressed: isLoading
+            ? null
+            : () async {
+                await HapticService.light();
+                onPressed();
+              },
         style: ElevatedButton.styleFrom(
           backgroundColor: NomAIColors.black,
           foregroundColor: NomAIColors.whiteText,
@@ -182,7 +189,12 @@ class SecondaryButton extends StatelessWidget {
             )
           : null,
       child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
+        onPressed: isLoading
+            ? null
+            : () async {
+                await HapticService.light();
+                onPressed?.call();
+              },
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor ?? NomAIColors.black,
           foregroundColor: foregroundColor ?? Colors.white,

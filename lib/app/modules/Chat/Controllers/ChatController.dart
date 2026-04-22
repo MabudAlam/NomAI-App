@@ -18,6 +18,7 @@ import 'package:NomAi/app/models/Chat/ChatPostModel.dart';
 import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:NomAi/app/modules/Scanner/views/scan_view.dart';
 import 'package:NomAi/app/repo/nutrition_record_repo.dart';
+import 'package:NomAi/app/utility/haptic_service.dart';
 import 'package:NomAi/app/repo/storage_service.dart';
 import 'package:NomAi/app/utility/image_utility.dart';
 import 'package:NomAi/app/utility/registry_service.dart';
@@ -174,6 +175,8 @@ if (kIsWeb) {
 
     final localMessageId = 'local_${DateTime.now().millisecondsSinceEpoch}';
 
+    await HapticService.light();
+
     messages.add(ChatMessage(
       messageId: localMessageId,
       localMessageId: localMessageId,
@@ -222,6 +225,8 @@ if (kIsWeb) {
         timestamp: DateTime.now(),
         nutritionData: response.nutritionData,
       ));
+
+      await HapticService.success();
     } catch (e) {
       messages.add(ChatMessage(
         messageId: 'local_${DateTime.now().millisecondsSinceEpoch}',

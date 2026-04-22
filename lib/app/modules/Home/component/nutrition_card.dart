@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/constants/enums.dart';
+import 'package:NomAi/app/utility/haptic_service.dart';
 import 'package:NomAi/app/models/AI/nutrition_output.dart';
 import 'package:NomAi/app/models/AI/nutrition_record.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
@@ -62,8 +63,9 @@ class NutritionCard extends StatelessWidget {
         nutritionRecord.processingStatus == ProcessingStatus.FAILED;
 
     return Bounceable(
-      onTap: () {
+      onTap: () async {
         if (isProcessing || isFailed) return;
+        await HapticService.selection();
         Get.to(() => NutritionView(
               nutritionRecord: nutritionRecord,
               userModel: userModel,

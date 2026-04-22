@@ -1613,6 +1613,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  web_haptics:
+    dependency: "direct main"
+    description:
+      name: web_haptics
+      sha256: e6d447c7b39ef8bcf7ea9ec1be1c80dccec75366b29955fdd93a3b32e0bd8d97
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   web_socket:
     dependency: transitive
     description:

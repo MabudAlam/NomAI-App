@@ -49,6 +49,7 @@ dependencies:
   sizer: ^3.0.5
   smooth_page_indicator: ^1.2.1
   timeline_date_picker_plus: ^0.0.3
+  web_haptics: ^0.0.2
 
 dev_dependencies:
   build_runner: ^2.8.0

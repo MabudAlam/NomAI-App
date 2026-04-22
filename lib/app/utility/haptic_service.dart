@@ -1,25 +1,50 @@
+// Conditional import resolves to stub on mobile, web impl on web
+import 'haptic_service_stub.dart'
+    if (dart.library.js_interop) 'haptic_service_web.dart';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class HapticService {
-  const HapticService._();
+  HapticService._();
 
   static Future<void> selection() async {
-    await HapticFeedback.selectionClick();
+    if (kIsWeb) {
+      await WebHapticsImpl.trigger('selection');
+    } else {
+      await HapticFeedback.selectionClick();
+    }
   }
 
   static Future<void> light() async {
-    await HapticFeedback.lightImpact();
+    if (kIsWeb) {
+      await WebHapticsImpl.trigger('light');
+    } else {
+      await HapticFeedback.lightImpact();
+    }
   }
 
   static Future<void> medium() async {
-    await HapticFeedback.mediumImpact();
+    if (kIsWeb) {
+      await WebHapticsImpl.trigger('medium');
+    } else {
+      await HapticFeedback.mediumImpact();
+    }
   }
 
   static Future<void> success() async {
-    await HapticFeedback.mediumImpact();
+    if (kIsWeb) {
+      await WebHapticsImpl.trigger('success');
+    } else {
+      await HapticFeedback.mediumImpact();
+    }
   }
 
   static Future<void> error() async {
-    await HapticFeedback.heavyImpact();
+    if (kIsWeb) {
+      await WebHapticsImpl.trigger('error');
+    } else {
+      await HapticFeedback.heavyImpact();
+    }
   }
 }

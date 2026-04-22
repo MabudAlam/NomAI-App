@@ -1,5 +1,6 @@
 import 'package:NomAi/app/components/empty.dart';
 import 'package:NomAi/app/constants/constants.dart';
+import 'package:NomAi/app/utility/haptic_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -161,7 +162,8 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: EdgeInsets.only(right: 4.w),
             child: Bounceable(
-              onTap: () {
+              onTap: () async {
+                await HapticService.selection();
                 Get.to(() => SettingsView());
               },
               child: CircleAvatar(

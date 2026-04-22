@@ -14,6 +14,7 @@ import 'package:NomAi/app/modules/Home/views/home_view.dart';
 import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:NomAi/app/modules/Scanner/views/scan_view.dart';
 import 'package:NomAi/app/modules/Diet/views/diet_view.dart';
+import 'package:NomAi/app/utility/haptic_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onItemTapped(int index) {
+    HapticService.selection();
     setState(() {
       _selectedIndex = index;
     });
@@ -111,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       shape: const CircleBorder(),
                       onPressed: isProcessing
                           ? null
-                          : () {
+                          : () async {
+                              await HapticService.medium();
                               try {
                                 final userBloc = context.read<UserBloc>();
 

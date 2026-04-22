@@ -4,6 +4,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/components/water_tracker_card.dart';
+import 'package:NomAi/app/utility/haptic_service.dart';
 
 class NutritionTrackerCard extends StatelessWidget {
   final int maximumCalories;
@@ -49,7 +50,9 @@ class NutritionTrackerCard extends StatelessWidget {
       child: Column(
         children: [
           Bounceable(
-            onTap: () {},
+            onTap: () async {
+              await HapticService.selection();
+            },
             child: PhysicalModel(
               color: Colors.black,
               borderRadius: BorderRadius.circular(14),
@@ -308,7 +311,9 @@ class NutritionTrackerCard extends StatelessWidget {
 
     return Expanded(
       child: Bounceable(
-        onTap: () => {},
+        onTap: () async {
+          await HapticService.selection();
+        },
         child: PhysicalModel(
           color: Colors.black,
           borderRadius: BorderRadius.circular(14),
