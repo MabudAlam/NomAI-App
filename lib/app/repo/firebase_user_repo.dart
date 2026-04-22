@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/models/Auth/user_repo.dart';
+import 'package:NomAi/app/repo/google_auth_service.dart';
 
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -62,28 +64,36 @@ class FirebaseUserRepo implements UserRepository {
   Future<UserModel> signInWithGoogle() async {
     try {
       log('Starting Google sign-in...');
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        log('Google sign-in canceled');
-        throw Exception('Google sign-in canceled');
+
+      User? user;
+
+      if (kIsWeb) {
+        final userCredential = await GoogleAuthService.instance.signInWithGoogle();
+        user = userCredential.user;
+      } else {
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+        if (googleUser == null) {
+          log('Google sign-in canceled');
+          throw Exception('Google sign-in canceled');
+        }
+
+        log('Google sign-in successful: ${googleUser.email}');
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+          log('Google auth token retrieval failed');
+          throw Exception('Google authentication tokens missing');
+        }
+
+        final OAuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        final UserCredential userCredential =
+            await _firebaseAuth.signInWithCredential(credential);
+        user = userCredential.user;
       }
-
-      log('Google sign-in successful: ${googleUser.email}');
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        log('Google auth token retrieval failed');
-        throw Exception('Google authentication tokens missing');
-      }
-
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final UserCredential userCredential =
-          await _firebaseAuth.signInWithCredential(credential);
-      final User? user = userCredential.user;
 
       if (user == null) {
         log('Firebase user is null after Google sign-in');

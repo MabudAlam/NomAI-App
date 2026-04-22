@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:NomAi/app/models/Auth/user.dart';
-import 'package:NomAi/app/modules/Home/views/nutrition_view.dart';
-import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:get/get.dart';
@@ -12,6 +10,9 @@ import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/constants/enums.dart';
 import 'package:NomAi/app/models/AI/nutrition_output.dart';
 import 'package:NomAi/app/models/AI/nutrition_record.dart';
+import 'package:NomAi/app/models/Auth/user.dart';
+import 'package:NomAi/app/modules/Home/views/nutrition_view.dart';
+import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
 import 'package:NomAi/app/utility/date_utility.dart';
 
 class NutritionCard extends StatelessWidget {
@@ -305,6 +306,12 @@ class NutritionCard extends StatelessWidget {
   }
 
   Widget _buildFoodImage(BuildContext context, double width, double height) {
+    final query = nutritionRecord.nutritionInputQuery;
+    final hasFilePath = query?.imageFilePath != null && query!.imageFilePath!.isNotEmpty;
+    final hasUrl = query?.imageUrl != null && query!.imageUrl!.isNotEmpty;
+    final String filePath = hasFilePath ? query!.imageFilePath! : '';
+    final String imageUrlStr = hasUrl ? query!.imageUrl! : '';
+
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         topLeft: Radius.circular(16),
@@ -316,18 +323,26 @@ class NutritionCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (nutritionRecord.nutritionInputQuery?.imageFilePath != null)
-              Image.file(
-                File(nutritionRecord.nutritionInputQuery!.imageFilePath!),
-                width: 25.w,
-                height: 12.h,
-                fit: BoxFit.cover,
-              )
-            else if (nutritionRecord.nutritionInputQuery?.imageUrl != null &&
-                nutritionRecord.nutritionInputQuery!.imageUrl!.isNotEmpty)
+            if (hasFilePath) ...[
+              if (kIsWeb)
+                CachedNetworkImage(
+                  imageUrl: filePath,
+                  width: 25.w,
+                  height: 12.h,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => _buildImagePlaceholder(),
+                  errorWidget: (context, url, error) => _buildImageError(),
+                )
+              else
+                Image.file(
+                  File(filePath),
+                  width: 25.w,
+                  height: 12.h,
+                  fit: BoxFit.cover,
+                ),
+            ] else if (hasUrl)
               CachedNetworkImage(
-                imageUrl:
-                    nutritionRecord.nutritionInputQuery!.imageUrl.toString(),
+                imageUrl: imageUrlStr,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => _buildImagePlaceholder(),
                 errorWidget: (context, url, error) => _buildImageError(),

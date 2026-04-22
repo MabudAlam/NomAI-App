@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/modules/Chat/Controllers/ChatController.dart';
@@ -10,6 +14,8 @@ class ImagePreviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final image = controller.selectedImage.value!;
+
     return Stack(
       children: [
         Container(
@@ -18,7 +24,7 @@ class ImagePreviewWidget extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(1.5.h),
             image: DecorationImage(
-              image: FileImage(controller.selectedImage.value!),
+              image: _getImage(image),
               fit: BoxFit.cover,
             ),
           ),
@@ -44,5 +50,13 @@ class ImagePreviewWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  ImageProvider _getImage(XFile image) {
+    if (kIsWeb) {
+      return NetworkImage(image.path);
+    } else {
+      return FileImage(File(image.path));
+    }
   }
 }

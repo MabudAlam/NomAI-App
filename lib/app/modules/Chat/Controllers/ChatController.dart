@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -26,7 +27,7 @@ class ChatController extends GetxController {
   final RxList<ChatMessage> messages = <ChatMessage>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isFetchingHistory = true.obs;
-  final Rx<File?> selectedImage = Rx<File?>(null);
+  final Rx<XFile?> selectedImage = Rx<XFile?>(null);
   final RxString uploadedImageUrl = ''.obs;
   final RxBool isUploading = false.obs;
   final RxSet<String> updatingLogStatusForMessages = <String>{}.obs;
@@ -134,19 +135,22 @@ class ChatController extends GetxController {
   Future<void> _processSelectedImage(XFile image) async {
     isUploading.value = true;
 
-    File resizedFile = File(image.path);
-    try {
-      resizedFile = await ImageUtility.downscaleImage(
-        image.path,
-        scale: ImageScale.large_2048,
-      );
-    } catch (e) {
-      print("Error downscaling image: $e");
-      resizedFile = File(image.path);
-    }
-
-    selectedImage.value =
-        resizedFile.existsSync() ? resizedFile : File(image.path);
+if (kIsWeb) {
+        selectedImage.value = image;
+      } else {
+        File resizedFile = File(image.path);
+        try {
+          resizedFile = await ImageUtility.downscaleImage(
+            image.path,
+            scale: ImageScale.large_2048,
+          );
+        } catch (e) {
+          print("Error downscaling image: $e");
+          resizedFile = File(image.path);
+        }
+        selectedImage.value =
+            resizedFile.existsSync() ? XFile(resizedFile.path) : XFile(File(image.path).path);
+      }
 
     final imageUrl = await _storageService.uploadImage(selectedImage.value!);
     uploadedImageUrl.value = imageUrl ?? '';

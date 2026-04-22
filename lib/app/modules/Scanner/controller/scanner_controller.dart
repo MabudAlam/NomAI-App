@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_state.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
@@ -98,7 +100,7 @@ class ScannerController extends GetxController {
     update();
   }
 
-  Future<void> processNutritionQueryRequest(String userId, File image,
+  Future<void> processNutritionQueryRequest(String userId, XFile image,
       ScanMode scanMode, BuildContext context) async {
     DateTime time = selectedDate;
 
@@ -137,18 +139,23 @@ class ScannerController extends GetxController {
 
       addRecord(nutritionRecord);
 
-      File resizedFile;
-      try {
-        resizedFile = await ImageUtility.downscaleImage(
-          image.path,
-          scale: ImageScale.large_2048,
-        );
-      } catch (e) {
-        print("Error downscaling image: $e");
-        resizedFile = image;
+      XFile fileToUpload;
+      if (kIsWeb) {
+        fileToUpload = image;
+      } else {
+        File resizedFile;
+        final File tempFile = File(image.path);
+        try {
+          resizedFile = await ImageUtility.downscaleImage(
+            image.path,
+            scale: ImageScale.large_2048,
+          );
+        } catch (e) {
+          print("Error downscaling image: $e");
+          resizedFile = tempFile;
+        }
+        fileToUpload = resizedFile.existsSync() ? XFile(resizedFile.path) : XFile(tempFile.path);
       }
-
-      File fileToUpload = resizedFile.existsSync() ? resizedFile : image;
 
       final imageUrl = await storageService.uploadImage(fileToUpload);
 
@@ -431,23 +438,16 @@ class ScannerController extends GetxController {
 
     removeRecord(failedRecord);
 
-    final imageFile = File(failedRecord.nutritionInputQuery!.imageFilePath!);
+    final XFile imageFile = XFile(failedRecord.nutritionInputQuery!.imageFilePath!);
     final scanMode =
         failedRecord.nutritionInputQuery!.scanMode ?? ScanMode.food;
 
-    if (imageFile.existsSync()) {
-      await processNutritionQueryRequest(
-        userId,
-        imageFile,
-        scanMode,
-        context,
-      );
-    } else {
-      AppDialogs.showErrorSnackbar(
-        title: "Cannot Retry",
-        message: "Original image file not found",
-      );
-    }
+    await processNutritionQueryRequest(
+      userId,
+      imageFile,
+      scanMode,
+      context,
+    );
   }
 
   void removeFailedRecord(NutritionRecord record) {

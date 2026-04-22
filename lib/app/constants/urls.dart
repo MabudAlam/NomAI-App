@@ -1,6 +1,6 @@
 class ApiUrl {
   static const String baseUrl =
-      "https://43bc-2a09-bac5-3e09-1a8c-00-2a5-d.ngrok-free.app";
+      "https://nomai-service-760266971868.us-central1.run.app";
 }
 
 class ApiPath {

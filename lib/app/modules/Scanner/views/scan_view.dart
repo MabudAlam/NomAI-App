@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,15 +39,12 @@ class _NomAICameraState extends State<NomAICamera> {
   Future<void> _openGallery() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      File imageFile = File(image.path);
-
-      // Reuse existing controller to keep selectedDate and state
       final ScannerController scannerController = Get.find<ScannerController>();
       final authBloc = context.read<AuthenticationBloc>();
 
       scannerController.processNutritionQueryRequest(
           authBloc.state.user!.uid.toString(),
-          imageFile,
+          image,
           _selectedscanMode,
           context);
       Navigator.pop(context);
@@ -60,13 +55,13 @@ class _NomAICameraState extends State<NomAICamera> {
     state.when(
       onPhotoMode: (photoState) {
         photoState.takePhoto().then((mediaCapture) async {
-          // Reuse existing controller to keep selectedDate and state
+          final XFile image = XFile(mediaCapture.path!);
           final ScannerController scannerController = Get.find<ScannerController>();
           final authBloc = context.read<AuthenticationBloc>();
 
           scannerController.processNutritionQueryRequest(
               authBloc.state.user!.uid.toString(),
-              File(mediaCapture.path!),
+              image,
               _selectedscanMode,
               context);
           Navigator.pop(context);

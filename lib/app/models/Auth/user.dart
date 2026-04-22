@@ -35,8 +35,6 @@ extension GenderExtension on Gender {
         return 'Other';
       case Gender.none:
         return 'Prefer not to say';
-      default:
-        return '';
     }
   }
 
@@ -47,21 +45,6 @@ extension GenderExtension on Gender {
       (e) => e.name == json,
       orElse: () => Gender.none,
     );
-  }
-
-  static Gender fromSimpleText(String text) {
-    switch (text) {
-      case 'Male':
-        return Gender.male;
-      case 'Female':
-        return Gender.female;
-      case 'Other':
-        return Gender.other;
-      case 'Prefer not to say':
-        return Gender.none;
-      default:
-        throw ArgumentError('Invalid gender text: $text');
-    }
   }
 }
 
@@ -76,8 +59,6 @@ extension WeeklyPaceExtension on WeeklyPace {
         return 'Fast Track';
       case WeeklyPace.none:
         return 'Not Specified';
-      default:
-        return '';
     }
   }
 
@@ -88,21 +69,6 @@ extension WeeklyPaceExtension on WeeklyPace {
       (e) => e.name == json,
       orElse: () => WeeklyPace.none,
     );
-  }
-
-  static WeeklyPace fromSimpleText(String text) {
-    switch (text) {
-      case 'Slow & Steady':
-        return WeeklyPace.slow;
-      case 'Moderate Progress':
-        return WeeklyPace.moderate;
-      case 'Fast Track':
-        return WeeklyPace.fast;
-      case 'Not Specified':
-        return WeeklyPace.none;
-      default:
-        throw ArgumentError('Invalid pace text: $text');
-    }
   }
 }
 
@@ -117,8 +83,6 @@ extension HealthModeExtension on HealthMode {
         return 'Maintain Current Weight';
       case HealthMode.none:
         return 'Not Specified';
-      default:
-        return '';
     }
   }
 
@@ -129,21 +93,6 @@ extension HealthModeExtension on HealthMode {
       (e) => e.name == json,
       orElse: () => HealthMode.none,
     );
-  }
-
-  static HealthMode fromSimpleText(String text) {
-    switch (text) {
-      case 'Weight Loss':
-        return HealthMode.weightLoss;
-      case 'Muscle Gain':
-        return HealthMode.muscleGain;
-      case 'Maintain Weight':
-        return HealthMode.maintainWeight;
-      case 'None':
-        return HealthMode.none;
-      default:
-        throw ArgumentError('Invalid health mode text: $text');
-    }
   }
 }
 
@@ -158,7 +107,7 @@ extension ActivityLevelExtension on ActivityLevel {
         return 'Moderately Active';
       case ActivityLevel.veryActive:
         return 'Very Active';
-      default:
+      case ActivityLevel.none:
         return '';
     }
   }
@@ -171,21 +120,6 @@ extension ActivityLevelExtension on ActivityLevel {
       orElse: () => ActivityLevel.sedentary,
     );
   }
-
-  static ActivityLevel fromSimpleText(String text) {
-    switch (text) {
-      case 'Sedentary':
-        return ActivityLevel.sedentary;
-      case 'Lightly Active':
-        return ActivityLevel.lightlyActive;
-      case 'Moderately Active':
-        return ActivityLevel.moderatelyActive;
-      case 'Very Active':
-        return ActivityLevel.veryActive;
-      default:
-        throw ArgumentError('Invalid activity level text: $text');
-    }
-  }
 }
 
 extension GoalExtension on Goal {
@@ -197,8 +131,6 @@ extension GoalExtension on Goal {
         return 'Maintain Weight';
       case Goal.gainMuscle:
         return 'Gain Muscle';
-      default:
-        return '';
     }
   }
 
@@ -209,19 +141,6 @@ extension GoalExtension on Goal {
       (e) => e.name == json,
       orElse: () => Goal.maintainWeight,
     );
-  }
-
-  static Goal fromSimpleText(String text) {
-    switch (text) {
-      case 'Lose Weight':
-        return Goal.loseWeight;
-      case 'Maintain Weight':
-        return Goal.maintainWeight;
-      case 'Gain Muscle':
-        return Goal.gainMuscle;
-      default:
-        throw ArgumentError('Invalid goal text: $text');
-    }
   }
 }
 
@@ -238,8 +157,6 @@ extension DietPreferenceExtension on DietPreference {
         return 'Keto';
       case DietPreference.paleo:
         return 'Paleo';
-      default:
-        return '';
     }
   }
 
@@ -251,24 +168,11 @@ extension DietPreferenceExtension on DietPreference {
       orElse: () => DietPreference.none,
     );
   }
-
-  static DietPreference fromSimpleText(String text) {
-    switch (text) {
-      case 'No Preference':
-        return DietPreference.none;
-      case 'Vegetarian':
-        return DietPreference.vegetarian;
-      case 'Vegan':
-        return DietPreference.vegan;
-      case 'Keto':
-        return DietPreference.keto;
-      case 'Paleo':
-        return DietPreference.paleo;
-      default:
-        throw ArgumentError('Invalid diet preference text: $text');
-    }
-  }
 }
+
+// ---------------------------------------------------------------------------
+// UserModel
+// ---------------------------------------------------------------------------
 
 class UserModel extends Equatable {
   final String userId;
@@ -291,35 +195,37 @@ class UserModel extends Equatable {
     this.userInfo,
   });
 
-  Map<String, dynamic> toEntity() {
+  Map<String, dynamic> toJson() {
     return {
-      "user_id": userId,
-      "email": email,
-      "name": name,
-      "photo_url": photoUrl,
-      "phone_number": phoneNumber,
-      "created_at": createdAt.toIso8601String(),
-      "updated_at": updatedAt.toIso8601String(),
-      "user_info": userInfo?.toMap(),
+      'user_id': userId,
+      'email': email,
+      'name': name,
+      'photo_url': photoUrl,
+      'phone_number': phoneNumber,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+      'user_info': userInfo?.toJson(),
     };
   }
 
-  static UserModel fromEntity(Map<String, dynamic> entity) {
+  Map<String, dynamic> toEntity() => toJson();
+
+  static UserModel fromJson(Map<String, dynamic> json) {
     return UserModel(
-      userId: entity["user_id"] ?? '',
-      email: entity["email"] ?? '',
-      name: entity["name"] ?? '',
-      photoUrl: entity["photo_url"],
-      phoneNumber: entity["phone_number"],
-      createdAt:
-          DateTime.tryParse(entity["created_at"] ?? "") ?? DateTime.now(),
-      updatedAt:
-          DateTime.tryParse(entity["updated_at"] ?? "") ?? DateTime.now(),
-      userInfo: entity["user_info"] != null
-          ? UserBasicInfo.fromMap(entity["user_info"])
+      userId: json['user_id'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      photoUrl: json['photo_url'] as String?,
+      phoneNumber: json['phone_number'] as String?,
+      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updated_at'] as String? ?? '') ?? DateTime.now(),
+      userInfo: json['user_info'] != null
+          ? UserBasicInfo.fromJson(json['user_info'] as Map<String, dynamic>)
           : null,
     );
   }
+
+  static UserModel fromEntity(Map<String, dynamic> entity) => fromJson(entity);
 
   UserModel copyWith({
     String? userId,
@@ -348,8 +254,6 @@ class UserModel extends Equatable {
           userId: '',
           email: '',
           name: '',
-          photoUrl: '',
-          phoneNumber: '',
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );
@@ -366,6 +270,10 @@ class UserModel extends Equatable {
         userInfo,
       ];
 }
+
+// ---------------------------------------------------------------------------
+// UserBasicInfo
+// ---------------------------------------------------------------------------
 
 class UserBasicInfo {
   final Gender selectedGender;
@@ -424,13 +332,14 @@ class UserBasicInfo {
     required this.age,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'gender': selectedGender.toJson(),
+      'age': age,
       'birth_date': birthDate.toIso8601String(),
-      'height': currentHeight,
-      'weight': currentWeight,
-      'target_weight': desiredWeight,
+      'height': (currentHeight ?? 0.0).toString(),
+      'weight': (currentWeight ?? 0.0).toString(),
+      'target_weight': (desiredWeight ?? 0.0).toString(),
       'previous_apps_experience': selectedHaveYouTriedApps,
       'workout_preference': selectedWorkoutOption,
       'health_goal': selectedGoal.toJson(),
@@ -450,67 +359,39 @@ class UserBasicInfo {
       'home_cooking_frequency': selectedHomeCooked,
       'activity_level': selectedActivityLevel.toJson(),
       'sleep_pattern': selectedSleepPattern,
-      'macros': userMacros.toMap(),
-      'age': age,
+      'macros': userMacros.toJson(),
     };
   }
 
-  static UserBasicInfo fromMap(Map<String, dynamic> map) {
+  factory UserBasicInfo.fromJson(Map<String, dynamic> json) {
     return UserBasicInfo(
-      selectedGender: map['gender'] != null
-          ? GenderExtension.fromJson(map['gender'])
-          : GenderExtension.fromSimpleText(
-              map['selectedGender'] ?? 'Prefer not to say'),
-      birthDate: DateTime.parse(map['birth_date'] ?? map['birthDate']),
-      currentHeight: map['height'] ?? map['currentHeight'],
-      currentWeight: map['weight'] ?? map['currentWeight'],
-      desiredWeight: map['target_weight'] ?? map['desiredWeight'],
-      selectedHaveYouTriedApps:
-          map['previous_apps_experience'] ?? map['selectedHaveYouTriedApps'],
-      selectedWorkoutOption:
-          map['workout_preference'] ?? map['selectedWorkoutOption'],
-      selectedGoal: map['health_goal'] != null
-          ? HealthModeExtension.fromJson(map['health_goal'])
-          : HealthMode.values.firstWhere((e) => e.name == map['selectedGoal'],
-              orElse: () => HealthMode.none),
-      selectedPace: map['weekly_pace'] != null
-          ? WeeklyPaceExtension.fromJson(map['weekly_pace'])
-          : WeeklyPace.values.firstWhere((e) => e.name == map['selectedPace'],
-              orElse: () => WeeklyPace.none),
-      selectedObstacle: map['main_obstacle'] ?? map['selectedObstacle'],
-      selectedDietKnowledge:
-          map['diet_knowledge_level'] ?? map['selectedDietKnowledge'],
-      selectedMeals: List<String>.from(
-          map['preferred_meals'] ?? map['selectedMeals'] ?? []),
-      selectedBodySatisfaction:
-          map['body_satisfaction'] ?? map['selectedBodySatisfaction'],
-      selectedDiet: map['diet_type'] ?? map['selectedDiet'],
-      selectedMealTiming:
-          map['meal_timing_preference'] ?? map['selectedMealTiming'],
-      firstMealOfDay:
-          _timeOfDayFromString(map['first_meal_time'] ?? map['firstMealOfDay']),
-      secondMealOfDay: _timeOfDayFromString(
-          map['second_meal_time'] ?? map['secondMealOfDay']),
-      thirdMealOfDay:
-          _timeOfDayFromString(map['third_meal_time'] ?? map['thirdMealOfDay']),
-      selectedMacronutrientKnowledge:
-          map['macro_knowledge_level'] ?? map['selectedMacronutrientKnowledge'],
-      selectedAllergies: map['allergies'] != null
-          ? (map['allergies'] is List
-              ? List<String>.from(map['allergies'])
-              : [map['allergies'].toString()])
-          : (map['selectedAllergy'] != null ? [map['selectedAllergy']] : []),
-      selectedEatOut: map['eating_out_frequency'] ?? map['selectedEatOut'],
-      selectedHomeCooked:
-          map['home_cooking_frequency'] ?? map['selectedHomeCooked'],
-      selectedActivityLevel: map['activity_level'] != null
-          ? ActivityLevelExtension.fromJson(map['activity_level'])
-          : ActivityLevel.values.firstWhere(
-              (e) => e.name == (map['selectedActivityLevel'] ?? ''),
-              orElse: () => ActivityLevel.sedentary),
-      selectedSleepPattern: map['sleep_pattern'] ?? map['selectedSleepPattern'],
-      userMacros: UserMacros.fromMap(map['macros'] ?? map['userMacros']),
-      age: map['age'],
+      selectedGender: GenderExtension.fromJson(json['gender'] as String? ?? 'none'),
+      age: (json['age'] as num?)?.toInt() ?? 0,
+      birthDate: DateTime.parse(json['birth_date'] as String),
+      currentHeight: _parseDouble(json['height']),
+      currentWeight: _parseDouble(json['weight']),
+      desiredWeight: _parseDouble(json['target_weight']),
+      selectedHaveYouTriedApps: json['previous_apps_experience'] as String? ?? '',
+      selectedWorkoutOption: json['workout_preference'] as String? ?? '',
+      selectedGoal: HealthModeExtension.fromJson(json['health_goal'] as String? ?? 'none'),
+      selectedPace: WeeklyPaceExtension.fromJson(json['weekly_pace'] as String? ?? 'none'),
+      selectedObstacle: json['main_obstacle'] as String? ?? '',
+      selectedDietKnowledge: json['diet_knowledge_level'] as String? ?? '',
+      selectedMeals: List<String>.from(json['preferred_meals'] as List? ?? []),
+      selectedBodySatisfaction: json['body_satisfaction'] as String? ?? '',
+      selectedDiet: json['diet_type'] as String? ?? '',
+      selectedMealTiming: json['meal_timing_preference'] as String? ?? '',
+      firstMealOfDay: _timeOfDayFromString(json['first_meal_time'] as String?),
+      secondMealOfDay: _timeOfDayFromString(json['second_meal_time'] as String?),
+      thirdMealOfDay: _timeOfDayFromString(json['third_meal_time'] as String?),
+      selectedMacronutrientKnowledge: json['macro_knowledge_level'] as String? ?? '',
+      selectedAllergies: List<String>.from(json['allergies'] as List? ?? []),
+      selectedEatOut: json['eating_out_frequency'] as String? ?? '',
+      selectedHomeCooked: json['home_cooking_frequency'] as String? ?? '',
+      selectedActivityLevel: ActivityLevelExtension.fromJson(
+          json['activity_level'] as String? ?? 'sedentary'),
+      selectedSleepPattern: json['sleep_pattern'] as String? ?? '',
+      userMacros: UserMacros.fromJson(json['macros'] as Map<String, dynamic>? ?? {}),
     );
   }
 
@@ -520,9 +401,14 @@ class UserBasicInfo {
   }
 
   static TimeOfDay _timeOfDayFromString(String? timeString) {
-    if (timeString == null) return const TimeOfDay(hour: 0, minute: 0);
+    if (timeString == null || timeString.isEmpty) {
+      return const TimeOfDay(hour: 0, minute: 0);
+    }
     final parts = timeString.split(':');
-    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+    return TimeOfDay(
+      hour: int.tryParse(parts[0]) ?? 0,
+      minute: int.tryParse(parts[1]) ?? 0,
+    );
   }
 
   UserBasicInfo copyWith({
@@ -561,34 +447,40 @@ class UserBasicInfo {
       currentHeight: currentHeight ?? this.currentHeight,
       currentWeight: currentWeight ?? this.currentWeight,
       desiredWeight: desiredWeight ?? this.desiredWeight,
-      selectedHaveYouTriedApps:
-          selectedHaveYouTriedApps ?? this.selectedHaveYouTriedApps,
-      selectedWorkoutOption:
-          selectedWorkoutOption ?? this.selectedWorkoutOption,
+      selectedHaveYouTriedApps: selectedHaveYouTriedApps ?? this.selectedHaveYouTriedApps,
+      selectedWorkoutOption: selectedWorkoutOption ?? this.selectedWorkoutOption,
       selectedGoal: selectedGoal ?? this.selectedGoal,
       selectedObstacle: selectedObstacle ?? this.selectedObstacle,
-      selectedDietKnowledge:
-          selectedDietKnowledge ?? this.selectedDietKnowledge,
+      selectedDietKnowledge: selectedDietKnowledge ?? this.selectedDietKnowledge,
       selectedMeals: selectedMeals ?? this.selectedMeals,
-      selectedBodySatisfaction:
-          selectedBodySatisfaction ?? this.selectedBodySatisfaction,
+      selectedBodySatisfaction: selectedBodySatisfaction ?? this.selectedBodySatisfaction,
       selectedDiet: selectedDiet ?? this.selectedDiet,
       selectedMealTiming: selectedMealTiming ?? this.selectedMealTiming,
       firstMealOfDay: firstMealOfDay ?? this.firstMealOfDay,
       secondMealOfDay: secondMealOfDay ?? this.secondMealOfDay,
       thirdMealOfDay: thirdMealOfDay ?? this.thirdMealOfDay,
-      selectedMacronutrientKnowledge:
-          selectedMacronutrientKnowledge ?? this.selectedMacronutrientKnowledge,
+      selectedMacronutrientKnowledge: selectedMacronutrientKnowledge ?? this.selectedMacronutrientKnowledge,
       selectedAllergies: selectedAllergies ?? this.selectedAllergies,
       selectedEatOut: selectedEatOut ?? this.selectedEatOut,
       selectedHomeCooked: selectedHomeCooked ?? this.selectedHomeCooked,
-      selectedActivityLevel:
-          selectedActivityLevel ?? this.selectedActivityLevel,
+      selectedActivityLevel: selectedActivityLevel ?? this.selectedActivityLevel,
       selectedSleepPattern: selectedSleepPattern ?? this.selectedSleepPattern,
       userMacros: userMacros ?? this.userMacros,
     );
   }
+
+  static double? _parseDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
+  }
 }
+
+// ---------------------------------------------------------------------------
+// UserMacros
+// ---------------------------------------------------------------------------
 
 class UserMacros {
   final int calories;
@@ -607,7 +499,7 @@ class UserMacros {
     this.fiber = 0,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'daily_calories': calories,
       'daily_protein': protein,
@@ -618,14 +510,14 @@ class UserMacros {
     };
   }
 
-  factory UserMacros.fromMap(Map<String, dynamic> map) {
+  factory UserMacros.fromJson(Map<String, dynamic> json) {
     return UserMacros(
-      calories: map['daily_calories'] ?? map['calories'] ?? 0,
-      protein: map['daily_protein'] ?? map['protein'] ?? 0,
-      carbs: map['daily_carbs'] ?? map['carbs'] ?? 0,
-      fat: map['daily_fat'] ?? map['fat'] ?? 0,
-      water: map['daily_water'] ?? map['water'] ?? 0,
-      fiber: map['daily_fiber'] ?? map['fiber'] ?? 0,
+      calories: (json['daily_calories'] as num?)?.toInt() ?? 0,
+      protein: (json['daily_protein'] as num?)?.toInt() ?? 0,
+      carbs: (json['daily_carbs'] as num?)?.toInt() ?? 0,
+      fat: (json['daily_fat'] as num?)?.toInt() ?? 0,
+      water: (json['daily_water'] as num?)?.toInt() ?? 0,
+      fiber: (json['daily_fiber'] as num?)?.toInt() ?? 0,
     );
   }
 }

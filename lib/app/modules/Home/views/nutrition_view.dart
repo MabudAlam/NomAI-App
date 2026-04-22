@@ -14,7 +14,6 @@ import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:sizer/sizer.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/models/AI/nutrition_output.dart';
@@ -253,7 +252,7 @@ class _NutritionViewState extends State<NutritionView> {
 
     try {
       final storageService = serviceLocator<StorageService>();
-      final imageUrl = await storageService.uploadImage(File(image.path));
+      final imageUrl = await storageService.uploadImage(image);
 
       if (imageUrl == null) {
         AppDialogs.hideDialog();

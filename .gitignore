@@ -79,3 +79,4 @@ android/app/google-services.json
 
 .agents
 skills-lock.json
+.firebaserc

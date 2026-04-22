@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="NomAI nutrition tracking and meal planning.">
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="nomai">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>NomAI</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <script>
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (window.hasPrompt) {
+        window.hasPrompt();
+      }
+    });
+
+    function promptInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+      }
+    }
+
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      if (window.appInstalled) {
+        window.appInstalled();
+      }
+    });
+
+    function getLaunchMode() {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+      const isTwa = document.referrer.startsWith('android-app://');
+
+      if (isTwa && window.appLaunchedAsTWA) {
+        window.appLaunchedAsTWA();
+      } else if (isStandalone && window.appLaunchedAsPWA) {
+        window.appLaunchedAsPWA();
+      } else if (window.appLaunchedInBrowser) {
+        window.appLaunchedInBrowser();
+      }
+    }
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

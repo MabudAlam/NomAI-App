@@ -1,5 +1,7 @@
 import 'package:NomAi/app/modules/Analytics/views/analytics_view.dart';
 import 'package:NomAi/app/modules/Chat/Views/ChatView.dart';
+import 'package:NomAi/app/modules/Scanner/views/scan_view_web.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -112,12 +114,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           : () {
                               try {
                                 final userBloc = context.read<UserBloc>();
-                                Get.to(() => BlocProvider.value(
-                                      value: userBloc,
-                                      child: NomAICamera(),
-                                    ));
+
+                                if (kIsWeb) {
+                                  Get.to(() => BlocProvider.value(
+                                        value: userBloc,
+                                        child: const NomAIWebCamera(),
+                                      ));
+                                } else {
+                                  Get.to(() => BlocProvider.value(
+                                        value: userBloc,
+                                        child:  NomAICamera(),
+                                      ));
+                                }
                               } catch (_) {
-                                Get.to(() => NomAICamera());
+                               print('Error navigating to camera: $_');
                               }
                             },
                       child: Padding(
