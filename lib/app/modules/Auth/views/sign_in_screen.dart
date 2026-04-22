@@ -6,8 +6,6 @@ import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/constants/constants.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/modules/Auth/blocs/sign_in_bloc/sign_in_bloc.dart';
-import 'package:NomAi/app/modules/DashBoard/view/dashboard.dart';
-import 'package:NomAi/app/repo/firebase_user_repo.dart';
 
 class SignInScreen extends StatefulWidget {
   final UserBasicInfo? user;
@@ -23,8 +21,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-
     return BlocListener<SignInBloc, SignInState>(
       listener: (context, state) {
         if (state is SignInSuccess) {
@@ -65,7 +61,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 120,
                   width: 120,
                   decoration: BoxDecoration(
-                    color: NomAIColors.blackText.withOpacity(0.1),
+                    color: NomAIColors.blackText.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -100,7 +96,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           onPressed: () {
                             context
                                 .read<SignInBloc>()
-                                .add(GoogleSignInRequested(widget.user!));
+                                .add(GoogleSignInRequested(widget.user));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,

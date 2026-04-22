@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:NomAi/app/constants/colors.dart';
 import 'package:NomAi/app/modules/Auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:NomAi/app/modules/Onboarding/views/onboarding_progress_view.dart';
 import 'package:NomAi/app/repo/firebase_user_repo.dart';
+import 'package:pwa_install/pwa_install.dart';
 
 class OnboardingHome extends StatefulWidget {
   const OnboardingHome({super.key});
@@ -80,6 +82,26 @@ class _OnboardingHomeState extends State<OnboardingHome> {
               ),
             ),
             const SizedBox(height: 24),
+            if (kIsWeb)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: OutlinedButton.icon(
+                  onPressed: PWAInstall().installPromptEnabled
+                      ? () => PWAInstall().promptInstall_()
+                      : null,
+                  icon: const Icon(Icons.download_outlined),
+                  label: const Text('Install app'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: NomAIColors.blackText,
+                    side: BorderSide(color: NomAIColors.blackText),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                ),
+              ),
+            if (kIsWeb) const SizedBox(height: 12),
             ValueListenableBuilder<int>(
               valueListenable: _currentPage,
               builder: (context, value, child) {

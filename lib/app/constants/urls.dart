@@ -1,6 +1,6 @@
 class ApiUrl {
   static const String baseUrl =
-      "https://43bc-2a09-bac5-3e09-1a8c-00-2a5-d.ngrok-free.app";
+      "https://ad9b-2a09-bac5-3e0f-1aa0-00-2a7-77.ngrok-free.app";
 }
 
 class ApiPath {
@@ -10,6 +10,7 @@ class ApiPath {
 
   static String getMessages(String userId, int offset, int limit) =>
       "/api/v1/users?user_id=$userId&offset=$offset&limit=$limit";
+
 
   static const String updateLogStatus = "/api/v1/users/log-status";
 

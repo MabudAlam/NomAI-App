@@ -6,6 +6,7 @@ import 'package:get/get.dart' as getx;
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:NomAi/app/constants/colors.dart';
+import 'package:NomAi/firebase_options.dart';
 import 'package:NomAi/app/modules/Auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_event.dart';
@@ -17,20 +18,23 @@ import 'package:NomAi/app/providers/theme_provider.dart';
 import 'package:NomAi/app/repo/firebase_user_repo.dart';
 import 'package:NomAi/app/utility/registry_service.dart';
 import 'package:NomAi/app/utility/simple_bloc_observer.dart';
+import 'package:pwa_install/pwa_install.dart';
 
 final FirebaseUserRepo _userRepository = FirebaseUserRepo();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    
-    
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
   var remoteConfigService = await RemoteConfigService.getInstance();
   await remoteConfigService!.initialise();
   configLoading();
   setupRegistry();
+  PWAInstall().setup(installCallback: () {
+    debugPrint('PWA installed');
+  });
 
   Bloc.observer = SimpleBlocObserver();
 
@@ -64,10 +68,10 @@ void configLoading() {
     ..indicatorSize = 40.0
     ..radius = 10.0
     ..progressColor = NomAIColors.switchWhiteColor
-    ..backgroundColor = NomAIColors.blackText.withOpacity(0.8)
+    ..backgroundColor = NomAIColors.blackText.withValues(alpha: 0.8)
     ..indicatorColor = NomAIColors.switchWhiteColor
     ..textColor = NomAIColors.switchWhiteColor
-    ..maskColor = NomAIColors.blackText.withOpacity(0.5)
+    ..maskColor = NomAIColors.blackText.withValues(alpha: 0.5)
     ..userInteractions = true
     ..dismissOnTap = false;
 }
@@ -82,7 +86,7 @@ class MyAppView extends StatelessWidget {
       builder: (context, orientation, deviceType) {
         return getx.GetMaterialApp(
           builder: EasyLoading.init(),
-          title: 'Firebase Auth',
+          title: 'NomAI',
           defaultTransition: getx.Transition.fadeIn,
           transitionDuration: const Duration(milliseconds: 300),
           debugShowCheckedModeBanner: false,

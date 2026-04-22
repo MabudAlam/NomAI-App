@@ -1,5 +1,7 @@
-import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:image/image.dart' as img;
+import 'package:image_picker/image_picker.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_bloc.dart';
 import 'package:NomAi/app/modules/Auth/blocs/my_user_bloc/my_user_state.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
@@ -12,10 +14,10 @@ import 'package:NomAi/app/models/AI/nutrition_input.dart';
 import 'package:NomAi/app/models/AI/nutrition_output.dart';
 import 'package:NomAi/app/models/AI/nutrition_record.dart';
 import 'package:NomAi/app/modules/Scanner/views/scan_view.dart';
+import 'package:NomAi/app/modules/Scanner/views/scan_mode.dart';
 import 'package:NomAi/app/repo/meal_ai_repo.dart';
 import 'package:NomAi/app/repo/nutrition_record_repo.dart';
 import 'package:NomAi/app/repo/storage_service.dart';
-import 'package:NomAi/app/utility/image_utility.dart';
 import 'package:NomAi/app/utility/registry_service.dart';
 
 class ScannerController extends GetxController {
@@ -98,7 +100,7 @@ class ScannerController extends GetxController {
     update();
   }
 
-  Future<void> processNutritionQueryRequest(String userId, File image,
+  Future<void> processNutritionQueryRequest(String userId, XFile image,
       ScanMode scanMode, BuildContext context) async {
     DateTime time = selectedDate;
 
@@ -130,27 +132,15 @@ class ScannerController extends GetxController {
         nutritionInputQuery: NutritionInputQuery(
           imageUrl: "",
           scanMode: scanMode,
-          imageFilePath: image.path,
+          imageFilePath: image.path.isNotEmpty ? image.path : image.name,
         ),
         processingStatus: ProcessingStatus.PROCESSING,
       );
 
       addRecord(nutritionRecord);
 
-      File resizedFile;
-      try {
-        resizedFile = await ImageUtility.downscaleImage(
-          image.path,
-          scale: ImageScale.large_2048,
-        );
-      } catch (e) {
-        print("Error downscaling image: $e");
-        resizedFile = image;
-      }
-
-      File fileToUpload = resizedFile.existsSync() ? resizedFile : image;
-
-      final imageUrl = await storageService.uploadImage(fileToUpload);
+      final Uint8List imageBytes = await _prepareUploadBytes(image);
+      final imageUrl = await storageService.uploadImage(imageBytes);
 
       if (imageUrl == null) {
         throw Exception("Failed to upload image");
@@ -180,7 +170,7 @@ class ScannerController extends GetxController {
           nutritionInputQuery: NutritionInputQuery(
             imageUrl: imageUrl,
             scanMode: scanMode,
-            imageFilePath: image.path,
+            imageFilePath: image.path.isNotEmpty ? image.path : image.name,
           ),
           processingStatus: ProcessingStatus.FAILED,
           nutritionOutput: rawNutritionData, // Include the error response
@@ -197,7 +187,7 @@ class ScannerController extends GetxController {
       final inputData = NutritionInputQuery(
         imageUrl: imageUrl,
         scanMode: scanMode,
-        imageFilePath: image.path,
+        imageFilePath: image.path.isNotEmpty ? image.path : image.name,
         food_description: "",
         dietaryPreferences: userModel?.userInfo?.selectedDiet != null
             ? [userModel!.userInfo!.selectedDiet]
@@ -291,7 +281,7 @@ class ScannerController extends GetxController {
           nutritionInputQuery: NutritionInputQuery(
             imageUrl: "",
             scanMode: scanMode,
-            imageFilePath: image.path,
+            imageFilePath: image.path.isNotEmpty ? image.path : image.name,
           ),
           processingStatus: ProcessingStatus.FAILED,
         ),
@@ -431,11 +421,11 @@ class ScannerController extends GetxController {
 
     removeRecord(failedRecord);
 
-    final imageFile = File(failedRecord.nutritionInputQuery!.imageFilePath!);
+    final imageFile = XFile(failedRecord.nutritionInputQuery!.imageFilePath!);
     final scanMode =
         failedRecord.nutritionInputQuery!.scanMode ?? ScanMode.food;
 
-    if (imageFile.existsSync()) {
+    if (failedRecord.nutritionInputQuery!.imageFilePath!.isNotEmpty) {
       await processNutritionQueryRequest(
         userId,
         imageFile,
@@ -448,6 +438,35 @@ class ScannerController extends GetxController {
         message: "Original image file not found",
       );
     }
+  }
+
+  Future<Uint8List> _prepareUploadBytes(XFile image) async {
+    final bytes = await image.readAsBytes();
+    final decoded = img.decodeImage(bytes);
+    if (decoded == null) {
+      return bytes;
+    }
+
+    const maxSize = 2048;
+    var width = decoded.width;
+    var height = decoded.height;
+
+    if (width > height && width > maxSize) {
+      height = (height * (maxSize / width)).toInt();
+      width = maxSize;
+    } else if (height >= width && height > maxSize) {
+      width = (width * (maxSize / height)).toInt();
+      height = maxSize;
+    }
+
+    final resized = img.copyResize(
+      decoded,
+      width: width,
+      height: height,
+      maintainAspect: true,
+    );
+
+    return Uint8List.fromList(img.encodeJpg(resized, quality: 85));
   }
 
   void removeFailedRecord(NutritionRecord record) {

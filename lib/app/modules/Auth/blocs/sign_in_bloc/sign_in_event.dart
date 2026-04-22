@@ -19,7 +19,7 @@ class SignOutRequired extends SignInEvent {
 }
 
 class GoogleSignInRequested extends SignInEvent {
-  final UserBasicInfo userBasicInfo;
+  final UserBasicInfo? userBasicInfo;
 
   const GoogleSignInRequested(this.userBasicInfo);
 }

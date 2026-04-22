@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/modules/Auth/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
+import 'package:NomAi/app/modules/Onboarding/views/onboarding_home.dart';
 import 'package:NomAi/app/modules/Settings/views/adjust_goals.dart';
 import 'package:NomAi/app/repo/firebase_user_repo.dart';
 
@@ -18,29 +17,14 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  bool isCaloriesBurnedEnabled = false;
-
-  late ScannerController _scannerController;
   late String _userId;
-
-  DateTime _selectedDate = DateTime.now();
-
-  late AuthenticationBloc authenticationBloc;
   final FirebaseUserRepo _userRepository = FirebaseUserRepo();
-
-  UserModel? userModel;
-  bool _isLoading = true;
-  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
     final authState = context.read<AuthenticationBloc>().state;
     if (authState.user == null) {
-      setState(() {
-        _errorMessage = 'User not authenticated. Please log in again.';
-        _isLoading = false;
-      });
       return;
     }
 
@@ -74,8 +58,13 @@ class _SettingsViewState extends State<SettingsView> {
                 ),
               );
             } else {
-              UserModel? userModel = snapshot.data;
-              UserMacros userMacros = userModel!.userInfo!.userMacros;
+              final userModel = snapshot.data;
+              if (userModel == null || userModel.userInfo == null) {
+                return const Center(
+                  child: Text('Profile data is unavailable.'),
+                );
+              }
+
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -130,10 +119,59 @@ class _SettingsViewState extends State<SettingsView> {
                       SizedBox(height: 2.h),
 
                       const Divider(thickness: 1),
+                      SizedBox(height: 2.h),
+                      _buildLogoutButton(
+                        onTap: () async {
+                          final shouldLogout = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              title: const Text('Log out'),
+                              content: const Text(
+                                'Are you sure you want to log out?',
+                              ),
+                              actionsAlignment: MainAxisAlignment.end,
+                              actionsPadding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                bottom: 12,
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.black,
+                                  ),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                  ),
+                                  child: const Text('Log out'),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (shouldLogout == true) {
+                            await _userRepository.logOut();
+                            if (!mounted) return;
+                            Get.offAll(() => const OnboardingHome());
+                          }
+                        },
+                      ),
 
                       // SizedBox(height: 2.h),
                       // const Text(
                       //   'Preferences',
+
                       //   style: TextStyle(
                       //     fontSize: 22,
                       //     fontWeight: FontWeight.bold,
@@ -255,37 +293,30 @@ class _SettingsViewState extends State<SettingsView> {
     );
   }
 
-  Widget _buildToggleItem(
-      String title, String subtitle, bool value, Function(bool) onChanged) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
-                ),
-              ),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                ),
-              ),
-            ],
+  Widget _buildLogoutButton({
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: onTap,
+        icon: const Icon(Icons.logout, color: Colors.red),
+        label: const Text(
+          'Log out',
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        Switch(
-          value: value,
-          onChanged: onChanged,
-          activeThumbColor: Colors.black,
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Colors.red),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
-      ],
+      ),
     );
   }
 }

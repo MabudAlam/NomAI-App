@@ -3,22 +3,25 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/models/Auth/user_repo.dart';
+import 'package:NomAi/app/repo/google_auth_service.dart';
 
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
+  final GoogleAuthService _googleAuthService;
 
   final usersCollection =
-      FirebaseFirestore.instanceFor(databaseId: 'mealai',
-      
-      app: Firebase.app()
-      ).collection('users');
+      FirebaseFirestore.instanceFor(databaseId: 'mealai', app: Firebase.app())
+          .collection('users');
 
   FirebaseUserRepo({
     FirebaseAuth? firebaseAuth,
-  }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+    GoogleAuthService? googleAuthService,
+  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        _googleAuthService = googleAuthService ?? GoogleAuthService();
 
   Stream<User?> get user {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
@@ -62,27 +65,32 @@ class FirebaseUserRepo implements UserRepository {
   Future<UserModel> signInWithGoogle() async {
     try {
       log('Starting Google sign-in...');
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        log('Google sign-in canceled');
-        throw Exception('Google sign-in canceled');
+      final UserCredential userCredential;
+      if (kIsWeb) {
+        userCredential = await _googleAuthService.signInWithGoogle();
+      } else {
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+        if (googleUser == null) {
+          log('Google sign-in canceled');
+          throw Exception('Google sign-in canceled');
+        }
+
+        log('Google sign-in successful: ${googleUser.email}');
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+          log('Google auth token retrieval failed');
+          throw Exception('Google authentication tokens missing');
+        }
+
+        final OAuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        userCredential = await _firebaseAuth.signInWithCredential(credential);
       }
 
-      log('Google sign-in successful: ${googleUser.email}');
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        log('Google auth token retrieval failed');
-        throw Exception('Google authentication tokens missing');
-      }
-
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final UserCredential userCredential =
-          await _firebaseAuth.signInWithCredential(credential);
       final User? user = userCredential.user;
 
       if (user == null) {
@@ -106,7 +114,18 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   Future<void> logOut() async {
-    await _firebaseAuth.signOut();
+    try {
+      if (kIsWeb) {
+        await _googleAuthService.signOut();
+      } else {
+        await GoogleSignIn().signOut();
+      }
+
+      await _firebaseAuth.signOut();
+    } catch (e) {
+      log('Logout error: $e');
+      rethrow;
+    }
   }
 
   Future<UserModel> getUserById(String userId) async {

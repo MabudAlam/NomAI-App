@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:NomAi/app/models/Auth/user.dart';
 import 'package:NomAi/app/modules/Home/views/nutrition_view.dart';
 import 'package:NomAi/app/modules/Scanner/controller/scanner_controller.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:get/get.dart';
@@ -316,21 +313,14 @@ class NutritionCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (nutritionRecord.nutritionInputQuery?.imageFilePath != null)
-              Image.file(
-                File(nutritionRecord.nutritionInputQuery!.imageFilePath!),
-                width: 25.w,
-                height: 12.h,
-                fit: BoxFit.cover,
-              )
-            else if (nutritionRecord.nutritionInputQuery?.imageUrl != null &&
+            if (nutritionRecord.nutritionInputQuery?.imageUrl != null &&
                 nutritionRecord.nutritionInputQuery!.imageUrl!.isNotEmpty)
-              CachedNetworkImage(
-                imageUrl:
-                    nutritionRecord.nutritionInputQuery!.imageUrl.toString(),
+              Image.network(
+                nutritionRecord.nutritionInputQuery!.imageUrl.toString(),
                 fit: BoxFit.cover,
-                placeholder: (context, url) => _buildImagePlaceholder(),
-                errorWidget: (context, url, error) => _buildImageError(),
+                webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+                errorBuilder: (context, error, stackTrace) =>
+                    _buildImageError(),
               )
             else
               _buildImagePlaceholder(),
@@ -340,8 +330,8 @@ class NutritionCard extends StatelessWidget {
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [
-                    NomAIColors.blackText.withOpacity(0.2),
-                    NomAIColors.blackText.withOpacity(0.0),
+                    NomAIColors.blackText.withValues(alpha: 0.2),
+                    NomAIColors.blackText.withValues(alpha: 0.0),
                   ],
                 ),
               ),
@@ -417,7 +407,7 @@ class NutritionCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -429,48 +419,34 @@ class NutritionCard extends StatelessWidget {
             size: 12,
           ),
           SizedBox(width: 4),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                value,
-                style: context.textTheme.bodyMedium?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.bold,
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  value,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              Text(
-                label,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: NomAIColors.blackText.withValues(alpha: 0.5),
-                  fontSize: 6.sp,
-                  fontWeight: FontWeight.w500,
+                Text(
+                  label,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: NomAIColors.blackText.withValues(alpha: 0.5),
+                    fontSize: 6.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildChevron(BuildContext context) {
-    return Container(
-      width: 8.w,
-      decoration: BoxDecoration(
-        color: NomAIColors.darkPrimary.withOpacity(0.08),
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(16),
-          bottomRight: Radius.circular(16),
-        ),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.chevron_right_rounded,
-          color: NomAIColors.darkPrimary,
-          size: 24,
-        ),
       ),
     );
   }

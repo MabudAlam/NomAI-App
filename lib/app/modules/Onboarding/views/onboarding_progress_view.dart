@@ -1124,8 +1124,8 @@ class _OnboardingQuestionariesState extends State<OnboardingQuestionaries> {
                 tile:
                     _currentPage == _totalPages - 1 ? "Go to Sign Up" : "Next",
                 onPressed: () {
-                  // _populateDemoData();
-                  _onNext();
+                  _populateDemoData();
+                  // _onNext();
                 },
               ),
             ],

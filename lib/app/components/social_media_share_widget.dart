@@ -4,7 +4,7 @@ import 'package:NomAi/app/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:davinci/davinci.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/painting.dart';
 import 'package:sizer/sizer.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +13,7 @@ import 'package:NomAi/app/models/AI/nutrition_record.dart';
 import 'package:NomAi/app/models/AI/nutrition_output.dart';
 import 'package:NomAi/app/utility/date_utility.dart';
 import 'package:NomAi/app/components/dialogs.dart';
+import 'package:flutter/foundation.dart';
 
 class SocialMediaShareWidget extends StatefulWidget {
   final NutritionRecord nutritionRecord;
@@ -256,20 +257,20 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            CachedNetworkImage(
-              imageUrl: widget.nutritionRecord.nutritionInputQuery!.imageUrl!,
+            Image.network(
+              widget.nutritionRecord.nutritionInputQuery!.imageUrl!,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
+              webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+              errorBuilder: (context, error, stackTrace) => Container(
                 color: NomAIColors.lightGreyTile,
                 child: Center(
-                  child: CircularProgressIndicator(
-                    color: NomAIColors.blackText.withOpacity(0.5),
-                    strokeWidth: 2,
+                  child: Icon(
+                    Icons.restaurant,
+                    color: NomAIColors.blackText.withOpacity(0.3),
+                    size: 40,
                   ),
                 ),
               ),
-              errorWidget: (context, url, error) =>
-                  const SizedBox.shrink(), // Return empty widget on error
             ),
 
             // Time stamp
@@ -547,7 +548,6 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
 
       AppDialogs.hideDialog();
 
-      // Share using share_plus
       try {
         final response = widget.nutritionRecord.nutritionOutput?.response;
         String foodName = response?.foodName ?? "My delicious meal";
@@ -581,10 +581,14 @@ class _SocialMediaShareWidgetState extends State<SocialMediaShareWidget> {
 
 #NomAI #NutritionTracking #HealthyEating #AInutrition #FoodTracking #HealthTech''';
 
-        Share.shareXFiles(
-          [XFile(imageFile!.path)],
-          text: shareText,
-        );
+        if (kIsWeb) {
+          await Share.share(shareText);
+        } else {
+          Share.shareXFiles(
+            [XFile(imageFile!.path)],
+            text: shareText,
+          );
+        }
       } catch (error) {
         AppDialogs.showErrorSnackbar(
           title: "Share Failed",

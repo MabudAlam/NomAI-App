@@ -8,7 +8,6 @@ import 'package:NomAi/app/repo/nutrition_record_repo.dart';
 import 'package:NomAi/app/repo/storage_service.dart';
 import 'package:NomAi/app/utility/registry_service.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -859,30 +858,28 @@ class _NutritionViewState extends State<NutritionView> {
           ),
           child: nutritionRecord.nutritionInputQuery?.imageUrl != null &&
                   nutritionRecord.nutritionInputQuery!.imageUrl!.isNotEmpty
-              ? CachedNetworkImage(
-                  imageUrl:
-                      nutritionRecord.nutritionInputQuery!.imageUrl.toString(),
+              ? Image.network(
+                  nutritionRecord.nutritionInputQuery!.imageUrl.toString(),
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: NomAIColors.greyLight,
-                    child: Center(
-                      child:
-                          CircularProgressIndicator(color: NomAIColors.black),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => Container(
+                  webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
+                  errorBuilder: (context, error, stackTrace) => Container(
                     color: NomAIColors.greyLight,
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.restaurant,
-                              size: 48,
-                              color: NomAIColors.black.withOpacity(0.3)),
+                          Icon(
+                            Icons.restaurant,
+                            size: 48,
+                            color: NomAIColors.black.withOpacity(0.3),
+                          ),
                           SizedBox(height: 8),
-                          Text('No Image Available',
-                              style: TextStyle(
-                                  color: NomAIColors.black.withOpacity(0.3))),
+                          Text(
+                            'No Image Available',
+                            style: TextStyle(
+                              color: NomAIColors.black.withOpacity(0.3),
+                            ),
+                          ),
                         ],
                       ),
                     ),
