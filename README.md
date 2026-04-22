@@ -28,34 +28,44 @@ Below is a gallery of the current screenshots in `static/screenshots/`.
 
 <table>
   <tr>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.06 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.10 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.14 PM.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872036.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872042.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872044.png" width="230" /></td>
   </tr>
   <tr>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.18 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.28 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.37 PM.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872048.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872052.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872059.png" width="230" /></td>
   </tr>
   <tr>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.40 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.44 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.53 PM.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872068.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872072.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872093.png" width="230" /></td>
   </tr>
   <tr>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.58.58 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.59.04 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 6.59.28 PM.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872095.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872097.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872106.png" width="230" /></td>
   </tr>
   <tr>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 7.00.13 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 7.02.36 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 7.02.43 PM.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872109.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872113.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872181.png" width="230" /></td>
   </tr>
   <tr>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 7.02.49 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 7.02.53 PM.png" width="230" /></td>
-    <td><img src="static/screenshots/Screenshot 2025-09-26 at 7.03.20 PM.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872183.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872191.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872201.png" width="230" /></td>
+  </tr>
+  <tr>
+    <td><img src="static/screenshots/Screenshot_1776872204.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872211.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872216.png" width="230" /></td>
+  </tr>
+  <tr>
+    <td><img src="static/screenshots/Screenshot_1776872221.png" width="230" /></td>
+    <td><img src="static/screenshots/Screenshot_1776872224.png" width="230" /></td>
+    <td></td>
   </tr>
 </table>
 
